@@ -1,0 +1,5 @@
+# Ignorar archivos de configuración, claves y otros sensibles
+*.env
+*.key
+*.pem
+*.secret
