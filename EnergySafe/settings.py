@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'EnergySafeDB'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': os.environ.get('DB_HOST', 'mongodb://localhost:27017/'),
+            'host': os.environ.get('DB_HOST', 'mongodb://<3.142.50.189>:27017/'),
         }
     }
 }
@@ -111,7 +111,7 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
             'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
-            'secret': os.environ.get('GOOGLE_SECRET'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),  # Asegúrate de que sea CLIENT_SECRET
         },
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
@@ -136,6 +136,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"  
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
