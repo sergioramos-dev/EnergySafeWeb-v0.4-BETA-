@@ -13,16 +13,9 @@ class CustomUser(AbstractUser):
         editable=False
     )
     email = models.EmailField(unique=True)
-    groups = models.ManyToManyField(
-        "auth.Group",
-        related_name="customuser_groups_related",
-        blank=True
-    )
-    user_permissions = models.ManyToManyField(
-        "auth.Permission",
-        related_name="customuser_permissions_related",
-        blank=True
-    )
+    groups = models.ManyToManyField("auth.Group", blank=True)
+    user_permissions = models.ManyToManyField("auth.Permission", blank=True)
+
 
     class Meta:
         db_table = "users"

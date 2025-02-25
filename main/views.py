@@ -17,6 +17,9 @@ def index(request):
 def home(request):
     return render(request, 'home.html');
 
+def download(request):
+    return render(request, 'download.html')
+
 def registerUserManager(request):
     if request.method == "GET":
         return render(request, 'login.html')
@@ -43,17 +46,13 @@ def loginUserManager(request):
         return render(request, 'login.html')
 
     if request.method == "POST":
-        username_or_email = request.POST.get("username_or_email")  # Puede ser email o username
+        username_or_email = request.POST.get("username_or_email")  
         password = request.POST.get("password")
-
-        print(username_or_email)
-        print(password)
 
         user = authenticate(request, username=username_or_email, password=password) 
 
         if user is not None:
             login(request, user)
-            print("mandando a home")
             return redirect('home')
         else:
             return render(request, 'login.html', {'error': 'Credenciales incorrectas'})

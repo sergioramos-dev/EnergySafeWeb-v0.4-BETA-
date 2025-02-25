@@ -1,0 +1,60 @@
+{% load static %}
+
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Aplicación Móvil - EnergySafe</title>
+        <link rel='stylesheet' href="{% static 'css/download.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    </head>
+    <body>
+            <div class="header-container">
+                <div class="logo">
+                    <img src="https://i.imgur.com/M8s3mYZ.png" alt="Logo de EnergySafe">
+                </div>
+                <div class="optios">
+                    <a href=""><h2>Inicio</h2></a>
+                    <a href=""><h2>Productos</h2></a>
+                    <a href=""><h2>Acerca de nosotros</h2></a>
+                    <a href="" id="Login-Register"><h2>Login/Register</h2></a>
+                </div>
+            </div>
+            <div class="container">
+                <div class="information">
+                    <h1 class="">
+                        <span class="line1">APLICACION MOVIL</span>
+                        <span class="line2">ENERGYSAFE</span>
+                    </h1>
+                    
+                    
+                    <p id="text">Controla el consumo energético de todos los dispositivos <br> 
+                        en tu hogar desde una sola aplicación. Visualiza en <br>
+                        tiempo real cuánta energía utiliza cada aparato y <br>
+                        optimiza tu consumo de manera inteligente.</p>
+                        <img id="qr" src="https://i.imgur.com/U8N16UK.png" alt="">
+                    <div class="lowest">
+                        <img src="https://i.imgur.com/cGSQrYL.png" alt="">
+                    <p class="highlight">Menos consumo, menor factura</p>
+                    </div>
+                </div>
+                <div class="dispositivo">
+                    <img src="https://i.imgur.com/zfTQ2z1.png" alt="">
+                </div>
+            </div>
+    </body>
+    <script>
+        window.onscroll = function() {
+          var header = document.querySelector('.header-container');
+          if (window.scrollY > 50) { // Cuando el scroll pase de 50px
+            header.classList.add('scrolled');
+          } else {
+            header.classList.remove('scrolled');
+          }
+        };
+      </script>
+      
+    </html>

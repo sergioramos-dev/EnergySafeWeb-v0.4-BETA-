@@ -13,14 +13,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'your_default_secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 AUTH_USER_MODEL = "main.CustomUser"
+
+
 
 AUTHENTICATION_BACKENDS = [
     'main.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  
 ]
 
 SITE_ID = 1
@@ -85,7 +87,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'EnergySafeDB'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': os.environ.get('DB_HOST', 'mongodb://<3.142.50.189>:27017/'),
+            'host': os.environ.get('DB_HOST', 'mongodb://127.0.0.1:27017/'),
         }
     }
 }
@@ -137,6 +139,16 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"  
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+# Configuración adicional para allauth - resolver el problema de Djongo
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_QUERY_EMAIL = False
+
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'

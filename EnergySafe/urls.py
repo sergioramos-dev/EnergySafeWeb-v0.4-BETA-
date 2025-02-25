@@ -24,5 +24,6 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('login/', views.loginUserManager, name='login'),
     path('register/', views.registerUserManager, name='register'),
+    path('download/', views.download, name='donwload'),
     path("accounts/",include('allauth.urls')),
 ]
