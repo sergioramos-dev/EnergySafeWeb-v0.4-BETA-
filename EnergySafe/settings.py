@@ -81,16 +81,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'EnergySafe.wsgi.application'
 
 # Database
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': os.environ.get('DB_NAME', 'EnergySafeDB'),
+        'NAME': 'EnergySafeDB',  # Nombre de la base de datos
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': os.environ.get('DB_HOST', 'mongodb://127.0.0.1:27017/'),
+            'host': 'mongodb+srv://sergioramospyt:G1F8iRaSqmDd75gJ@energysafe.te71t.mongodb.net/EnergySafeDB?retryWrites=true&w=majority',
         }
     }
 }
+
+
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
