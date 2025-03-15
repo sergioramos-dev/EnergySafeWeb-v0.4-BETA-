@@ -1,0 +1,668 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informacion del dispositivo - EnergySafe</title>
+    <link rel='stylesheet' href="{% static 'css/devices.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+</head>
+<body>
+        <div class="header-container">
+            <div class="logo">
+                <img src="https://i.imgur.com/M8s3mYZ.png" alt="Logo de EnergySafe">
+            </div>
+            <div class="optios">
+                <a href="/download"><h2>Descargar</h2></a>
+                <a href="/devices"><h2>Dispositivos</h2></a>
+                <a href=""><h2>Acerca de nosotros</h2></a>
+                <a href="/accounts/logout" id="Login-Register"><h2>Cerrar sesion</h2></a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="first-part">
+                <img src="https://i.imgur.com/Gc9kzyb.png" alt="">
+                    <div class="voltaje">
+                        <hr>
+                        <h1 id="voltaje-text">VOLTAJE</h1>
+                        <div class="circle-v">
+                            <img id="circle-v" src="https://i.imgur.com/BR1kvFH.png" alt="">
+                            <img id="flash-v" src="https://i.imgur.com/dKBjb76.png" alt="">
+                        </div>
+                        <div class="information-v">
+                            <h1 id="voltaje-v">60V</h2>
+                            <h3 id="voltaje-date" >Enero 1 2025</h1>
+                                <div class="porcentaje-v">
+                                    <img src="https://i.imgur.com/NHR1Q8A.png" alt="">
+                                    <h2 id="voltaje-porcentaje" >2% desde ayer</h2>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="kwh">
+                        <hr>
+                        <h3 id="kwh-text">kWh CONSUMIDOS</h3>
+                        <div class="kwh-text"></div>
+                        <div class="kwh-dashboard">
+                            
+                            <div class="dashboard">
+                                <div class="kwh-info">
+                                    <h1 id="kw">0.5 <span>kWh</span></h1>
+                                </div>
+                                <div class="chart" id="consumption-chart">
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-lun"></div>
+                                        <div class="day">Lun</div>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-mar"></div>
+                                        <div class="day">Mar</div>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-mir"></div>
+                                        <div class="day">Mir</div>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-jue"></div>
+                                        <div class="day">Jue</div>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-vie"></div>
+                                        <div class="day">Vie</div>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-sab"></div>
+                                        <div class="day">Sab</div>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar" id="bar-dom"></div>
+                                        <div class="day">Dom</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dashboard2">
+                                <div class="grafico-circular-container">
+                                    <div class="grafico-circular-wrapper">
+                                        <div class="grafico-container">
+                                            <canvas id="grafico-circular" width="197" height="197"></canvas>
+                                            <div class="tooltip" id="tooltip"></div>
+                                        </div>
+                            
+                                        <div class="leyenda-container" id="leyenda">
+                                            <!-- La leyenda se generará dinámicamente con JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>                                <h1>0.5kWh</h1>
+                                <h3>Enero 1 2025</h3>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+
+                <div class="second-part">
+                    <div class="amperios">
+                        <hr>
+                        <h1 id="amperios-text">Amperios</h1>
+                        <div class="amperios-info">
+                            <div class="chart-container">
+                                <div id="chartdiv1" class="chartdiv"></div>
+                                </div>                            <div class="information-a">
+                            <h1 id="amperios-a">2 <span>A</span></h2>
+                            <h3 id="amperios-date" >Enero 1 2025</h1>
+                                <div class="porcentaje-a">
+                                    <img src="https://i.imgur.com/NHR1Q8A.png" alt="">
+                                    <h2 id="amperios-porcentaje" >2% desde ayer</h2>
+                                    
+                                </div>
+                                
+                        </div>
+                        <div class="circle-a">
+                            <img id="circle-a" src="https://i.imgur.com/BR1kvFH.png" alt="">
+                            <img id="flash-a" src="https://i.imgur.com/EeXnkJx.png" alt="">
+                        </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="corriente">
+                        <hr>
+                        <h1 id="amperios-text">Corriente</h1>
+                        <div class="amperios-info">
+                        <div class="circle-a">
+                            <img id="circle-a" src="https://i.imgur.com/BR1kvFH.png" alt="">
+                            <img id="flash-a" src="https://i.imgur.com/J1obQa6.png" alt="">
+                        </div>
+                        <div class="chart-container">
+                            <div id="chartdiv2" class="chartdiv"></div>
+                        </div>                        <div class="information-a">
+                            <h1 id="amperios-a">2 <span>A</span></h2>
+                            <h3 id="amperios-date" >Enero 1 2025</h1>
+                                <div class="porcentaje-a">
+                                    <img src="https://i.imgur.com/NHR1Q8A.png" alt="">
+                                    <h2 id="amperios-porcentaje" >2% desde ayer</h2>
+                                    
+                                </div>
+                        </div>
+
+                        </div>
+
+
+                    </div>
+
+            </div>
+            <div class="dispositivo-monitor-wrapper" id="monitorizacion-dispositivos">
+                <div class="info-box">
+                    <table id="dispositivo-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Voltaje</th>
+                                <th>Corriente</th>
+                                <th>Potencia</th>
+                                <th>Consumo</th>
+                                <th>Frecuencia</th>
+                            </tr>
+                        </thead>
+                        <div class="table-info">
+                        <tbody>
+                            <tr>
+                                <td>#1</td>
+                                <td>2025/01/25<br>12:00:00</td>
+                                <td>110 v</td>
+                                <td>5 A</td>
+                                <td>540 w</td>
+                                <td>1 kWh</td>
+                                <td>60Hz</td>
+                            </tr>
+                            <tr>
+                                <td>#2</td>
+                                <td>2025/02/01<br>19:30:00</td>
+                                <td>70 v</td>
+                                <td>10 A</td>
+                                <td>430 w</td>
+                                <td>3 kWh</td>
+                                <td>60Hz</td>
+                            </tr>
+                            <tr>
+                                <td>#3</td>
+                                <td>2025/01/24<br>12:00:00</td>
+                                <td>80 v</td>
+                                <td>2 A</td>
+                                <td>40 w</td>
+                                <td>5 kWh</td>
+                                <td>60Hz</td>
+                            </tr>
+                            <tr>
+                                <td>#4</td>
+                                <td>2025/01/26<br>12:00:00</td>
+                                <td>10 v</td>
+                                <td>5 A</td>
+                                <td>426 w</td>
+                                <td>6 kWh</td>
+                                <td>60Hz</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        
+                <h2 id="alert-text">Historial de Alertas</h2>
+                
+                <div class="info-box">
+                    <div class="alert-header"><h2>Anomalías detectadas</h2></div>
+                    <div id="alertas-container">
+                        <div class="alert-item">
+                            <div class="alert-icon"><img src="https://i.imgur.com/j3d5GBP.png" alt=""></div>
+                            <div id="alert-alarm">Se ha detectado un voltaje fuera del rango seguro en tu dispositivo.</div>
+                            <div class="close-btn">✕</div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            </div>
+        </div>
+
+    <script>
+        // Valores predeterminados
+        const defaultValues = {
+            lun: 2,
+            mar: 10,
+            mir: 8,
+            jue: 12,
+            vie: 13,
+            sab: 17,
+            dom: 9
+        };
+        
+        // Función para actualizar el gráfico con los valores dados
+        function updateChart(values) {
+            const maxValue = 20; // Valor máximo para calcular la altura
+            const maxHeight = 150; // Altura máxima en píxeles
+            
+            Object.keys(values).forEach(day => {
+                const value = values[day];
+                const bar = document.getElementById(`bar-${day}`);
+                
+                // Calcular altura relativa (mínimo 10px para que se vea incluso si es > 0)
+                const height = value === 0 ? 0 : Math.max(10, (value / maxValue) * maxHeight);
+                
+                bar.style.height = `${height}px`;
+                bar.textContent = value;
+            });
+        }
+        
+        // Inicializar el gráfico con valores predeterminados
+        window.onload = function() {
+            updateChart(defaultValues);
+        };
+        
+        // Función que puede ser llamada desde el backend para actualizar los valores
+        function updateValues(newValues) {
+            updateChart(newValues);
+        }
+    </script>
+
+<script>
+    window.onscroll = function() {
+      var header = document.querySelector('.header-container');
+      if (window.scrollY > 50) { // Cuando el scroll pase de 50px
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    };
+  </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener referencias a elementos del DOM
+        const table = document.getElementById('dispositivo-table');
+        const alertasContainer = document.getElementById('alertas-container');
+        const addRowBtn = document.getElementById('add-dispositivo-btn');
+        const addAlertBtn = document.getElementById('add-alerta-btn');
+        
+        // Inicializar listeners para botones de cierre existentes
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.alert-item').remove();
+            });
+        });
+        
+        // Evento para añadir una nueva fila a la tabla
+        addRowBtn.addEventListener('click', function() {
+            const tbody = table.querySelector('tbody');
+            const newRow = document.createElement('tr');
+            
+            // Datos de muestra para la nueva fila
+            const now = new Date();
+            const formattedDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}<br>${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            
+            // Generar ID basado en el número de filas existentes
+            const rowCount = tbody.children.length;
+            const newId = `#${rowCount + 1}`;
+            
+            // Generar valores aleatorios para los demás campos
+            const voltaje = Math.floor(Math.random() * 120) + 10;
+            const corriente = Math.floor(Math.random() * 15) + 1;
+            const potencia = Math.floor(voltaje * corriente);
+            const consumo = Math.floor(Math.random() * 10) + 1;
+            
+            // Crear las celdas con los datos
+            newRow.innerHTML = `
+                <td>${newId}</td>
+                <td>${formattedDate}</td>
+                <td>${voltaje} v</td>
+                <td>${corriente} A</td>
+                <td>${potencia} w</td>
+                <td>${consumo} kWh</td>
+                <td>60Hz</td>
+            `;
+            
+            // Añadir la fila al tbody
+            tbody.appendChild(newRow);
+            
+            // Objeto de datos para enviar al backend
+            const rowData = {
+                id: newId,
+                fecha: formattedDate.replace('<br>', ' '),
+                voltaje: voltaje,
+                corriente: corriente,
+                potencia: potencia,
+                consumo: consumo,
+                frecuencia: '60Hz'
+            };
+            
+            console.log('Datos de dispositivo para enviar al backend:', rowData);
+            // Aquí puedes agregar tu código para enviar datos al backend
+            // Por ejemplo: fetch('/api/dispositivos', { method: 'POST', body: JSON.stringify(rowData) });
+        });
+        
+        // Evento para añadir una nueva alerta
+
+            
+            
+            // Añadir la nueva alerta al contenedor
+            alertasContainer.appendChild(newAlert);
+            
+            // Añadir evento para cerrar la alerta
+            const closeBtn = newAlert.querySelector('.close-btn');
+            closeBtn.addEventListener('click', function() {
+                newAlert.remove();
+            });
+            
+            // Objeto de datos para enviar al backend
+            const alertData = {
+                timestamp: new Date().toISOString(),
+                mensaje: randomAlert,
+                tipo: 'advertencia'
+            };
+            
+            console.log('Datos de alerta para enviar al backend:', alertData);
+            // Aquí puedes agregar tu código para enviar datos al backend
+            // Por ejemplo: fetch('/api/alertas', { method: 'POST', body: JSON.stringify(alertData) });
+        });
+        
+        // Método para exponer API pública que puedes usar desde tu backend
+        window.dispositivoMonitor = {
+            // Método para añadir un dispositivo con datos específicos
+            addDispositivo: function(datos) {
+                const tbody = table.querySelector('tbody');
+                const newRow = document.createElement('tr');
+                
+                newRow.innerHTML = `
+                    <td>${datos.id || '#' + (tbody.children.length + 1)}</td>
+                    <td>${datos.fecha || 'N/A'}</td>
+                    <td>${datos.voltaje || '0'} v</td>
+                    <td>${datos.corriente || '0'} A</td>
+                    <td>${datos.potencia || '0'} w</td>
+                    <td>${datos.consumo || '0'} kWh</td>
+                    <td>${datos.frecuencia || '60Hz'}</td>
+                `;
+                
+                tbody.appendChild(newRow);
+                return true;
+            },
+            
+            // Método para añadir una alerta con mensaje específico
+            addAlerta: function(mensaje) {
+                const newAlert = document.createElement('div');
+                newAlert.className = 'alert-item';
+                newAlert.innerHTML = `
+                    <div class="alert-icon">⚠️</div>
+                    <div>${mensaje}</div>
+                    <div class="close-btn">✕</div>
+                `;
+                
+                alertasContainer.appendChild(newAlert);
+                
+                const closeBtn = newAlert.querySelector('.close-btn');
+                closeBtn.addEventListener('click', function() {
+                    newAlert.remove();
+                });
+                
+                return true;
+            },
+            
+            // Método para limpiar toda la tabla
+            clearDispositivos: function() {
+                const tbody = table.querySelector('tbody');
+                tbody.innerHTML = '';
+                return true;
+            },
+            
+            // Método para limpiar todas las alertas
+            clearAlertas: function() {
+                alertasContainer.innerHTML = '';
+                return true;
+            }
+        };
+</script>
+
+<script>
+    // Datos iniciales
+    const datos = [
+        { nombre: "Semana 1", valor: 20, color: "#2196F3" }, // Azul
+        { nombre: "Semana 2", valor: 15, color: "#4CAF50" }, // Verde
+        { nombre: "Semana 3", valor: 15, color: "#FFEB3B" }, // Amarillo
+        { nombre: "Semana 4", valor: 25, color: "#F44336" }, // Rojo
+        { nombre: "Semana 5", valor: 0, color: "#E91E63" }   // Rosa (inicialmente con valor 0)
+    ];
+
+    // Obtener el contexto del canvas
+    const canvas = document.getElementById('grafico-circular');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('tooltip');
+    const leyendaContainer = document.getElementById('leyenda');
+    
+    // Establecer el tamaño del canvas
+    canvas.width = 197;
+    canvas.height = 197;
+    
+    // Calcular el total
+    function calcularTotal() {
+        return datos.reduce((total, item) => total + item.valor, 0);
+    }
+
+    // Dibujar el gráfico circular con agujero interior blanco
+    function dibujarGrafico() {
+        // Limpiar el canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const total = calcularTotal();
+        const radio = (Math.min(canvas.width, canvas.height) / 2) - 10;
+        const centroX = canvas.width / 2;
+        const centroY = canvas.height / 2;
+
+        let anguloInicial = -Math.PI / 2; // Comenzar desde arriba
+
+        // Dibujar cada segmento
+        datos.forEach(item => {
+            if (item.valor <= 0) return; // Omitir elementos con valor 0
+
+            const angulo = (item.valor / total) * (Math.PI * 2);
+            const anguloFinal = anguloInicial + angulo;
+
+            // Dibujar segmento
+            ctx.beginPath();
+            ctx.moveTo(centroX, centroY);
+            ctx.arc(centroX, centroY, radio, anguloInicial, anguloFinal);
+            ctx.closePath();
+
+            ctx.fillStyle = item.color;
+            ctx.fill();
+
+            // Actualizar ángulo inicial para el siguiente segmento
+            anguloInicial = anguloFinal;
+        });
+
+        // Dibujar el círculo blanco en el centro para simular el agujero
+        ctx.beginPath();
+        ctx.arc(centroX, centroY, radio / 1.5, 0, Math.PI * 2, false); // Radio más pequeño
+        ctx.fillStyle = "white"; // Color blanco
+        ctx.fill();
+    }
+
+    // Crear la leyenda
+    function crearLeyenda() {
+        leyendaContainer.innerHTML = '';
+        
+        datos.forEach((item, index) => {
+            const leyendaItem = document.createElement('div');
+            leyendaItem.className = 'leyenda-item';
+            leyendaItem.dataset.index = index;
+            
+            const leyendaColor = document.createElement('div');
+            leyendaColor.className = 'leyenda-color';
+            leyendaColor.style.backgroundColor = item.color;
+            
+            const leyendaTexto = document.createElement('div');
+            leyendaTexto.className = 'leyenda-texto';
+            leyendaTexto.textContent = item.nombre;
+            
+            leyendaItem.appendChild(leyendaColor);
+            leyendaItem.appendChild(leyendaTexto);
+            leyendaContainer.appendChild(leyendaItem);
+            
+            // Evento para resaltar al pasar el ratón
+            leyendaItem.addEventListener('mouseover', () => {
+                resaltarSegmento(index);
+            });
+            
+            // Evento para restaurar al quitar el ratón
+            leyendaItem.addEventListener('mouseout', () => {
+                dibujarGrafico();
+                tooltip.style.opacity = 0;
+            });
+            
+            // Evento para cambiar valor al hacer clic
+            leyendaItem.addEventListener('click', () => {
+                cambiarValor(index);
+            });
+        });
+    }
+
+    // Función para resaltar un segmento
+    function resaltarSegmento(index) {
+        if (datos[index].valor <= 0) return;
+        
+        // Dibujar el gráfico base
+        dibujarGrafico();
+        
+        // Calcular la posición del segmento
+        const total = calcularTotal();
+        const radio = (Math.min(canvas.width, canvas.height) / 2) - 10;
+        const centroX = canvas.width / 2;
+        const centroY = canvas.height / 2;
+        const radioResaltado = radio * 1.05; // Ligeramente más grande
+        
+        let anguloInicial = -Math.PI / 2; // Comenzar desde arriba
+        for (let i = 0; i < index; i++) {
+            if (datos[i].valor > 0) {
+                anguloInicial += (datos[i].valor / total) * (Math.PI * 2);
+            }
+        }
+        
+        const angulo = (datos[index].valor / total) * (Math.PI * 2);
+        const anguloFinal = anguloInicial + angulo;
+        const anguloMedio = anguloInicial + (angulo / 2);
+        
+        // Redibujar el segmento resaltado
+        ctx.beginPath();
+        ctx.moveTo(centroX, centroY);
+        ctx.arc(centroX, centroY, radioResaltado, anguloInicial, anguloFinal);
+        ctx.closePath();
+        
+        ctx.fillStyle = datos[index].color;
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
+        
+        // Mostrar tooltip
+        const tooltipX = centroX + (radio * 0.75) * Math.cos(anguloMedio);
+        const tooltipY = centroY + (radio * 0.75) * Math.sin(anguloMedio);
+        
+        tooltip.style.left = `${tooltipX}px`;
+        tooltip.style.top = `${tooltipY}px`;
+        tooltip.textContent = `${datos[index].nombre}: ${datos[index].valor} (${Math.round((datos[index].valor / total) * 100)}%)`;
+        tooltip.style.opacity = 1;
+    }
+    
+    // Función para cambiar el valor de un segmento (simulando interacción)
+    function cambiarValor(index) {
+        const nuevoValor = prompt(`Ingrese un nuevo valor para ${datos[index].nombre}:`, datos[index].valor);
+        if (nuevoValor !== null) {
+            const valor = parseInt(nuevoValor);
+            if (!isNaN(valor) && valor >= 0) {
+                datos[index].valor = valor;
+                actualizarGrafico();
+                
+                // Aquí podrías enviar los datos actualizados al backend
+                console.log('Datos actualizados para enviar al backend:', datos);
+            }
+        }
+    }
+    
+    // Actualizar el gráfico
+    function actualizarGrafico() {
+        dibujarGrafico();
+        crearLeyenda();
+    }
+    
+    // Inicializar el gráfico
+    actualizarGrafico();
+</script>
+<script>
+    function createGaugeChart(chartId) {
+        var root = am5.Root.new(chartId);
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+        var chart = root.container.children.push(
+            am5radar.RadarChart.new(root, {
+                panX: false,
+                panY: false,
+                startAngle: 180,
+                endAngle: 360
+            })
+        );
+        var axisRenderer = am5radar.AxisRendererCircular.new(root, {
+            innerRadius: -10,
+            strokeOpacity: 1,
+            strokeWidth: 25,
+            strokeGradient: am5.LinearGradient.new(root, {
+                rotation: 0,
+                stops: [
+                    { color: am5.color(0x19d228) },
+                    { color: am5.color(0xf4fb16) },
+                    { color: am5.color(0xf6d32b) },
+                    { color: am5.color(0xfb7116) }
+                ]
+            })
+        });
+        var xAxis = chart.xAxes.push(
+            am5xy.ValueAxis.new(root, {
+                maxDeviation: 0,
+                min: 0,
+                max: 100,
+                strictMinMax: true,
+                renderer: axisRenderer
+            })
+        );
+        var axisDataItem = xAxis.makeDataItem({});
+        axisDataItem.set("value", 0);
+        var bullet = axisDataItem.set("bullet", am5xy.AxisBullet.new(root, {
+            sprite: am5radar.ClockHand.new(root, {
+                radius: am5.percent(99)
+            })
+        }));
+        xAxis.createAxisRange(axisDataItem);
+        axisDataItem.get("grid").set("visible", false);
+        setInterval(() => {
+            axisDataItem.animate({
+                key: "value",
+                to: Math.round(Math.random() * 100),
+                duration: 800,
+                easing: am5.ease.out(am5.ease.cubic)
+            });
+        }, 2000);
+        chart.appear(1000, 100);
+    }
+    
+    am5.ready(function() {
+        createGaugeChart("chartdiv1");
+        createGaugeChart("chartdiv2");
+    });
+</script>
+</body>
+</html>

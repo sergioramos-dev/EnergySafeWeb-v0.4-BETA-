@@ -43,7 +43,19 @@ body {
     margin-right: 50px;
 }
 
-#Login-Register h2 {
+#Logout {
+    background-color: #1C4268;
+    color: rgb(255, 0, 0) ;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+    padding: 20px;
+    margin-right: 50px;
+}
+
+
+#logout h2 {
     color: white;
 }
 

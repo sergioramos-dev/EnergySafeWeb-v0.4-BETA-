@@ -1,0 +1,247 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EnergySafe</title>
+    <link rel="stylesheet" href="{% static 'css/add_devices.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/modals.css' %}" />
+
+    <script src="{% static 'js/modals.js' %}"></script>
+    <link rel="stylesheet" href="modals.css">
+  </head>
+  <body>
+    <!-- contenedor general-->
+    <div class="div_general">
+      <!-- barra de titulo para mostrar los dispositivos -->
+      <div class="div_titulo_agregar">
+        <div class="div_titulo">
+          <h3>Mis Dispositivos</h3>
+        </div>
+        <button class="btn_agregar">Agregar Dispositivo</button>
+      </div>
+
+      <!-- contenedor de dispositivos -->
+      <div class="div_dispositivos">
+        <!-- contenedor del dispositivo numero uno -->
+        <div>
+          <div class="linea_azul"></div>
+          <div class="tarjeta_dispositivo">
+            <div class="nombre_dispositivo">
+              <h3>Refrigerador</h3>
+            </div>
+            <div class="contenido_dispositivo">
+              <div class="estado_dispositivo">
+                <div class="circulo_estado normal"></div>
+                <span>Normal</span>
+              </div>
+              <div class="info_actualizacion">
+                <div class="icono_reloj"></div>
+                <span>Actualización hace 5 min</span>
+              </div>
+            </div>
+
+            <div class="div_contenido">
+              <div class="div_imagen">
+                <img
+                  class="imagen"
+                  id="Refrigerador"
+                  src="https://i.imgur.com/kyFdrai.jpeg"
+                  alt="Refrigerador"
+                />
+              </div>
+              <div class="div_info_1">
+                <div class="div_marco_info">
+                  <div class="div_icono_energia">
+                    <div class="icono_electrico">
+                      <img
+                        class="icono"
+                        src="https://i.imgur.com/3TtTtQa.jpeg"
+                        alt="icono potencia"
+                      />
+                    </div>
+                    <div class="info">
+                      <span>Potencia</span>
+                    </div>
+                  </div>
+                  <div class="div_valor_energia">
+                    <span>120 w</span>
+                  </div>
+                </div>
+                <div class="div_marco_info">
+                  <div class="div_icono_energia">
+                    <div class="icono_electrico">
+                      <img
+                        class="icono"
+                        src="https://i.imgur.com/9MPENt5.jpeg"
+                        alt="icono potencia"
+                      />
+                    </div>
+                    <div class="info">
+                      <span>Potencia Activa</span>
+                    </div>
+                  </div>
+                  <div class="div_valor_energia">
+                    <span>112 w</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="div_info_2">
+                <div class="div_marco_info">
+                  <div class="div_icono_energia">
+                    <div class="icono_electrico">
+                      <img
+                        class="icono"
+                        src="https://i.imgur.com/xrT4kle.jpeg"
+                        alt="icono potencia"
+                      />
+                    </div>
+                    <div class="info">
+                      <span>Corriente</span>
+                    </div>
+                  </div>
+                  <div class="div_valor_energia">
+                    <span>1.1 A</span>
+                  </div>
+                </div>
+                <div class="div_marco_info">
+                  <div class="div_icono_energia">
+                    <div class="icono_electrico">
+                      <img
+                        class="icono"
+                        src="https://i.imgur.com/rX0s4cN.jpeg"
+                        alt="icono potencia"
+                      />
+                    </div>
+                    <div class="info">
+                      <span>Voltaje</span>
+                    </div>
+                  </div>
+                  <div class="div_valor_energia">
+                    <span>40 V</span>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="div_datos_ad">
+                <div class="datos_adicionales">
+                  <h3>Datos Adicionales</h3>
+                  <div class="marco_datos">
+                    <div class="fila_dato">
+                      <span>Factor de potencia:</span> <span>0.92</span>
+                    </div>
+                    <div class="fila_dato">
+                      <span>Potencia reactiva:</span> <span>45VAr</span>
+                    </div>
+                    <div class="fila_dato">
+                      <span>Consumo diario:</span> <span>1.5kWh</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <div class="div_boton_mas_info">
+              <button class="btn_mas_info">Mas Informacion</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
+
+    
+<!-- Modal para Agregar Dispositivo -->
+<div id="modal-agregar-dispositivo" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar-modal">&times;</span>
+    <h2>Agregar Dispositivo</h2>
+    <form id="form-dispositivo">
+      <div class="campo-form">
+        <label for="nombre-dispositivo">Nombre del Dispositivo</label>
+        <input type="text" id="nombre-dispositivo" placeholder="Ejemplo: televisión" required>
+      </div>
+      <div class="campo-form">
+        <label for="numero-serie">Número de Serie</label>
+        <input type="text" id="numero-serie" placeholder="12 dígitos" required>
+      </div>
+      <div class="campo-form">
+        <label for="voltaje">Voltaje</label>
+        <select id="voltaje" required>
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="110">110 V</option>
+          <option value="120">120 V</option>
+          <option value="220">220 V</option>
+        </select>
+      </div>
+      <div class="campo-form">
+        <div class="icono-preview">
+          <div class="icono-preview-container" id="preview-icono-container">
+            <div class="icono-preview-add">+</div>
+          </div>
+        </div>
+        <button type="button" id="btn-seleccionar-icono" class="btn-seleccionar-icono">Seleccionar Ícono</button>
+      </div>
+      <div class="acciones-form">
+        <button type="button" class="btn-cancelar" id="btn-cancelar-dispositivo">Cancelar</button>
+        <button type="submit" class="btn-aceptar">Aceptar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para Seleccionar Ícono -->
+<div id="modal-seleccionar-icono" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar-modal" id="cerrar-modal-icono">&times;</span>
+    <h2>Seleccionar Ícono</h2>
+    <div class="grid-iconos">
+      <div class="icono-item" data-icono="impresora">
+        <img src="https://i.imgur.com/QTNk9c5.png" alt="Impresora">
+        <span>Impreso</span>
+      </div>
+      <div class="icono-item" data-icono="computadora">
+        <img src="https://i.imgur.com/G9W3kSS.png" alt="Computadora">
+        <span>Comput</span>
+      </div>
+      <div class="icono-item" data-icono="lavadora">
+        <img src="https://i.imgur.com/HKZWrSP.png" alt="Lavadora">
+        <span>Lavador</span>
+      </div>
+      <div class="icono-item" data-icono="refrigerador">
+        <img src="https://i.imgur.com/y6vQp4I.png" alt="Refrigerador">
+        <span>Refriger</span>
+      </div>
+      <div class="icono-item" data-icono="microondas">
+        <img src="https://i.imgur.com/QFNUZvz.png" alt="Microondas">
+        <span>Microon</span>
+      </div>
+      <div class="icono-item" data-icono="television">
+        <img src="https://i.imgur.com/1cp16yr.png" alt="Televisión">
+        <span>Televisi</span>
+      </div>
+      <div class="icono-item" data-icono="consola">
+        <img src="https://i.imgur.com/MYNXLrB.png" alt="Consola">
+        <span>Consola</span>
+      </div>
+      <div class="icono-item" data-icono="cargador">
+        <img src="https://i.imgur.com/J3y4lRs.png" alt="Cargador">
+        <span>Cargado</span>
+      </div>
+      <div class="icono-item" data-icono="pc">
+        <img src="https://i.imgur.com/Xwh0HPl.png" alt="PC">
+        <span>PC</span>
+      </div>
+    </div>
+    <div class="acciones-form">
+      <button type="button" class="btn-cancelar" id="btn-cancelar-icono">Cancelar</button>
+      <button type="button" id="btn-confirmar-icono" class="btn-aceptar">Aceptar</button>
+    </div>
+  </div>
+</div>

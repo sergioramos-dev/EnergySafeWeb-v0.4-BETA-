@@ -7,20 +7,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Aplicación Móvil - EnergySafe</title>
         <link rel='stylesheet' href="{% static 'css/download.css' %}">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
+         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     </head>
     <body>
             <div class="header-container">
                 <div class="logo">
-                    <img src="https://i.imgur.com/M8s3mYZ.png" alt="Logo de EnergySafe">
+                    <a href="{% url 'home' %}"><img src="https://i.imgur.com/M8s3mYZ.png" alt=""></a>
                 </div>
                 <div class="optios">
-                    <a href=""><h2>Inicio</h2></a>
-                    <a href=""><h2>Productos</h2></a>
+                    <a href="/download"><h2>Descargar</h2></a>
+                    <a href="/devices"><h2>Dispositivos</h2></a>
                     <a href=""><h2>Acerca de nosotros</h2></a>
-                    <a href="" id="Login-Register"><h2>Login/Register</h2></a>
+                    <a href="/accounts/logout" id="Login-Register"><h2>Cerrar sesion</h2></a>
                 </div>
             </div>
             <div class="container">

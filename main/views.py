@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
-
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 
 User = get_user_model()
@@ -19,6 +20,12 @@ def home(request):
 
 def download(request):
     return render(request, 'download.html')
+
+def devices(request):
+    return render(request, 'devices.html')
+
+def device_info(request):
+    return render(request, 'devices-info.html')
 
 def registerUserManager(request):
     if request.method == "GET":
@@ -37,9 +44,6 @@ def registerUserManager(request):
             return redirect('login')
         except Exception as e:
             return HttpResponse(f"Error al crear usuario: {e}")
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
 
 def loginUserManager(request):
     if request.method == "GET":

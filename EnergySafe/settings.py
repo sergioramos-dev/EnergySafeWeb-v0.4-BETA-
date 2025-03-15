@@ -2,6 +2,9 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+SOCIALACCOUNT_ADAPTER = 'main.views.SocialAccountAdapter'  # Ajusta 'main' al nombre de tu app
+
+
 # Cargar el archivo .env
 load_dotenv()
 
@@ -25,13 +28,13 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  
 ]
 
+
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 SOCIALACCOUNT_AUTO_SIGNUP = True
-WSGI_APPLICATION = "social_login.wsgi.application"
-
+WSGI_APPLICATION = 'EnergySafe.wsgi.application'
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,8 +60,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',]
 
 ROOT_URLCONF = 'EnergySafe.urls'
 
@@ -86,10 +88,11 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'EnergySafeDB',  # Nombre de la base de datos
+        'NAME': 'EnergySafeDB',  
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb+srv://sergioramospyt:G1F8iRaSqmDd75gJ@energysafe.te71t.mongodb.net/EnergySafeDB?retryWrites=true&w=majority',
+        
         }
     }
 }
@@ -148,7 +151,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-# Configuración adicional para allauth - resolver el problema de Djongo
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
@@ -165,6 +167,3 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'core' / 'static',  # Asegúrate de que la ruta esté correctamente configurada
-]
