@@ -2,8 +2,10 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-SOCIALACCOUNT_ADAPTER = 'main.views.SocialAccountAdapter'  # Ajusta 'main' al nombre de tu app
+# Eliminar la importación de views que causa la importación circular
+# from main import views  # <-- ELIMINAR ESTA LÍNEA
 
+SOCIALACCOUNT_ADAPTER = 'main.views.SocialAccountAdapter'  # Ajusta 'main' al nombre de tu app
 
 # Cargar el archivo .env
 load_dotenv()
@@ -11,8 +13,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'your_default_secret_key')
-
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-h7c3s9y2m5x8z4w1q0p6l3k9j7h5g4f2d1s3a6')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
@@ -20,14 +21,11 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 AUTH_USER_MODEL = "main.CustomUser"
 
-
-
 AUTHENTICATION_BACKENDS = [
     'main.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',  
 ]
-
 
 SITE_ID = 1
 
@@ -35,6 +33,7 @@ LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 WSGI_APPLICATION = 'EnergySafe.wsgi.application'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,7 +59,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',]
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main.middleware.SocialLoginErrorMiddleware',
+    # El nuevo middleware de sesiones se agregará después
+]
 
 ROOT_URLCONF = 'EnergySafe.urls'
 
@@ -96,9 +98,6 @@ DATABASES = {
         }
     }
 }
-
-
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -156,6 +155,10 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_QUERY_EMAIL = False
 
+# Configuración de sesiones
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600  # 2 semanas en segundos
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -166,4 +169,3 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-

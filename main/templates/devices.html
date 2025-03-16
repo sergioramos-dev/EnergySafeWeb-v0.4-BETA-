@@ -1,247 +1,766 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EnergySafe</title>
-    <link rel="stylesheet" href="{% static 'css/add_devices.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/modals.css' %}" />
-
-    <script src="{% static 'js/modals.js' %}"></script>
-    <link rel="stylesheet" href="modals.css">
-  </head>
-  <body>
-    <!-- contenedor general-->
-    <div class="div_general">
-      <!-- barra de titulo para mostrar los dispositivos -->
-      <div class="div_titulo_agregar">
-        <div class="div_titulo">
-          <h3>Mis Dispositivos</h3>
-        </div>
-        <button class="btn_agregar">Agregar Dispositivo</button>
-      </div>
-
-      <!-- contenedor de dispositivos -->
-      <div class="div_dispositivos">
-        <!-- contenedor del dispositivo numero uno -->
-        <div>
-          <div class="linea_azul"></div>
-          <div class="tarjeta_dispositivo">
-            <div class="nombre_dispositivo">
-              <h3>Refrigerador</h3>
-            </div>
-            <div class="contenido_dispositivo">
-              <div class="estado_dispositivo">
-                <div class="circulo_estado normal"></div>
-                <span>Normal</span>
-              </div>
-              <div class="info_actualizacion">
-                <div class="icono_reloj"></div>
-                <span>Actualización hace 5 min</span>
-              </div>
-            </div>
-
-            <div class="div_contenido">
-              <div class="div_imagen">
-                <img
-                  class="imagen"
-                  id="Refrigerador"
-                  src="https://i.imgur.com/kyFdrai.jpeg"
-                  alt="Refrigerador"
-                />
-              </div>
-              <div class="div_info_1">
-                <div class="div_marco_info">
-                  <div class="div_icono_energia">
-                    <div class="icono_electrico">
-                      <img
-                        class="icono"
-                        src="https://i.imgur.com/3TtTtQa.jpeg"
-                        alt="icono potencia"
-                      />
-                    </div>
-                    <div class="info">
-                      <span>Potencia</span>
-                    </div>
-                  </div>
-                  <div class="div_valor_energia">
-                    <span>120 w</span>
-                  </div>
-                </div>
-                <div class="div_marco_info">
-                  <div class="div_icono_energia">
-                    <div class="icono_electrico">
-                      <img
-                        class="icono"
-                        src="https://i.imgur.com/9MPENt5.jpeg"
-                        alt="icono potencia"
-                      />
-                    </div>
-                    <div class="info">
-                      <span>Potencia Activa</span>
-                    </div>
-                  </div>
-                  <div class="div_valor_energia">
-                    <span>112 w</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="div_info_2">
-                <div class="div_marco_info">
-                  <div class="div_icono_energia">
-                    <div class="icono_electrico">
-                      <img
-                        class="icono"
-                        src="https://i.imgur.com/xrT4kle.jpeg"
-                        alt="icono potencia"
-                      />
-                    </div>
-                    <div class="info">
-                      <span>Corriente</span>
-                    </div>
-                  </div>
-                  <div class="div_valor_energia">
-                    <span>1.1 A</span>
-                  </div>
-                </div>
-                <div class="div_marco_info">
-                  <div class="div_icono_energia">
-                    <div class="icono_electrico">
-                      <img
-                        class="icono"
-                        src="https://i.imgur.com/rX0s4cN.jpeg"
-                        alt="icono potencia"
-                      />
-                    </div>
-                    <div class="info">
-                      <span>Voltaje</span>
-                    </div>
-                  </div>
-                  <div class="div_valor_energia">
-                    <span>40 V</span>
-                  </div>
-                </div>
-              </div>
-
-
-              <div class="div_datos_ad">
-                <div class="datos_adicionales">
-                  <h3>Datos Adicionales</h3>
-                  <div class="marco_datos">
-                    <div class="fila_dato">
-                      <span>Factor de potencia:</span> <span>0.92</span>
-                    </div>
-                    <div class="fila_dato">
-                      <span>Potencia reactiva:</span> <span>45VAr</span>
-                    </div>
-                    <div class="fila_dato">
-                      <span>Consumo diario:</span> <span>1.5kWh</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-            <div class="div_boton_mas_info">
-              <button class="btn_mas_info">Mas Informacion</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </body>
-</html>
-
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Dispositivos - EnergySafe</title>
+  <link rel="stylesheet" href="{% static 'css/add_devices.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/modals.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/styleshome.css' %}" />
+  <style>
+    .energy-safe-info {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
     
-<!-- Modal para Agregar Dispositivo -->
-<div id="modal-agregar-dispositivo" class="modal">
-  <div class="modal-contenido">
-    <span class="cerrar-modal">&times;</span>
-    <h2>Agregar Dispositivo</h2>
-    <form id="form-dispositivo">
-      <div class="campo-form">
-        <label for="nombre-dispositivo">Nombre del Dispositivo</label>
-        <input type="text" id="nombre-dispositivo" placeholder="Ejemplo: televisión" required>
+    .energy-safe-icon {
+      width: 50px;
+      height: 50px;
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .energy-safe-icon img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
+    .energy-safe-details {
+      flex-grow: 1;
+    }
+    
+    .energy-safe-name {
+      font-weight: bold;
+      font-size: 18px;
+      color: #1C4268;
+      margin-bottom: 5px;
+    }
+    
+    .energy-safe-serial, .energy-safe-location {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 2px;
+    }
+    
+    .energy-safe-status {
+      display: inline-block;
+      background-color: #d4edda;
+      color: #155724;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    
+    .feedback {
+      margin-top: 5px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: opacity 0.3s ease;
+    }
+
+    .feedback.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .feedback.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .no-devices {
+      text-align: center;
+      padding: 40px 20px;
+      background-color: #CEDDFF32;
+      border-radius: 10px;
+      margin: 50px 0;
+      color: #4C4D4F;
+    }
+
+    body{
+      margin-top:100px;
+    }
+    .no-devices h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #1C4268;
+    }
+
+    .no-devices p {
+      margin-bottom: 20px;
+    }
+
+    .no-devices button {
+      background-color: #01C38D;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .no-devices button:hover {
+      background-color: #00b377;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-container">
+    <div class="logo">
+        <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt=""></a>
+    </div>
+    <div class="optios">
+        <a href="/download"><h2>Descargar</h2></a>
+        <a href="/devices"><h2>Dispositivos</h2></a>
+        <a href=""><h2>Acerca de nosotros</h2></a>
+        <a href="/logout" id="Login-Register"><h2>Cerrar sesión</h2></a>
+    </div>
+  </div>
+
+  <!-- contenedor general-->
+  <div class="div_general">
+    {% if user_device %}
+    <!-- Información del dispositivo EnergySafe -->
+    <div class="energy-safe-info">
+      <div class="energy-safe-icon">
+        <img src="https://i.imgur.com/M8s3mYZ.png" alt="EnergySafe">
       </div>
-      <div class="campo-form">
-        <label for="numero-serie">Número de Serie</label>
-        <input type="text" id="numero-serie" placeholder="12 dígitos" required>
+      <div class="energy-safe-details">
+        <div class="energy-safe-name">{{ user_device.nombre_personalizado|default:user_device.dispositivo.nombre }}</div>
+        <div class="energy-safe-serial">Nº Serie: {{ user_device.dispositivo.numero_serie }}</div>
+        <div class="energy-safe-location">Ubicación: {{ user_device.ubicacion|default:"No especificada" }}</div>
+        <div class="energy-safe-status">Conectado</div>
       </div>
-      <div class="campo-form">
-        <label for="voltaje">Voltaje</label>
-        <select id="voltaje" required>
-          <option value="" disabled selected>Selecciona una opción</option>
-          <option value="110">110 V</option>
-          <option value="120">120 V</option>
-          <option value="220">220 V</option>
-        </select>
+    </div>
+    {% endif %}
+    
+    <!-- barra de titulo para mostrar los dispositivos -->
+    <div class="div_titulo_agregar">
+      <div class="div_titulo">
+        <h3>{% if user_device %}Mis Electrodomésticos{% else %}Mis Dispositivos{% endif %}</h3>
       </div>
-      <div class="campo-form">
-        <div class="icono-preview">
-          <div class="icono-preview-container" id="preview-icono-container">
-            <div class="icono-preview-add">+</div>
+      <button class="btn_agregar" id="btn_agregar">
+        {% if user_device %}Agregar Electrodoméstico{% else %}Registrar EnergySafe{% endif %}
+      </button>
+    </div>
+
+    <!-- contenedor de dispositivos -->
+    <div class="div_dispositivos">
+      {% if user_device and appliances %}
+        {% for appliance in appliances %}
+          <div>
+            <div class="linea_azul"></div>
+            <div class="tarjeta_dispositivo">
+              <div class="nombre_dispositivo">
+                <h3>{{ appliance.nombre }}</h3>
+              </div>
+              <div class="contenido_dispositivo">
+                <div class="estado_dispositivo">
+                  <div class="circulo_estado normal"></div>
+                  <span>Normal</span>
+                </div>
+                <div class="info_actualizacion">
+                  <div class="icono_reloj"></div>
+                  <span>Actualización hace 5 min</span>
+                </div>
+              </div>
+
+              <div class="div_contenido">
+                <div class="div_imagen">
+                  <img
+                    class="imagen"
+                    src="{% if appliance.icono %}https://i.imgur.com/{{ appliance.icono }}.png{% else %}https://i.imgur.com/kyFdrai.jpeg{% endif %}"
+                    alt="{{ appliance.nombre }}"
+                  />
+                </div>
+                <div class="div_info_1">
+                  <div class="div_marco_info">
+                    <div class="div_icono_energia">
+                      <div class="icono_electrico">
+                        <img
+                          class="icono"
+                          src="https://i.imgur.com/3TtTtQa.jpeg"
+                          alt="icono potencia"
+                        />
+                      </div>
+                      <div class="info">
+                        <span>Potencia</span>
+                      </div>
+                    </div>
+                    <div class="div_valor_energia">
+                      <span>120 w</span>
+                    </div>
+                  </div>
+                  <div class="div_marco_info">
+                    <div class="div_icono_energia">
+                      <div class="icono_electrico">
+                        <img
+                          class="icono"
+                          src="https://i.imgur.com/9MPENt5.jpeg"
+                          alt="icono potencia"
+                        />
+                      </div>
+                      <div class="info">
+                        <span>Potencia Activa</span>
+                      </div>
+                    </div>
+                    <div class="div_valor_energia">
+                      <span>112 w</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="div_info_2">
+                  <div class="div_marco_info">
+                    <div class="div_icono_energia">
+                      <div class="icono_electrico">
+                        <img
+                          class="icono"
+                          src="https://i.imgur.com/xrT4kle.jpeg"
+                          alt="icono potencia"
+                        />
+                      </div>
+                      <div class="info">
+                        <span>Corriente</span>
+                      </div>
+                    </div>
+                    <div class="div_valor_energia">
+                      <span>1.1 A</span>
+                    </div>
+                  </div>
+                  <div class="div_marco_info">
+                    <div class="div_icono_energia">
+                      <div class="icono_electrico">
+                        <img
+                          class="icono"
+                          src="https://i.imgur.com/rX0s4cN.jpeg"
+                          alt="icono potencia"
+                        />
+                      </div>
+                      <div class="info">
+                        <span>Voltaje</span>
+                      </div>
+                    </div>
+                    <div class="div_valor_energia">
+                      <span>{{ appliance.voltaje }} V</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="div_datos_ad">
+                  <div class="datos_adicionales">
+                    <h3>Datos Adicionales</h3>
+                    <div class="marco_datos">
+                      <div class="fila_dato">
+                        <span>Tipo:</span> <span>{{ appliance.tipo|title }}</span>
+                      </div>
+                      <div class="fila_dato">
+                        <span>Conexión:</span> <span>{{ appliance.fecha_conexion|date:"d/m/Y" }}</span>
+                      </div>
+                      <div class="fila_dato">
+                        <span>Consumo diario:</span> <span>1.5kWh</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="div_boton_mas_info">
+                <button class="btn_mas_info" data-id="{{ appliance.id }}">Mas Informacion</button>
+              </div>
+            </div>
           </div>
+        {% endfor %}
+      {% elif user_device %}
+        <!-- Sin electrodomésticos pero con dispositivo EnergySafe -->
+        <div class="no-devices">
+          <h3>No tienes electrodomésticos registrados</h3>
+          <p>Haz clic en "Agregar Electrodoméstico" para empezar a monitorear el consumo energético.</p>
+          <button class="btn_agregar">Agregar Electrodoméstico</button>
         </div>
-        <button type="button" id="btn-seleccionar-icono" class="btn-seleccionar-icono">Seleccionar Ícono</button>
+      {% else %}
+        <!-- Sin dispositivo EnergySafe -->
+        <div class="no-devices">
+          <h3>No tienes un dispositivo EnergySafe registrado</h3>
+          <p>Primero debes registrar tu dispositivo EnergySafe para empezar a monitorear tus electrodomésticos.</p>
+          <button class="btn_agregar">Registrar EnergySafe</button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Modal para Agregar Electrodoméstico o Registrar EnergySafe -->
+  <div id="modal-agregar-dispositivo" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar-modal">&times;</span>
+      <h2 id="modal-title">{% if user_device %}Agregar Electrodoméstico{% else %}Registrar Dispositivo EnergySafe{% endif %}</h2>
+      
+      {% if user_device %}
+      <!-- Formulario para agregar electrodoméstico -->
+      <form id="form-dispositivo" method="POST" action="{% url 'add_appliance' %}">
+        {% csrf_token %}
+        <div class="campo-form">
+          <label for="nombre-dispositivo">Nombre del Electrodoméstico</label>
+          <input type="text" id="nombre-dispositivo" name="nombre-dispositivo" placeholder="Ejemplo: Mi Televisor" required>
+        </div>
+        <div class="campo-form">
+          <label for="voltaje">Voltaje</label>
+          <select id="voltaje" name="voltaje" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="110">110 V</option>
+            <option value="120">120 V</option>
+            <option value="220">220 V</option>
+          </select>
+        </div>
+        <div class="campo-form">
+          <div class="icono-preview">
+            <div class="icono-preview-container" id="preview-icono-container">
+              <div class="icono-preview-add">+</div>
+            </div>
+          </div>
+          <button type="button" id="btn-seleccionar-icono" class="btn-seleccionar-icono">Seleccionar Ícono</button>
+        </div>
+        <div class="acciones-form">
+          <button type="button" class="btn-cancelar" id="btn-cancelar-dispositivo">Cancelar</button>
+          <button type="submit" class="btn-aceptar">Aceptar</button>
+        </div>
+      </form>
+      {% else %}
+      <!-- Formulario para registrar EnergySafe -->
+      <form id="form-energysafe" method="POST" action="{% url 'register_device' %}">
+        {% csrf_token %}
+        <div class="campo-form">
+          <label for="numero-serie">Número de Serie</label>
+          <input type="text" id="numero-serie" name="numero_serie" placeholder="Ej: ESF12345678" required>
+          <div id="serie-feedback" class="feedback" style="display: none;"></div>
+        </div>
+        <div class="campo-form">
+          <label for="nombre-energysafe">Nombre del Dispositivo (opcional)</label>
+          <input type="text" id="nombre-energysafe" name="nombre" placeholder="Ej: Mi EnergySafe">
+        </div>
+        <div class="campo-form">
+          <label for="ubicacion">Ubicación (opcional)</label>
+          <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Sala de estar">
+        </div>
+        <div class="acciones-form">
+          <button type="button" class="btn-cancelar" id="btn-cancelar-energysafe">Cancelar</button>
+          <button type="submit" id="btn-registrar" class="btn-aceptar" disabled>Registrar Dispositivo</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Modal para Seleccionar Ícono -->
+  <div id="modal-seleccionar-icono" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar-modal" id="cerrar-modal-icono">&times;</span>
+      <h2>Seleccionar Ícono</h2>
+      <div class="grid-iconos">
+        <div class="icono-item" data-icono="impresora">
+          <img src="https://i.imgur.com/QTNk9c5.png" alt="Impresora">
+          <span>Impresora</span>
+        </div>
+        <div class="icono-item" data-icono="computadora">
+          <img src="https://i.imgur.com/G9W3kSS.png" alt="Computadora">
+          <span>Computadora</span>
+        </div>
+        <div class="icono-item" data-icono="lavadora">
+          <img src="https://i.imgur.com/HKZWrSP.png" alt="Lavadora">
+          <span>Lavadora</span>
+        </div>
+        <div class="icono-item" data-icono="refrigerador">
+          <img src="https://i.imgur.com/y6vQp4I.png" alt="Refrigerador">
+          <span>Refrigerador</span>
+        </div>
+        <div class="icono-item" data-icono="microondas">
+          <img src="https://i.imgur.com/QFNUZvz.png" alt="Microondas">
+          <span>Microondas</span>
+        </div>
+        <div class="icono-item" data-icono="television">
+          <img src="https://i.imgur.com/1cp16yr.png" alt="Televisión">
+          <span>Televisión</span>
+        </div>
+        <div class="icono-item" data-icono="consola">
+          <img src="https://i.imgur.com/MYNXLrB.png" alt="Consola">
+          <span>Consola</span>
+        </div>
+        <div class="icono-item" data-icono="cargador">
+          <img src="https://i.imgur.com/J3y4lRs.png" alt="Cargador">
+          <span>Cargador</span>
+        </div>
+        <div class="icono-item" data-icono="pc">
+          <img src="https://i.imgur.com/Xwh0HPl.png" alt="PC">
+          <span>PC</span>
+        </div>
       </div>
       <div class="acciones-form">
-        <button type="button" class="btn-cancelar" id="btn-cancelar-dispositivo">Cancelar</button>
-        <button type="submit" class="btn-aceptar">Aceptar</button>
+        <button type="button" class="btn-cancelar" id="btn-cancelar-icono">Cancelar</button>
+        <button type="button" id="btn-confirmar-icono" class="btn-aceptar">Aceptar</button>
       </div>
-    </form>
+    </div>
   </div>
-</div>
 
-<!-- Modal para Seleccionar Ícono -->
-<div id="modal-seleccionar-icono" class="modal">
-  <div class="modal-contenido">
-    <span class="cerrar-modal" id="cerrar-modal-icono">&times;</span>
-    <h2>Seleccionar Ícono</h2>
-    <div class="grid-iconos">
-      <div class="icono-item" data-icono="impresora">
-        <img src="https://i.imgur.com/QTNk9c5.png" alt="Impresora">
-        <span>Impreso</span>
-      </div>
-      <div class="icono-item" data-icono="computadora">
-        <img src="https://i.imgur.com/G9W3kSS.png" alt="Computadora">
-        <span>Comput</span>
-      </div>
-      <div class="icono-item" data-icono="lavadora">
-        <img src="https://i.imgur.com/HKZWrSP.png" alt="Lavadora">
-        <span>Lavador</span>
-      </div>
-      <div class="icono-item" data-icono="refrigerador">
-        <img src="https://i.imgur.com/y6vQp4I.png" alt="Refrigerador">
-        <span>Refriger</span>
-      </div>
-      <div class="icono-item" data-icono="microondas">
-        <img src="https://i.imgur.com/QFNUZvz.png" alt="Microondas">
-        <span>Microon</span>
-      </div>
-      <div class="icono-item" data-icono="television">
-        <img src="https://i.imgur.com/1cp16yr.png" alt="Televisión">
-        <span>Televisi</span>
-      </div>
-      <div class="icono-item" data-icono="consola">
-        <img src="https://i.imgur.com/MYNXLrB.png" alt="Consola">
-        <span>Consola</span>
-      </div>
-      <div class="icono-item" data-icono="cargador">
-        <img src="https://i.imgur.com/J3y4lRs.png" alt="Cargador">
-        <span>Cargado</span>
-      </div>
-      <div class="icono-item" data-icono="pc">
-        <img src="https://i.imgur.com/Xwh0HPl.png" alt="PC">
-        <span>PC</span>
-      </div>
-    </div>
-    <div class="acciones-form">
-      <button type="button" class="btn-cancelar" id="btn-cancelar-icono">Cancelar</button>
-      <button type="button" id="btn-confirmar-icono" class="btn-aceptar">Aceptar</button>
-    </div>
-  </div>
-</div>
+  <script>
+    window.onscroll = function() {
+      var header = document.querySelector('.header-container');
+      if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+      } else {
+          header.classList.remove('scrolled');
+      }
+    };
+  </script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Referencias a elementos
+      const btnAgregar = document.querySelectorAll('.btn_agregar');
+      const modalDispositivo = document.getElementById('modal-agregar-dispositivo');
+      const modalIcono = document.getElementById('modal-seleccionar-icono');
+      const btnSeleccionarIcono = document.getElementById('btn-seleccionar-icono');
+      const btnConfirmarIcono = document.getElementById('btn-confirmar-icono');
+      const btnsCancel = document.querySelectorAll('.btn-cancelar');
+      const btnsCerrar = document.querySelectorAll('.cerrar-modal');
+      const iconoItems = document.querySelectorAll('.icono-item');
+      const previewIconoContainer = document.getElementById('preview-icono-container');
+      
+      {% if user_device %}
+      // Variables para agregar electrodoméstico
+      const formDispositivo = document.getElementById('form-dispositivo');
+      let iconoSeleccionado = null;
+      
+      {% else %}
+      // Variables para registrar EnergySafe
+      const formEnergySafe = document.getElementById('form-energysafe');
+      const numeroSerieInput = document.getElementById('numero-serie');
+      const btnRegistrar = document.getElementById('btn-registrar');
+      let deviceVerified = false;
+      
+      // Verificar número de serie al perder el foco
+      if (numeroSerieInput) {
+        numeroSerieInput.addEventListener('blur', function() {
+          const numeroSerie = this.value.trim();
+          
+          if (numeroSerie.length < 5) {
+            showFeedback('El número de serie debe tener al menos 5 caracteres', 'error');
+            deviceVerified = false;
+            btnRegistrar.disabled = true;
+            return;
+          }
+          
+          // Verificar el número de serie
+          fetch(`/devices/verify/${numeroSerie}/`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.exists) {
+                if (data.available) {
+                  // El dispositivo existe y está disponible
+                  showFeedback(data.message, 'success');
+                  deviceVerified = true;
+                  btnRegistrar.disabled = false;
+                  
+                  // Autocompletar el nombre si está vacío
+                  const nombreInput = document.getElementById('nombre-energysafe');
+                  if (nombreInput && !nombreInput.value && data.device_name) {
+                    nombreInput.value = data.device_name;
+                  }
+                } else {
+                  // El dispositivo no está disponible
+                  showFeedback(data.message, 'error');
+                  deviceVerified = false;
+                  btnRegistrar.disabled = true;
+                }
+              } else {
+                // El dispositivo no existe
+                showFeedback(data.message, 'error');
+                deviceVerified = false;
+                btnRegistrar.disabled = true;
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              showFeedback('Error al verificar el dispositivo', 'error');
+              deviceVerified = false;
+              btnRegistrar.disabled = true;
+            });
+        });
+      }
+      
+      // Registrar dispositivo EnergySafe
+      if (formEnergySafe) {
+        formEnergySafe.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          if (!deviceVerified) {
+            showFeedback('Primero debes verificar el número de serie', 'error');
+            return;
+          }
+          
+          // Deshabilitar botón y mostrar carga
+          btnRegistrar.disabled = true;
+          btnRegistrar.innerHTML = 'Registrando... <span class="loading"></span>';
+          
+          // Crear FormData
+          const formData = new FormData(this);
+          
+          // Enviar formulario
+          fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Registro exitoso
+              showFeedback(data.message, 'success');
+              
+              // Recargar la página después de 1.5 segundos
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            } else {
+              // Ocurrió un error
+              showFeedback(data.message, 'error');
+              btnRegistrar.disabled = false;
+              btnRegistrar.textContent = 'Registrar Dispositivo';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showFeedback('Error al registrar el dispositivo', 'error');
+            btnRegistrar.disabled = false;
+            btnRegistrar.textContent = 'Registrar Dispositivo';
+          });
+        });
+      }
+      
+      // Función para mostrar feedback
+      function showFeedback(message, type) {
+        const feedbackElement = document.getElementById('serie-feedback');
+        if (feedbackElement) {
+          feedbackElement.textContent = message;
+          feedbackElement.className = `feedback ${type}`;
+          feedbackElement.style.display = 'block';
+          
+          // Ocultar después de unos segundos si es éxito
+          if (type === 'success') {
+            setTimeout(() => {
+              feedbackElement.style.opacity = '0';
+              setTimeout(() => {
+                feedbackElement.style.display = 'none';
+                feedbackElement.style.opacity = '1';
+              }, 500);
+            }, 3000);
+          }
+        }
+      }
+      {% endif %}
+      
+      // Abrir modal
+      btnAgregar.forEach(btn => {
+        btn.addEventListener('click', function() {
+          modalDispositivo.style.display = 'block';
+        });
+      });
+      
+      // Abrir modal de seleccionar ícono
+      if (btnSeleccionarIcono) {
+        btnSeleccionarIcono.addEventListener('click', function() {
+          modalIcono.style.display = 'block';
+        });
+      }
+      
+      // Cerrar modales con botón X
+      btnsCerrar.forEach(btn => {
+        btn.addEventListener('click', function() {
+          modalDispositivo.style.display = 'none';
+          modalIcono.style.display = 'none';
+        });
+      });
+      
+      // Cerrar modales con botón cancelar
+      btnsCancel.forEach(btn => {
+        btn.addEventListener('click', function() {
+          modalDispositivo.style.display = 'none';
+          modalIcono.style.display = 'none';
+        });
+      });
+      
+      // Cerrar al hacer clic fuera del modal
+      window.addEventListener('click', function(e) {
+        if (e.target === modalDispositivo) {
+          modalDispositivo.style.display = 'none';
+        }
+        if (e.target === modalIcono) {
+          modalIcono.style.display = 'none';
+        }
+      });
+      
+      {% if user_device %}
+      // Seleccionar ícono (solo para electrodomésticos)
+      iconoItems.forEach(item => {
+        item.addEventListener('click', function() {
+          // Quitar selección previa
+          iconoItems.forEach(i => i.classList.remove('seleccionado'));
+          // Agregar selección actual
+          this.classList.add('seleccionado');
+          
+          // Obtener el nombre del ícono desde el atributo data-icono del div
+          iconoSeleccionado = {
+            nombre: this.getAttribute('data-icono'),
+            src: this.querySelector('img').src
+          };
+        });
+      });
+      
+      // Confirmar selección de ícono
+      if (btnConfirmarIcono) {
+        btnConfirmarIcono.addEventListener('click', function() {
+          if (iconoSeleccionado) {
+            // Actualizar la vista previa del ícono en el contenedor
+            actualizarPreviewIcono(iconoSeleccionado);
+            // Cerrar modal de íconos
+            modalIcono.style.display = 'none';
+          } else {
+            alert('Por favor, selecciona un ícono');
+          }
+        });
+      }
+      
+      // Función para actualizar la vista previa del ícono
+      function actualizarPreviewIcono(icono) {
+        if (!previewIconoContainer) return;
+        
+        // Limpiar el contenedor
+        previewIconoContainer.innerHTML = '';
+        
+        // Crear la imagen
+        const img = document.createElement('img');
+        img.src = icono.src;
+        img.alt = icono.nombre;
+        
+        // Agregar elementos al contenedor
+        previewIconoContainer.appendChild(img);
+        
+        // Agregar campo oculto con el nombre del ícono
+        const iconoInput = document.createElement('input');
+        iconoInput.type = 'hidden';
+        iconoInput.name = 'icono';
+        iconoInput.value = icono.nombre;
+        
+        if (formDispositivo) {
+          // Eliminar campo oculto previo si existe
+          const prevInput = formDispositivo.querySelector('input[name="icono"]');
+          if (prevInput) {
+            prevInput.remove();
+          }
+          formDispositivo.appendChild(iconoInput);
+        }
+      }
+      
+      // Envío del formulario de electrodoméstico
+      if (formDispositivo) {
+        formDispositivo.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Validar campos requeridos
+          const nombre = document.getElementById('nombre-dispositivo').value;
+          const voltaje = document.getElementById('voltaje').value;
+          
+          if (!nombre || !voltaje) {
+            alert('Por favor, completa todos los campos requeridos');
+            return;
+          }
+          
+          if (!iconoSeleccionado) {
+            alert('Por favor, selecciona un ícono para el electrodoméstico');
+            return;
+          }
+          
+          // Enviar formulario
+          const formData = new FormData(this);
+          
+          // Deshabilitar botón y mostrar carga
+          const submitBtn = this.querySelector('[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = 'Procesando... <span class="loading"></span>';
+          
+          fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Éxito
+              alert(data.message);
+              
+              // Cerrar modal y recargar página
+              modalDispositivo.style.display = 'none';
+              window.location.reload();
+            } else {
+              // Error
+              alert(data.message);
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Aceptar';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error al agregar el electrodoméstico');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Aceptar';
+          });
+        });
+      }
+      {% endif %}
+      
+      // Botones de Más Información
+      document.querySelectorAll('.btn_mas_info').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const applianceId = this.getAttribute('data-id');
+          if (applianceId) {
+            window.location.href = `/devices/appliance/${applianceId}/`;
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

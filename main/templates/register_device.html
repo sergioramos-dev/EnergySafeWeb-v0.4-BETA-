@@ -1,0 +1,307 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Dispositivo - EnergySafe</title>
+    <link rel="stylesheet" href="{% static 'css/styleshome.css' %}">
+    <style>
+        body{
+            margin-top: 200px;
+            background-color: #00A87B;
+        }
+        .register-container {
+            max-width: 600px;
+            margin: 120px auto 50px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .register-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #1C4268;
+            font-size: 24px;
+        }
+        
+        .register-subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1C4268;
+            box-shadow: 0 0 0 2px rgba(28, 66, 104, 0.1);
+        }
+        
+        .feedback {
+            margin-top: 5px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .feedback.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .register-button {
+            background-color: #01C38D;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 15px;
+        }
+        
+        .register-button:hover {
+            background-color: #00A87B;
+        }
+        
+        .register-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .device-image {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .device-image img {
+            max-width: 200px;
+            border-radius: 10px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo"></a>
+        </div>
+        <div class="optios">
+            <a href="/download"><h2>Descargar</h2></a>
+            <a href="/devices"><h2>Dispositivos</h2></a>
+            <a href=""><h2>Acerca de nosotros</h2></a>
+            <a href="/logout" id="Login-Register"><h2>Cerrar sesión</h2></a>
+        </div>
+    </div>
+    
+    <div class="register-container">
+        <h1 class="register-title">Registrar dispositivo EnergySafe</h1>
+        <p class="register-subtitle">Conecta tu dispositivo EnergySafe para empezar a monitorear tus electrodomésticos</p>
+        
+        <div class="device-image">
+            <img src="https://i.imgur.com/M8s3mYZ.png" alt="EnergySafe Device">
+        </div>
+        
+        <form id="register-form" class="register-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="numero-serie">Número de Serie</label>
+                <input type="text" id="numero-serie" name="numero_serie" placeholder="Ej: ESF12345678" required>
+                <div id="serie-feedback" class="feedback" style="display: none;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre-dispositivo">Nombre del Dispositivo (opcional)</label>
+                <input type="text" id="nombre-dispositivo" name="nombre" placeholder="Ej: Mi EnergySafe">
+            </div>
+            
+            <div class="form-group">
+                <label for="ubicacion">Ubicación (opcional)</label>
+                <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Sala de estar">
+            </div>
+            
+            <button type="submit" id="register-button" class="register-button" disabled>Registrar Dispositivo</button>
+        </form>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numeroSerieInput = document.getElementById('numero-serie');
+            const nombreInput = document.getElementById('nombre-dispositivo');
+            const registerButton = document.getElementById('register-button');
+            const registerForm = document.getElementById('register-form');
+            const feedbackElement = document.getElementById('serie-feedback');
+            
+            let deviceVerified = false;
+            
+            // Función para mostrar feedback
+            function showFeedback(message, type) {
+                feedbackElement.textContent = message;
+                feedbackElement.className = `feedback ${type}`;
+                feedbackElement.style.display = 'block';
+            }
+            
+            // Verificar número de serie al perder el foco
+            numeroSerieInput.addEventListener('blur', function() {
+                const numeroSerie = this.value.trim();
+                
+                if (numeroSerie.length < 5) {
+                    showFeedback('El número de serie debe tener al menos 5 caracteres', 'error');
+                    deviceVerified = false;
+                    registerButton.disabled = true;
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                showFeedback('Verificando...', 'info');
+                
+                // Verificar el número de serie
+                fetch(`/devices/verify/${numeroSerie}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            if (data.available) {
+                                // El dispositivo existe y está disponible
+                                showFeedback(data.message, 'success');
+                                deviceVerified = true;
+                                registerButton.disabled = false;
+                                
+                                // Autocompletar el nombre si está vacío
+                                if (!nombreInput.value && data.device_name) {
+                                    nombreInput.value = data.device_name;
+                                }
+                            } else {
+                                // El dispositivo no está disponible
+                                showFeedback(data.message, 'error');
+                                deviceVerified = false;
+                                registerButton.disabled = true;
+                            }
+                        } else {
+                            // El dispositivo no existe
+                            showFeedback(data.message, 'error');
+                            deviceVerified = false;
+                            registerButton.disabled = true;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showFeedback('Error al verificar el dispositivo', 'error');
+                        deviceVerified = false;
+                        registerButton.disabled = true;
+                    });
+            });
+            
+            // Manejar envío del formulario
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!deviceVerified) {
+                    showFeedback('Primero debes verificar el número de serie', 'error');
+                    return;
+                }
+                
+                // Deshabilitar botón y mostrar carga
+                registerButton.disabled = true;
+                registerButton.innerHTML = 'Registrando... <span class="loading"></span>';
+                
+                // Crear FormData
+                const formData = new FormData(this);
+                
+                // Obtener token CSRF
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Enviar formulario
+                fetch('/devices/register/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Registro exitoso
+                        showFeedback(data.message, 'success');
+                        
+                        // Redireccionar a la página de dispositivos después de 2 segundos
+                        setTimeout(() => {
+                            window.location.href = '/devices/';
+                        }, 2000);
+                    } else {
+                        // Ocurrió un error
+                        showFeedback(data.message, 'error');
+                        registerButton.disabled = false;
+                        registerButton.textContent = 'Registrar Dispositivo';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showFeedback('Error al registrar el dispositivo', 'error');
+                    registerButton.disabled = false;
+                    registerButton.textContent = 'Registrar Dispositivo';
+                });
+            });
+            
+            // Efecto del header al hacer scroll
+            window.onscroll = function() {
+                const header = document.querySelector('.header-container');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            };
+        });
+    </script>
+</body>
+</html>

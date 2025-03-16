@@ -1,22 +1,7 @@
-"""
-URL configuration for EnergySafe project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+# EnergySafe/urls.py - Versión mínima
 from django.contrib import admin
 from django.urls import include, path
-from main import views
+from main import views, device_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,9 +9,17 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('login/', views.loginUserManager, name='login'),
     path('register/', views.registerUserManager, name='register'),
-    path('download/', views.download, name='donwload'),
-    path("accounts/",include('allauth.urls')),
-    path('devices/', views.devices, name='devices'),
-    path('devices-info/', views.device_info, name='devices-info'),
+    path('logout/', views.logoutUser, name='logout'),
+    path('download/', views.download, name='download'),
+    path('accounts/', include('allauth.urls')),
     
+    # Rutas simplificadas para dispositivos
+    path('devices/', device_views.devices_dashboard, name='devices'),
+    path('devices/verify/<str:numero_serie>/', device_views.verify_energy_safe, name='verify_device'),
+    path('devices/register/', device_views.register_energy_safe, name='register_device'),
+    path('devices/appliance/add/', device_views.add_appliance, name='add_appliance'),
+    path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='appliance_details'),
+    
+    # Mantener esta ruta para compatibilidad
+    path('devices-info/', views.device_info, name='devices-info'),
 ]

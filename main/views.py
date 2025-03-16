@@ -1,22 +1,30 @@
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+import json
+
+# No importes los modelos aquí para evitar la importación circular
+# Importamos los modelos dentro de cada función donde se necesitan
 
 User = get_user_model()
+
+
+class SocialAccountAdapter:
+    """Adaptador para allauth"""
+    pass
 
 
 def index(request):
     return render(request, 'index.html')
 
 def home(request):
-    return render(request, 'home.html');
+    return render(request, 'home.html')
 
 def download(request):
     return render(request, 'download.html')
@@ -61,3 +69,8 @@ def loginUserManager(request):
         else:
             return render(request, 'login.html', {'error': 'Credenciales incorrectas'})
 
+@login_required
+def logoutUser(request):
+    # Implementaremos la lógica de sesiones después de resolver el problema de importación
+    logout(request)
+    return redirect('login')

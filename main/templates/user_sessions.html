@@ -1,0 +1,247 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - EnergySafe</title>
+    <link rel='stylesheet' href="{% static 'css/styleshome.css' %}">
+    <style>
+        .profile-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3EF8C4, #54B6F4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            color: white;
+            margin-right: 30px;
+        }
+        
+        .profile-info h1 {
+            margin: 0 0 10px 0;
+            color: #1C4268;
+        }
+        
+        .profile-info p {
+            margin: 0;
+            color: #666;
+        }
+        
+        .session-card {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .current-session {
+            border-left: 4px solid #00e676;
+        }
+        
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .session-title {
+            font-weight: 600;
+            color: #1C4268;
+        }
+        
+        .session-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .session-detail {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        .session-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .end-session-btn {
+            background-color: #ff5252;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: #1C4268;
+            color: #1C4268;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt=""></a>
+        </div>
+        <div class="optios">
+            <a href="/download"><h2>Descargar</h2></a>
+            <a href="/devices"><h2>Dispositivos</h2></a>
+            <a href=""><h2>Acerca de nosotros</h2></a>
+            <a href="/accounts/logout" id="Login-Register"><h2>Cerrar sesión</h2></a>
+        </div>
+    </div>
+    
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ user.username|first|upper }}
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.username }}</h1>
+                <p>{{ user.email }}</p>
+                <p>Miembro desde: {{ user.date_joined|date:"d M, Y" }}</p>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="sessions">Sesiones Activas</div>
+            <div class="tab" data-tab="settings">Configuración</div>
+            <div class="tab" data-tab="devices">Mis Dispositivos</div>
+        </div>
+        
+        <div id="sessions" class="tab-content active">
+            <h2>Sesiones activas</h2>
+            <p>Estas son tus sesiones iniciadas actualmente. Puedes cerrar cualquier sesión que no reconozcas.</p>
+            
+            {% for session in sessions %}
+            <div class="session-card {% if session.is_current %}current-session{% endif %}">
+                <div class="session-header">
+                    <div class="session-title">
+                        {% if session.is_current %}
+                        Sesión actual
+                        {% else %}
+                        Otra sesión
+                        {% endif %}
+                    </div>
+                    <div class="session-date">
+                        Última actividad: {{ session.last_activity|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+                <div class="session-detail">
+                    <strong>IP:</strong> {{ session.ip_address }}
+                </div>
+                <div class="session-detail">
+                    <strong>Navegador:</strong> {{ session.user_agent|truncatechars:50 }}
+                </div>
+                <div class="session-detail">
+                    <strong>Inicio:</strong> {{ session.created_at|date:"d/m/Y H:i" }}
+                </div>
+                <div class="session-actions">
+                    <a href="{% url 'end_session' session.id %}" class="end-session-btn">
+                        {% if session.is_current %}
+                        Cerrar sesión
+                        {% else %}
+                        Finalizar
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No hay sesiones activas.</p>
+            {% endfor %}
+        </div>
+        
+        <div id="settings" class="tab-content">
+            <h2>Configuración de cuenta</h2>
+            <p>Aquí podrás cambiar la configuración de tu cuenta.</p>
+            <!-- Contenido de configuración -->
+        </div>
+        
+        <div id="devices" class="tab-content">
+            <h2>Mis dispositivos</h2>
+            <p>Administra tus dispositivos conectados.</p>
+            <!-- Listado de dispositivos -->
+        </div>
+    </div>
+    
+    <script>
+        // Funcionalidad para las pestañas
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Desactivar todas las pestañas
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Activar la pestaña seleccionada
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+        
+        // Funcionalidad para el scroll en el header
+        window.onscroll = function() {
+            var header = document.querySelector('.header-container');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        };
+    </script>
+</body>
+</html>

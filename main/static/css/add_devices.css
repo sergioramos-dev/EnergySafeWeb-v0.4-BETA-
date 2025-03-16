@@ -4,6 +4,99 @@
 /* Importación de fuente Jaldi */
 @import url('https://fonts.googleapis.com/css2?family=Jaldi&display=swap');
 
+
+.header-container {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 90px;
+    justify-content: end;
+    align-items: center; 
+    overflow: hidden;   
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease; 
+    backdrop-filter: blur(10px);
+
+}
+
+#Login-Register {
+    background-color: #1C4268;
+    color: white ;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+    padding: 20px;
+    margin-right: 50px;
+}
+
+#Login-Register h2 {
+    color: white;
+}
+
+.header-container.scrolled {
+    background-color: rgba(201,243,252, 0.8); 
+    color: #4baac7;
+}
+
+.header-container.scrolled h2 {
+    color: #4baac7;
+}
+
+
+
+.optios {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; 
+    align-items: center;
+    padding: 0;
+}
+
+.optios a {
+    text-decoration: none;
+    color: white;
+    margin: 15px;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+
+.optios a:not(#Login-Register):hover {
+    color: #1C4268;
+}
+
+.optios a:not(#Login-Register):after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #1C4268;
+    transition: width 0.3s ease;
+}
+
+.optios a:not(#Login-Register):hover:after {
+    width: 100%;
+}
+
+
+
+.optios h2 {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    margin: 0;
+    font-weight: lighter;
+    font-size: 16px;  
+    color: black;
+}
+
+
+
 :root {
     /* Familias de fuentes */
     --font-primary: 'Inter', sans-serif;
@@ -306,4 +399,125 @@ body{
     padding: 5px 0;
     font-family: var(--font-secondary);
     color: #4C4D4F;
+}
+
+.feedback {
+    margin-top: 5px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+}
+
+.feedback.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.feedback.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Mejoras para dispositivos registrados */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 15px;
+}
+
+.btn-eliminar-dispositivo {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-eliminar-dispositivo:hover {
+    background-color: #c82333;
+}
+
+/* Mejoras para el modal */
+.campo-form input:focus,
+.campo-form select:focus {
+    border-color: var(--color-11);
+    box-shadow: 0 0 0 2px rgba(28, 66, 104, 0.2);
+    outline: none;
+}
+
+/* Spinner para cargas */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--color-11);
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Estado de carga */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(28, 66, 104, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--color-11);
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* Mensaje de no dispositivos */
+.no-devices {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--color-9);
+    border-radius: 10px;
+    margin: 20px 0;
+    color: var(--color-3);
+}
+
+.no-devices h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: var(--color-11);
+}
+
+.no-devices p {
+    margin-bottom: 20px;
+}
+
+.no-devices button {
+    background-color: var(--color-10);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.no-devices button:hover {
+    background-color: #00b377;
 }
