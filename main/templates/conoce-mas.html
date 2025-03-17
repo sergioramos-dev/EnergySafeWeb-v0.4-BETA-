@@ -1,0 +1,784 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conoce Más - EnergySafe</title>
+    <link rel="stylesheet" href="{% static 'css/styleshome.css' %}">
+    <style>
+        /* Estilos específicos para la página de "Conoce Más" */
+        .learn-more-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 20px;
+        }
+
+        .learn-more-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .learn-more-header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #160F9E 0%, #1C4268 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .learn-more-header:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            border-radius: 2px;
+        }
+
+        .intro-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 80px;
+            gap: 50px;
+        }
+
+        .intro-text {
+            flex: 1;
+        }
+
+        .intro-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: #1C4268;
+            line-height: 1.3;
+        }
+
+        .intro-text p {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #505050;
+            margin-bottom: 20px;
+        }
+
+        .intro-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .intro-image img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease;
+        }
+
+        .intro-image:hover img {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .features-section {
+            padding: 60px;
+            background: linear-gradient(135deg, #f5f9ff 0%, #ecf5f3 100%);
+            border-radius: 20px;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features-section:before {
+            content: "";
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62, 248, 196, 0.15), transparent 70%);
+        }
+
+        .features-section:after {
+            content: "";
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(84, 182, 244, 0.15), transparent 70%);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #1C4268;
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 4px;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #f5f9ff, #ecf5f3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            color: #1C4268;
+            margin-bottom: 15px;
+        }
+
+        .feature-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #505050;
+            flex-grow: 1;
+        }
+
+        .stats-section {
+            margin-bottom: 80px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            color: #505050;
+        }
+
+        .testimonials-section {
+            margin-bottom: 80px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .testimonial-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #505050;
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .testimonial-text:before {
+            content: '"';
+            font-size: 4rem;
+            color: rgba(84, 182, 244, 0.2);
+            position: absolute;
+            top: -20px;
+            left: -15px;
+            line-height: 1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background: linear-gradient(135deg, #3EF8C4, #54B6F4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 700;
+            color: #1C4268;
+            margin-bottom: 5px;
+        }
+
+        .author-role {
+            font-size: 0.9rem;
+            color: #505050;
+        }
+
+        .faq-section {
+            margin-bottom: 80px;
+        }
+
+        .faq-container {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #f9f9f9;
+        }
+
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #1C4268;
+        }
+
+        .faq-toggle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+            font-weight: bold;
+            color: #1C4268;
+        }
+
+        .faq-toggle.active {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-answer.active {
+            padding: 0 30px 20px;
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #505050;
+            margin: 0;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #3EF8C4, #54B6F4);
+            border-radius: 20px;
+            padding: 60px 30px;
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section:before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-section:after {
+            content: "";
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: #1C4268;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 992px) {
+            .intro-section {
+                flex-direction: column;
+            }
+
+            .features-section {
+                padding: 40px 30px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .learn-more-header h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-grid,
+            .stats-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .learn-more-header h1 {
+                font-size: 2rem;
+            }
+
+            .intro-text h2 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Fondo con degradado -->
+        <div class="gradient-bg">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Logo y Navegación -->
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo"></a>
+            </div>
+            <div class="optios">
+                <a href="/home"><h2>Inicio</h2></a>
+                <a href="/download"><h2>Descargar</h2></a>
+                <a href="/devices"><h2>Dispositivos</h2></a>
+                <a href="/products"><h2>Productos</h2></a>
+                <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+                {% else %}
+                    <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="learn-more-container">
+        <div class="learn-more-header">
+            <h1>Descubre EnergySafe</h1>
+        </div>
+
+        <!-- Sección de introducción -->
+        <div class="intro-section">
+            <div class="intro-text">
+                <h2>Revoluciona la forma en que usas la energía</h2>
+                <p>EnergySafe es más que un simple dispositivo de monitoreo. Es un sistema inteligente que te permite comprender, controlar y optimizar tu consumo eléctrico de manera sencilla e intuitiva.</p>
+                <p>Nuestra tecnología de vanguardia analiza el consumo en tiempo real de cada dispositivo conectado, identificando patrones de uso y ofreciendo recomendaciones personalizadas para maximizar tu ahorro energético.</p>
+                <p>Con EnergySafe, tomar el control de tu factura eléctrica nunca había sido tan fácil y efectivo.</p>
+            </div>
+            <div class="intro-image">
+                <img src="/api/placeholder/500/300" alt="EnergySafe en acción">
+            </div>
+        </div>
+
+        <!-- Sección de características -->
+        <div class="features-section">
+            <h2 class="section-title">Características principales</h2>
+            
+            <div class="features-grid">
+                <!-- Característica 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Monitoreo en tiempo real</h3>
+                    <p class="feature-text">Visualiza el consumo energético de cada dispositivo segundo a segundo, con datos precisos sobre voltaje, corriente y potencia.</p>
+                </div>
+                
+                <!-- Característica 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Análisis detallado</h3>
+                    <p class="feature-text">Recibe informes y estadísticas sobre tus patrones de consumo, con recomendaciones específicas para reducir gastos innecesarios.</p>
+                </div>
+                
+                <!-- Característica 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Control desde cualquier lugar</h3>
+                    <p class="feature-text">Accede a toda la información desde nuestra aplicación móvil, disponible para iOS y Android. Controla tus dispositivos estés donde estés.</p>
+                </div>
+                
+                <!-- Característica 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="feature-title">Protección avanzada</h3>
+                    <p class="feature-text">Detecta anomalías en el funcionamiento eléctrico que podrían dañar tus dispositivos o representar un riesgo para tu hogar.</p>
+                </div>
+                
+                <!-- Característica 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3 class="feature-title">Programación inteligente</h3>
+                    <p class="feature-text">Establece horarios de encendido y apagado para tus dispositivos, aprovechando las horas de menor tarifa eléctrica.</p>
+                </div>
+                
+                <!-- Característica 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Actualización constante</h3>
+                    <p class="feature-text">Disfruta de mejoras continuas a través de actualizaciones automáticas que añaden nuevas funcionalidades sin costo adicional.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de estadísticas -->
+        <div class="stats-section">
+            <h2 class="section-title">Resultados que hablan por sí solos</h2>
+            
+            <div class="stats-grid">
+                <!-- Estadística 1 -->
+                <div class="stat-card">
+                    <div class="stat-number">30%</div>
+                    <div class="stat-text">Reducción promedio en la factura eléctrica</div>
+                </div>
+                
+                <!-- Estadística 2 -->
+                <div class="stat-card">
+                    <div class="stat-number">15.000+</div>
+                    <div class="stat-text">Hogares inteligentes con EnergySafe</div>
+                </div>
+                
+                <!-- Estadística 3 -->
+                <div class="stat-card">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-text">Usuarios satisfechos</div>
+                </div>
+                
+                <!-- Estadística 4 -->
+                <div class="stat-card">
+                    <div class="stat-number">1.2M+</div>
+                    <div class="stat-text">KWh ahorrados en el último año</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de testimonios -->
+        <div class="testimonials-section">
+            <h2 class="section-title">Lo que dicen nuestros usuarios</h2>
+            
+            <div class="testimonials-grid">
+                <!-- Testimonio 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        EnergySafe cambió completamente mi forma de consumir energía. Reduje mi factura en un 35% el primer mes y pude identificar qué electrodomésticos estaban consumiendo más de lo normal.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MG</div>
+                        <div class="author-info">
+                            <div class="author-name">María González</div>
+                            <div class="author-role">Usuario desde 2024</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonio 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        La facilidad de instalación me sorprendió. En menos de 5 minutos tenía todo funcionando y podía ver el consumo de mis dispositivos. La app es intuitiva y las alertas son muy útiles.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">CA</div>
+                        <div class="author-info">
+                            <div class="author-name">Carlos Aguirre</div>
+                            <div class="author-role">Usuario desde 2023</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonio 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        Compré EnergySafe para mi negocio y ha sido una inversión excelente. Hemos optimizado nuestro consumo eléctrico y reducido costos operativos. Ahora tenemos control total sobre nuestros equipos.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">LR</div>
+                        <div class="author-info">
+                            <div class="author-name">Laura Ramírez</div>
+                            <div class="author-role">Propietaria de cafetería</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de preguntas frecuentes -->
+        <div class="faq-section">
+            <h2 class="section-title">Preguntas frecuentes</h2>
+            
+            <div class="faq-container">
+                <!-- Pregunta 1 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Cómo funciona EnergySafe?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>EnergySafe se conecta entre tus dispositivos y la toma de corriente. A través de sensores avanzados, mide el consumo eléctrico en tiempo real y transmite esa información a nuestra aplicación móvil. Allí podrás visualizar todos los datos, recibir análisis personalizados y controlar tus dispositivos remotamente.</p>
+                    </div>
+                </div>
+                
+                <!-- Pregunta 2 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Es difícil de instalar?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No, la instalación es extremadamente sencilla. Solo tienes que conectar EnergySafe a la toma de corriente y luego conectar tu dispositivo a EnergySafe. Después, descarga nuestra aplicación, sigue unos simples pasos de configuración y estarás listo para empezar a monitorear.</p>
+                    </div>
+                </div>
+                
+                <!-- Pregunta 3 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Con qué dispositivos es compatible?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>EnergySafe es compatible con cualquier dispositivo eléctrico que se conecte a una toma de corriente estándar. Desde electrodomésticos grandes como refrigeradores y lavadoras, hasta dispositivos más pequeños como computadoras, televisores o cargadores.</p>
+                    </div>
+                </div>
+                
+                <!-- Pregunta 4 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Requiere conexión a internet?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sí, EnergySafe necesita conexión WiFi para transmitir datos a nuestra plataforma y permitirte controlar tus dispositivos remotamente. Sin embargo, si la conexión a internet se interrumpe, seguirá funcionando y almacenando datos localmente, que se sincronizarán cuando se restablezca la conexión.</p>
+                    </div>
+                </div>
+                
+                <!-- Pregunta 5 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Qué garantía ofrece EnergySafe?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Todos nuestros dispositivos incluyen una garantía de 2 años contra defectos de fabricación. Además, ofrecemos un período de prueba de 30 días con devolución del dinero si no estás completamente satisfecho con el producto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de llamada a la acción -->
+        <div class="cta-section">
+            <h2 class="cta-title">Comienza a ahorrar hoy mismo</h2>
+            <p class="cta-text">Únete a miles de hogares y negocios que ya están tomando el control de su consumo energético. Con EnergySafe, ahorrar energía y dinero nunca ha sido tan fácil.</p>
+            <a href="/products" class="cta-button">Ver productos</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>Copyright © EnergySafe 2025 | Design by EnergySafe Development Team.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Script para el efecto scroll del header
+        window.onscroll = function() {
+            var header = document.querySelector('.header-container');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        };
+
+        // Script para las preguntas frecuentes
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const toggle = question.querySelector('.faq-toggle');
+                const answer = question.nextElementSibling;
+                
+                // Toggle active class
+                toggle.classList.toggle('active');
+                answer.classList.toggle('active');
+                
+                // Cambiar símbolo + por -
+                toggle.textContent = toggle.classList.contains('active') ? '−' : '+';
+            });
+        });
+    </script>
+</body>
+</html>

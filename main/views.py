@@ -29,11 +29,22 @@ def home(request):
 def download(request):
     return render(request, 'download.html')
 
+def aboutus(request):
+    return render(request, 'about-us.html')
+
+def productos(request):
+    return render(request, 'productos.html')
 def devices(request):
     return render(request, 'devices.html')
 
 def device_info(request):
     return render(request, 'devices-info.html')
+
+def optimiza_consumo(request):
+    return render(request, 'optimiza-consumo.html')
+
+def conoce_mas(request):
+    return render(request, 'conoce-mas.html')
 
 def registerUserManager(request):
     if request.method == "GET":

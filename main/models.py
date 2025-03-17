@@ -85,8 +85,8 @@ class UserDevice(models.Model):
         default=generate_id,
         editable=False
     )
-    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='dispositivos')
-    dispositivo = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='usuarios')
+    usuario_id = models.CharField(max_length=24)  # Simplificado para evitar ForeignKey
+    dispositivo_id = models.CharField(max_length=24)  # Simplificado para evitar ForeignKey
     fecha_adquisicion = models.DateTimeField(auto_now_add=True)
     nombre_personalizado = models.CharField(max_length=100, blank=True, null=True)
     ubicacion = models.CharField(max_length=100, blank=True, null=True)
@@ -94,9 +94,6 @@ class UserDevice(models.Model):
     
     class Meta:
         db_table = "user_devices"
-        
-    def __str__(self):
-        return f"{self.usuario.username} - {self.dispositivo.nombre}"
 
 class ConnectedAppliance(models.Model):
     """Electrodoméstico conectado a un dispositivo EnergySafe"""

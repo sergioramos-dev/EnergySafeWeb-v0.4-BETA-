@@ -140,11 +140,17 @@
         <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt=""></a>
     </div>
     <div class="optios">
-        <a href="/download"><h2>Descargar</h2></a>
-        <a href="/devices"><h2>Dispositivos</h2></a>
-        <a href=""><h2>Acerca de nosotros</h2></a>
-        <a href="/logout" id="Login-Register"><h2>Cerrar sesión</h2></a>
-    </div>
+      <a href="/home"><h2>Inicio</h2></a>
+      <a href="/download"><h2>Descargar</h2></a>
+      <a href="/devices"><h2>Dispositivos</h2></a>
+      <a href="/products"><h2>Productos</h2></a>
+      <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+      {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+      {% else %}
+          <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+      {% endif %}
+  </div>
   </div>
 
   <!-- contenedor general-->
@@ -156,9 +162,15 @@
         <img src="https://i.imgur.com/M8s3mYZ.png" alt="EnergySafe">
       </div>
       <div class="energy-safe-details">
-        <div class="energy-safe-name">{{ user_device.nombre_personalizado|default:user_device.dispositivo.nombre }}</div>
-        <div class="energy-safe-serial">Nº Serie: {{ user_device.dispositivo.numero_serie }}</div>
-        <div class="energy-safe-location">Ubicación: {{ user_device.ubicacion|default:"No especificada" }}</div>
+        <div class="energy-safe-name">
+          {{ user_device.nombre_personalizado|default:device_info.nombre }}
+      </div>
+      <div class="energy-safe-serial">
+          Nº Serie: {{ device_info.numero_serie }}
+      </div>
+      <div class="energy-safe-location">
+          Ubicación: {{ user_device.ubicacion|default:"No especificada" }}
+      </div>
         <div class="energy-safe-status">Conectado</div>
       </div>
     </div>
@@ -326,32 +338,27 @@
       
       {% if user_device %}
       <!-- Formulario para agregar electrodoméstico -->
-      <form id="form-dispositivo" method="POST" action="{% url 'add_appliance' %}">
+      <form id="form-electrodomestico" method="POST" action="{% url 'add_appliance' %}">
         {% csrf_token %}
         <div class="campo-form">
           <label for="nombre-dispositivo">Nombre del Electrodoméstico</label>
-          <input type="text" id="nombre-dispositivo" name="nombre-dispositivo" placeholder="Ejemplo: Mi Televisor" required>
+          <input type="text" id="nombre-dispositivo" name="nombre-dispositivo" value="TV" placeholder="Ejemplo: Mi Televisor">
         </div>
         <div class="campo-form">
           <label for="voltaje">Voltaje</label>
-          <select id="voltaje" name="voltaje" required>
-            <option value="" disabled selected>Selecciona una opción</option>
-            <option value="110">110 V</option>
-            <option value="120">120 V</option>
-            <option value="220">220 V</option>
+          <select id="voltaje" name="voltaje">
+            <option value="110 V" selected>110 V</option>
+            <option value="120 V">120 V</option>
+            <option value="220 V">220 V</option>
           </select>
         </div>
-        <div class="campo-form">
-          <div class="icono-preview">
-            <div class="icono-preview-container" id="preview-icono-container">
-              <div class="icono-preview-add">+</div>
-            </div>
-          </div>
-          <button type="button" id="btn-seleccionar-icono" class="btn-seleccionar-icono">Seleccionar Ícono</button>
-        </div>
+        
+        <!-- Campo oculto para el ícono seleccionado -->
+        <input type="hidden" id="icono-seleccionado" name="icono" value="television">
+        
         <div class="acciones-form">
-          <button type="button" class="btn-cancelar" id="btn-cancelar-dispositivo">Cancelar</button>
-          <button type="submit" class="btn-aceptar">Aceptar</button>
+          <button type="button" class="btn-cancelar" id="cancelar">Cancelar</button>
+          <button type="submit" class="btn-aceptar" id="btn-aceptar">Aceptar</button>
         </div>
       </form>
       {% else %}
@@ -762,5 +769,79 @@
       });
     });
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Formulario de electrodoméstico
+      const form = document.getElementById('form-electrodomestico') || document.getElementById('modal-agregar-dispositivo').querySelector('form');
+      
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Obtener los datos del formulario
+          const formData = new FormData(form);
+          
+          // Añadir un campo oculto para el ícono si no existe
+          if (!formData.has('icono')) {
+            formData.append('icono', 'television');
+          }
+          
+          // Cambiar botón a "Procesando..."
+          const submitBtn = form.querySelector('[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Procesando...';
+          }
+          
+          // Enviar formulario mediante fetch
+          fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Respuesta:', data);
+            
+            if (data.success) {
+              alert('Electrodoméstico agregado correctamente.');
+              window.location.reload(); // Recargar la página
+            } else {
+              alert('Error: ' + (data.message || 'No se pudo agregar el electrodoméstico.'));
+              // Restaurar botón
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Aceptar';
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error de comunicación con el servidor.');
+            
+            // Restaurar botón
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Aceptar';
+            }
+          });
+        });
+      }
+      
+      // Manejar cierre del modal
+      const cancelarBtn = document.getElementById('cancelar') || document.querySelector('.btn-cancelar');
+      const modal = document.querySelector('.modal') || document.getElementById('modal-agregar-dispositivo');
+      
+      if (cancelarBtn && modal) {
+        cancelarBtn.addEventListener('click', function() {
+          modal.style.display = 'none';
+        });
+      }
+    });
+    </script>
+    </body>
+    </html>
 </body>
 </html>

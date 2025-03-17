@@ -1,0 +1,829 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimiza Tu Consumo - EnergySafe</title>
+    <link rel="stylesheet" href="{% static 'css/styleshome.css' %}">
+    <style>
+        /* Estilos específicos para la página de Optimiza Tu Consumo */
+        .optimize-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 20px;
+        }
+
+        .optimize-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .optimize-header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #00e676, #00c853);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .optimize-header p {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #505050;
+            line-height: 1.6;
+        }
+
+        .optimize-header:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #00e676, #00c853);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #1C4268;
+            margin-bottom: 40px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 35px;
+            background: linear-gradient(180deg, #00e676, #00c853);
+            border-radius: 4px;
+        }
+
+        .section-intro {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #505050;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #f5f9ff 0%, #ecf5f3 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator-section:before {
+            content: "";
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.15), transparent 70%);
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .calculator-field {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .calculator-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1C4268;
+        }
+
+        .calculator-field input,
+        .calculator-field select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .calculator-field input:focus,
+        .calculator-field select:focus {
+            border-color: #00e676;
+            outline: none;
+        }
+
+        .calculator-button {
+            background: linear-gradient(90deg, #00e676, #00c853);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.3);
+        }
+
+        .calculator-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 230, 118, 0.4);
+        }
+
+        .calculator-results {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .result-card {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #00e676, #00c853);
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1C4268;
+            margin-bottom: 10px;
+        }
+
+        .result-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: #505050;
+        }
+
+        .tips-section {
+            margin-bottom: 60px;
+        }
+
+        .tips-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .tip-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .tip-content {
+            padding: 25px;
+        }
+
+        .tip-title {
+            font-size: 1.5rem;
+            color: #1C4268;
+            margin-bottom: 15px;
+        }
+
+        .tip-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #505050;
+            margin-bottom: 20px;
+        }
+
+        .tip-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #00e676;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .devices-section {
+            margin-bottom: 60px;
+        }
+
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .devices-table th {
+            background-color: #1C4268;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .devices-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .devices-table td {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .device-efficiency {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .high {
+            background-color: #e6f7ef;
+            color: #00c853;
+        }
+
+        .medium {
+            background-color: #fff8e6;
+            color: #ffab00;
+        }
+
+        .low {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+
+        .plan-section {
+            margin-bottom: 60px;
+        }
+
+        .plan-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            counter-reset: step-counter;
+        }
+
+        .plan-step {
+            flex: 1;
+            min-width: 260px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+            counter-increment: step-counter;
+        }
+
+        .plan-step:before {
+            content: counter(step-counter);
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(90deg, #00e676, #00c853);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .plan-title {
+            font-size: 1.5rem;
+            color: #1C4268;
+            margin-bottom: 15px;
+        }
+
+        .plan-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #505050;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            border-radius: 20px;
+            padding: 60px 30px;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section:before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-section:after {
+            content: "";
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: white;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: #00c853;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 992px) {
+            .optimize-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .calculator-section,
+            .plan-steps {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .optimize-header h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .calculator-form {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-section {
+                padding: 20px;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .result-card {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Fondo con degradado -->
+        <div class="gradient-bg">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Logo y Navegación -->
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo"></a>
+            </div>
+            <div class="optios">
+                <a href="/home"><h2>Inicio</h2></a>
+                <a href="/download"><h2>Descargar</h2></a>
+                <a href="/devices"><h2>Dispositivos</h2></a>
+                <a href="/products"><h2>Productos</h2></a>
+                <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+                {% else %}
+                    <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="optimize-container">
+        <div class="optimize-header">
+            <h1>Optimiza Tu Consumo Energético</h1>
+            <p>Descubre cómo reducir tu huella energética, ahorrar dinero y contribuir a un mundo más sostenible con nuestras herramientas y consejos prácticos.</p>
+        </div>
+
+        <!-- Sección de Calculadora -->
+        <div class="calculator-section">
+            <h2 class="section-title">Calculadora de Consumo</h2>
+            <p class="section-intro">Utiliza nuestra herramienta para estimar tu consumo actual y descubrir cuánto podrías ahorrar con EnergySafe. Introduce los datos de tus electrodomésticos para obtener un cálculo personalizado.</p>
+            
+            <div class="calculator-form">
+                <div class="calculator-field">
+                    <label for="device-type">Tipo de Electrodoméstico</label>
+                    <select id="device-type">
+                        <option value="">Selecciona una opción</option>
+                        <option value="refrigerator">Refrigerador</option>
+                        <option value="washing-machine">Lavadora</option>
+                        <option value="tv">Televisor</option>
+                        <option value="computer">Computadora</option>
+                        <option value="air-conditioner">Aire Acondicionado</option>
+                        <option value="microwave">Microondas</option>
+                    </select>
+                </div>
+                
+                <div class="calculator-field">
+                    <label for="power">Potencia (Watts)</label>
+                    <input type="number" id="power" placeholder="Ej. 1500">
+                </div>
+                
+                <div class="calculator-field">
+                    <label for="hours-per-day">Horas de Uso al Día</label>
+                    <input type="number" id="hours-per-day" placeholder="Ej. 8" min="0" max="24">
+                </div>
+                
+                <div class="calculator-field">
+                    <label for="days-per-month">Días de Uso al Mes</label>
+                    <input type="number" id="days-per-month" placeholder="Ej. 30" min="0" max="31">
+                </div>
+                
+                <div class="calculator-field">
+                    <label for="electricity-rate">Tarifa Eléctrica (MXN/kWh)</label>
+                    <input type="number" id="electricity-rate" placeholder="Ej. 5.2" step="0.01">
+                </div>
+            </div>
+            
+            <button id="calculate-button" class="calculator-button">Calcular Consumo</button>
+            
+            <div class="calculator-results" id="calculator-results">
+                <div class="result-card">
+                    <div class="result-value" id="monthly-consumption">0.00</div>
+                    <div class="result-label">kWh Mensuales</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-value" id="monthly-cost">$0.00</div>
+                    <div class="result-label">Costo Mensual</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-value" id="annual-cost">$0.00</div>
+                    <div class="result-label">Costo Anual</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-value" id="potential-savings">$0.00</div>
+                    <div class="result-label">Ahorro Potencial con EnergySafe</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Tips -->
+        <div class="tips-section">
+            <h2 class="section-title">Tips para Reducir tu Consumo</h2>
+            <p class="section-intro">Pequeños cambios en tus hábitos pueden traducirse en grandes ahorros. Descubre nuestros consejos prácticos para optimizar el uso de energía en tu hogar u oficina.</p>
+            
+            <div class="tips-container">
+                <!-- Tip 1 -->
+                <div class="tip-card">
+                    <div class="tip-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                    <div class="tip-content">
+                        <h3 class="tip-title"><span class="tip-number">1</span> Apaga los dispositivos en espera</h3>
+                        <p class="tip-text">Los dispositivos en modo de espera pueden representar hasta un 10% de tu factura eléctrica. Desconéctalos por completo cuando no los uses o utiliza regletas con interruptor para apagarlos fácilmente.</p>
+                    </div>
+                </div>
+                
+                <!-- Tip 2 -->
+                <div class="tip-card">
+                    <div class="tip-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                    <div class="tip-content">
+                        <h3 class="tip-title"><span class="tip-number">2</span> Usa electrodomésticos eficientes</h3>
+                        <p class="tip-text">Al renovar tus electrodomésticos, elige aquellos con clasificación energética A+++ o superior. A largo plazo, el ahorro en tu factura compensará la inversión inicial.</p>
+                    </div>
+                </div>
+                
+                <!-- Tip 3 -->
+                <div class="tip-card">
+                    <div class="tip-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                    <div class="tip-content">
+                        <h3 class="tip-title"><span class="tip-number">3</span> Optimiza el uso del aire acondicionado</h3>
+                        <p class="tip-text">Ajusta el termostato a 24°C en verano y 21°C en invierno. Cada grado de diferencia puede suponer un 8% más de consumo energético. Mantén las puertas y ventanas cerradas cuando esté en funcionamiento.</p>
+                    </div>
+                </div>
+                
+                <!-- Tip 4 -->
+                <div class="tip-card">
+                    <div class="tip-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                    <div class="tip-content">
+                        <h3 class="tip-title"><span class="tip-number">4</span> Aprovecha la iluminación natural</h3>
+                        <p class="tip-text">Organiza tu espacio para aprovechar al máximo la luz natural. Cuando necesites iluminación artificial, usa bombillas LED que consumen hasta un 80% menos que las incandescentes tradicionales.</p>
+                    </div>
+                </div>
+                
+                <!-- Tip 5 -->
+                <div class="tip-card">
+                    <div class="tip-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                    <div class="tip-content">
+                        <h3 class="tip-title"><span class="tip-number">5</span> Lava con agua fría</h3>
+                        <p class="tip-text">El 90% de la energía que consume una lavadora se destina a calentar el agua. Usar programas de agua fría y cargas completas puede reducir significativamente tu consumo energético.</p>
+                    </div>
+                </div>
+                
+                <!-- Tip 6 -->
+                <div class="tip-card">
+                    <div class="tip-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                    <div class="tip-content">
+                        <h3 class="tip-title"><span class="tip-number">6</span> Programa tus dispositivos</h3>
+                        <p class="tip-text">Utiliza temporizadores o dispositivos inteligentes como EnergySafe para programar el encendido y apagado de tus electrodomésticos durante las horas de menor tarifa eléctrica.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Dispositivos -->
+        <div class="devices-section">
+            <h2 class="section-title">Consumo de los Electrodomésticos</h2>
+            <p class="section-intro">Conocer cuánta energía consume cada dispositivo en tu hogar es el primer paso para optimizar tu consumo. A continuación, te mostramos el consumo promedio de los electrodomésticos más comunes.</p>
+            
+            <table class="devices-table">
+                <thead>
+                    <tr>
+                        <th>Electrodoméstico</th>
+                        <th>Consumo Promedio (kWh/mes)</th>
+                        <th>Costo Mensual Estimado</th>
+                        <th>Eficiencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Refrigerador</td>
+                        <td>43.8 kWh</td>
+                        <td>$227.76 MXN</td>
+                        <td><span class="device-efficiency medium">Media</span></td>
+                    </tr>
+                    <tr>
+                        <td>Lavadora</td>
+                        <td>19.5 kWh</td>
+                        <td>$101.40 MXN</td>
+                        <td><span class="device-efficiency high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td>Aire Acondicionado</td>
+                        <td>195.0 kWh</td>
+                        <td>$1,014.00 MXN</td>
+                        <td><span class="device-efficiency low">Baja</span></td>
+                    </tr>
+                    <tr>
+                        <td>Televisor (LCD 40")</td>
+                        <td>18.3 kWh</td>
+                        <td>$95.16 MXN</td>
+                        <td><span class="device-efficiency high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td>Computadora</td>
+                        <td>15.0 kWh</td>
+                        <td>$78.00 MXN</td>
+                        <td><span class="device-efficiency high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td>Microondas</td>
+                        <td>10.8 kWh</td>
+                        <td>$56.16 MXN</td>
+                        <td><span class="device-efficiency high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td>Secadora de Ropa</td>
+                        <td>75.6 kWh</td>
+                        <td>$393.12 MXN</td>
+                        <td><span class="device-efficiency low">Baja</span></td>
+                    </tr>
+                    <tr>
+                        <td>Plancha</td>
+                        <td>9.0 kWh</td>
+                        <td>$46.80 MXN</td>
+                        <td><span class="device-efficiency medium">Media</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-size: 0.9rem; color: #555; margin-top: 10px;">*Cálculos basados en una tarifa promedio de $5.20 MXN por kWh.</p>
+        </div>
+
+        <!-- Sección de Plan de Acción -->
+        <div class="plan-section">
+            <h2 class="section-title">Plan de Acción en 5 Pasos</h2>
+            <p class="section-intro">Sigue esta guía paso a paso para implementar un sistema efectivo de optimización energética en tu hogar u oficina, y comienza a ver resultados inmediatos.</p>
+            
+            <div class="plan-steps">
+                <!-- Paso 1 -->
+                <div class="plan-step">
+                    <h3 class="plan-title">Analiza tu consumo actual</h3>
+                    <p class="plan-text">Revisa tus facturas de los últimos meses para establecer una línea base. Identifica patrones de consumo y picos inusuales que puedan indicar problemas.</p>
+                </div>
+                
+                <!-- Paso 2 -->
+                <div class="plan-step">
+                    <h3 class="plan-title">Identifica los dispositivos que más consumen</h3>
+                    <p class="plan-text">Utiliza EnergySafe para medir el consumo real de cada electrodoméstico. Prioriza la optimización de aquellos que representan un mayor gasto.</p>
+                </div>
+                
+                <!-- Paso 3 -->
+                <div class="plan-step">
+                    <h3 class="plan-title">Implementa los cambios de hábitos</h3>
+                    <p class="plan-text">Aplica los consejos de esta guía en tu rutina diaria. Pequeños cambios como apagar luces o desconectar dispositivos en espera pueden tener un gran impacto.</p>
+                </div>
+                
+                <!-- Paso 4 -->
+                <div class="plan-step">
+                    <h3 class="plan-title">Automatiza el consumo</h3>
+                    <p class="plan-text">Configura EnergySafe para programar el encendido y apagado de tus dispositivos en horarios óptimos. Establece límites de consumo y alertas.</p>
+                </div>
+                
+                <!-- Paso 5 -->
+                <div class="plan-step">
+                    <h3 class="plan-title">Monitorea y ajusta continuamente</h3>
+                    <p class="plan-text">Revisa periódicamente tus estadísticas de consumo y haz ajustes según sea necesario. Celebra tus logros y comparte tus experiencias con otros.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de CTA -->
+        <div class="cta-section">
+            <h2 class="cta-title">¡Comienza hoy tu optimización energética!</h2>
+            <p class="cta-text">Con EnergySafe, tendrás todas las herramientas necesarias para monitorear, controlar y reducir tu consumo energético de manera sencilla y efectiva. ¡Únete a la revolución verde!</p>
+            <a href="/products" class="cta-button">Ver nuestros productos</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>Copyright © EnergySafe 2025 | Design by EnergySafe Development Team.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Script para el efecto scroll del header
+        window.onscroll = function() {
+            var header = document.querySelector('.header-container');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        };
+
+        // Script para la calculadora
+        document.getElementById('calculate-button').addEventListener('click', function() {
+            // Obtener valores de los campos
+            const power = parseFloat(document.getElementById('power').value) || 0;
+            const hoursPerDay = parseFloat(document.getElementById('hours-per-day').value) || 0;
+            const daysPerMonth = parseFloat(document.getElementById('days-per-month').value) || 0;
+            const electricityRate = parseFloat(document.getElementById('electricity-rate').value) || 0;
+            
+            // Calcular consumo mensual en kWh
+            const monthlyConsumption = (power * hoursPerDay * daysPerMonth) / 1000;
+            
+            // Calcular costo mensual
+            const monthlyCost = monthlyConsumption * electricityRate;
+            
+            // Calcular costo anual
+            const annualCost = monthlyCost * 12;
+            
+            // Calcular ahorro potencial (asumiendo un 30% de ahorro con EnergySafe)
+            const potentialSavings = annualCost * 0.3;
+            
+            // Actualizar resultados
+            document.getElementById('monthly-consumption').textContent = monthlyConsumption.toFixed(2);
+            document.getElementById('monthly-cost').textContent = '$' + monthlyCost.toFixed(2);
+            document.getElementById('annual-cost').textContent = '$' + annualCost.toFixed(2);
+            document.getElementById('potential-savings').textContent = '$' + potentialSavings.toFixed(2);
+        });
+
+        // Precargar algunos valores comunes para dispositivos seleccionados
+        document.getElementById('device-type').addEventListener('change', function() {
+            const deviceValues = {
+                'refrigerator': { power: 150, hours: 24 },
+                'washing-machine': { power: 500, hours: 1 },
+                'tv': { power: 100, hours: 5 },
+                'computer': { power: 200, hours: 6 },
+                'air-conditioner': { power: 1500, hours: 8 },
+                'microwave': { power: 1200, hours: 0.5 }
+            };
+            
+            const selectedDevice = this.value;
+            if (deviceValues[selectedDevice]) {
+                document.getElementById('power').value = deviceValues[selectedDevice].power;
+                document.getElementById('hours-per-day').value = deviceValues[selectedDevice].hours;
+                document.getElementById('days-per-month').value = 30;
+                document.getElementById('electricity-rate').value = 5.2;
+            }
+        });
+    </script>
+</body>
+</html>

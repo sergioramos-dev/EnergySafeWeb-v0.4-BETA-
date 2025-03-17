@@ -17,10 +17,16 @@
                     <a href="{% url 'home' %}"><img src="https://i.imgur.com/M8s3mYZ.png" alt=""></a>
                 </div>
                 <div class="optios">
+                    <a href="/home"><h2>Inicio</h2></a>
                     <a href="/download"><h2>Descargar</h2></a>
                     <a href="/devices"><h2>Dispositivos</h2></a>
-                    <a href=""><h2>Acerca de nosotros</h2></a>
-                    <a href="/accounts/logout" id="Login-Register"><h2>Cerrar sesion</h2></a>
+                    <a href="/products"><h2>Productos</h2></a>
+                    <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+                    {% else %}
+                        <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+                    {% endif %}
                 </div>
             </div>
             <div class="container">
@@ -42,7 +48,7 @@
                     </div>
                 </div>
                 <div class="dispositivo">
-                    <img src="https://i.imgur.com/zfTQ2z1.png" alt="">
+                    <img src="https://i.imgur.com/pHgcTYo.png" alt="">
                 </div>
             </div>
     </body>

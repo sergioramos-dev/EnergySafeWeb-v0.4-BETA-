@@ -64,10 +64,16 @@
                 <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt=""></a>
             </div>
             <div class="optios">
-                <a href=""><h2>Inicio</h2></a>
-                <a href=""><h2>Productos</h2></a>
-                <a href=""><h2>Acerca de nosotros</h2></a>
-                <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+                <a href="/home"><h2>Inicio</h2></a>
+                <a href="/download"><h2>Descargar</h2></a>
+                <a href="/devices"><h2>Dispositivos</h2></a>
+                <a href="/products"><h2>Productos</h2></a>
+                <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+                {% else %}
+                    <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+                {% endif %}
             </div>
         </div>
 
