@@ -138,9 +138,33 @@ class ApplianceConsumption(models.Model):
     corriente = models.FloatField(default=0)  # en amperios
     voltaje = models.FloatField(default=0)  # en voltios
     consumo = models.FloatField(default=0)  # en kWh
+    frecuencia = models.FloatField(default=60.0)
     
     class Meta:
         db_table = "appliance_consumption"
         
     def __str__(self):
         return f"{self.appliance.nombre} - {self.fecha}"
+    
+class ApplianceAlert(models.Model):
+    """Registro de alertas para electrodomésticos"""
+    def generate_id():
+        return get_random_string(24, allowed_chars='abcdef0123456789')
+        
+    id = models.CharField(
+        primary_key=True,
+        max_length=24,
+        default=generate_id,
+        editable=False
+    )
+    appliance = models.ForeignKey(ConnectedAppliance, on_delete=models.CASCADE, related_name='alertas')
+    fecha = models.DateTimeField(auto_now_add=True)
+    tipo = models.CharField(max_length=50)  # voltaje, corriente, etc.
+    mensaje = models.TextField()
+    atendida = models.BooleanField(default=False)
+    
+    class Meta:
+        db_table = "appliance_alerts"
+        
+    def __str__(self):
+        return f"{self.appliance.nombre} - {self.tipo} - {self.fecha}"

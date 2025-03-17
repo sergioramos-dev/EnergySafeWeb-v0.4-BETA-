@@ -1,7 +1,7 @@
 # EnergySafe/urls.py - Versión mínima
 from django.contrib import admin
 from django.urls import include, path
-from main import views, device_views
+from main import api_views, views, device_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('optimiza-consumo/', views.optimiza_consumo, name='optimiza_consumo'),
     path('conoce-mas/', views.conoce_mas, name='conoce_mas'),
     
+    
     # Rutas simplificadas para dispositivos
     path('devices/', device_views.devices_dashboard, name='devices'),
     path('devices/verify/<str:numero_serie>/', device_views.verify_energy_safe, name='verify_device'),
@@ -24,7 +25,14 @@ urlpatterns = [
     # En EnergySafe/urls.py
     path('devices/appliance/add/', device_views.add_appliance, name='add_appliance'),
     path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='appliance_details'),
+    path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='devices-info'),
+
+
     
     # Mantener esta ruta para compatibilidad
     path('devices-info/', views.device_info, name='devices-info'),
+
+    # API
+    path('api/device-readings/', api_views.device_readings, name='device_readings'),
+
 ]

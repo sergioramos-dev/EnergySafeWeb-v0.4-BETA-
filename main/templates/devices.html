@@ -307,7 +307,7 @@
                 </div>
               </div>
               <div class="div_boton_mas_info">
-                <button class="btn_mas_info" data-id="{{ appliance.id }}">Mas Informacion</button>
+                <a href="/devices-info"><button class="btn_mas_info"  >Mas Informacion</button></a>
               </div>
             </div>
           </div>
@@ -461,12 +461,7 @@
       const iconoItems = document.querySelectorAll('.icono-item');
       const previewIconoContainer = document.getElementById('preview-icono-container');
       
-      {% if user_device %}
-      // Variables para agregar electrodoméstico
-      const formDispositivo = document.getElementById('form-dispositivo');
-      let iconoSeleccionado = null;
-      
-      {% else %}
+      {% if not user_device %}
       // Variables para registrar EnergySafe
       const formEnergySafe = document.getElementById('form-energysafe');
       const numeroSerieInput = document.getElementById('numero-serie');
@@ -475,373 +470,275 @@
       
       // Verificar número de serie al perder el foco
       if (numeroSerieInput) {
-        numeroSerieInput.addEventListener('blur', function() {
-          const numeroSerie = this.value.trim();
-          
-          if (numeroSerie.length < 5) {
-            showFeedback('El número de serie debe tener al menos 5 caracteres', 'error');
-            deviceVerified = false;
-            btnRegistrar.disabled = true;
-            return;
-          }
-          
-          // Verificar el número de serie
-          fetch(`/devices/verify/${numeroSerie}/`)
-            .then(response => response.json())
-            .then(data => {
-              if (data.exists) {
-                if (data.available) {
-                  // El dispositivo existe y está disponible
-                  showFeedback(data.message, 'success');
-                  deviceVerified = true;
-                  btnRegistrar.disabled = false;
-                  
-                  // Autocompletar el nombre si está vacío
-                  const nombreInput = document.getElementById('nombre-energysafe');
-                  if (nombreInput && !nombreInput.value && data.device_name) {
-                    nombreInput.value = data.device_name;
-                  }
-                } else {
-                  // El dispositivo no está disponible
-                  showFeedback(data.message, 'error');
+          numeroSerieInput.addEventListener('blur', function() {
+              const numeroSerie = this.value.trim();
+              
+              if (numeroSerie.length < 5) {
+                  showFeedback('El número de serie debe tener al menos 5 caracteres', 'error');
                   deviceVerified = false;
                   btnRegistrar.disabled = true;
-                }
-              } else {
-                // El dispositivo no existe
-                showFeedback(data.message, 'error');
-                deviceVerified = false;
-                btnRegistrar.disabled = true;
+                  return;
               }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              showFeedback('Error al verificar el dispositivo', 'error');
-              deviceVerified = false;
-              btnRegistrar.disabled = true;
-            });
-        });
+              
+              // Verificar el número de serie
+              fetch(`/devices/verify/${numeroSerie}/`)
+                  .then(response => response.json())
+                  .then(data => {
+                      console.log("Respuesta de verificación:", data);
+                      if (data.exists) {
+                          if (data.available) {
+                              // El dispositivo existe y está disponible
+                              showFeedback(data.message, 'success');
+                              deviceVerified = true;
+                              btnRegistrar.disabled = false;
+                              
+                              // Autocompletar el nombre si está vacío
+                              const nombreInput = document.getElementById('nombre-energysafe');
+                              if (nombreInput && !nombreInput.value && data.device_name) {
+                                  nombreInput.value = data.device_name;
+                              }
+                          } else {
+                              // El dispositivo no está disponible
+                              showFeedback(data.message, 'error');
+                              deviceVerified = false;
+                              btnRegistrar.disabled = true;
+                          }
+                      } else {
+                          // El dispositivo no existe
+                          showFeedback(data.message, 'error');
+                          deviceVerified = false;
+                          btnRegistrar.disabled = true;
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      showFeedback('Error al verificar el dispositivo', 'error');
+                      deviceVerified = false;
+                      btnRegistrar.disabled = true;
+                  });
+          });
       }
       
       // Registrar dispositivo EnergySafe
       if (formEnergySafe) {
-        formEnergySafe.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          if (!deviceVerified) {
-            showFeedback('Primero debes verificar el número de serie', 'error');
-            return;
-          }
-          
-          // Deshabilitar botón y mostrar carga
-          btnRegistrar.disabled = true;
-          btnRegistrar.innerHTML = 'Registrando... <span class="loading"></span>';
-          
-          // Crear FormData
-          const formData = new FormData(this);
-          
-          // Enviar formulario
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              // Registro exitoso
-              showFeedback(data.message, 'success');
+          formEnergySafe.addEventListener('submit', function(e) {
+              e.preventDefault();
               
-              // Recargar la página después de 1.5 segundos
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-            } else {
-              // Ocurrió un error
-              showFeedback(data.message, 'error');
-              btnRegistrar.disabled = false;
-              btnRegistrar.textContent = 'Registrar Dispositivo';
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            showFeedback('Error al registrar el dispositivo', 'error');
-            btnRegistrar.disabled = false;
-            btnRegistrar.textContent = 'Registrar Dispositivo';
+              if (!deviceVerified) {
+                  showFeedback('Primero debes verificar el número de serie', 'error');
+                  return;
+              }
+              
+              // Deshabilitar botón y mostrar carga
+              btnRegistrar.disabled = true;
+              btnRegistrar.innerHTML = 'Registrando... <span class="loading"></span>';
+              
+              // Crear FormData
+              const formData = new FormData(this);
+              
+              // Enviar formulario
+              fetch("{% url 'register_device' %}", {
+                  method: 'POST',
+                  body: formData,
+                  headers: {
+                      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                  }
+              })
+              .then(response => response.json())
+              .then(data => {
+                  console.log("Respuesta de registro:", data);
+                  if (data.success) {
+                      // Registro exitoso
+                      showFeedback(data.message, 'success');
+                      
+                      // Recargar la página después de 1.5 segundos
+                      setTimeout(() => {
+                          window.location.reload();
+                      }, 1500);
+                  } else {
+                      // Ocurrió un error
+                      showFeedback(data.message, 'error');
+                      btnRegistrar.disabled = false;
+                      btnRegistrar.textContent = 'Registrar Dispositivo';
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  showFeedback('Error al registrar el dispositivo', 'error');
+                  btnRegistrar.disabled = false;
+                  btnRegistrar.textContent = 'Registrar Dispositivo';
+              });
           });
-        });
       }
       
       // Función para mostrar feedback
       function showFeedback(message, type) {
-        const feedbackElement = document.getElementById('serie-feedback');
-        if (feedbackElement) {
-          feedbackElement.textContent = message;
-          feedbackElement.className = `feedback ${type}`;
-          feedbackElement.style.display = 'block';
-          
-          // Ocultar después de unos segundos si es éxito
-          if (type === 'success') {
-            setTimeout(() => {
-              feedbackElement.style.opacity = '0';
-              setTimeout(() => {
-                feedbackElement.style.display = 'none';
-                feedbackElement.style.opacity = '1';
-              }, 500);
-            }, 3000);
+          const feedbackElement = document.getElementById('serie-feedback');
+          if (feedbackElement) {
+              feedbackElement.textContent = message;
+              feedbackElement.className = `feedback ${type}`;
+              feedbackElement.style.display = 'block';
+              
+              // Ocultar después de unos segundos si es éxito
+              if (type === 'success') {
+                  setTimeout(() => {
+                      feedbackElement.style.opacity = '0';
+                      setTimeout(() => {
+                          feedbackElement.style.display = 'none';
+                          feedbackElement.style.opacity = '1';
+                      }, 500);
+                  }, 3000);
+              }
           }
-        }
+      }
+      {% else %}
+      // Variables para agregar electrodoméstico
+      const formElectrodomestico = document.getElementById('form-electrodomestico');
+      let iconoSeleccionado = {
+          nombre: 'television',
+          src: 'https://i.imgur.com/1cp16yr.png'
+      };
+      
+      // Abrir modal de seleccionar ícono
+      if (btnSeleccionarIcono) {
+          btnSeleccionarIcono.addEventListener('click', function() {
+              modalIcono.style.display = 'block';
+          });
+      }
+      
+      // Seleccionar ícono
+      iconoItems.forEach(item => {
+          item.addEventListener('click', function() {
+              // Quitar selección previa
+              iconoItems.forEach(i => i.classList.remove('seleccionado'));
+              // Agregar selección actual
+              this.classList.add('seleccionado');
+              
+              // Obtener el nombre del ícono desde el atributo data-icono del div
+              iconoSeleccionado = {
+                  nombre: this.getAttribute('data-icono'),
+                  src: this.querySelector('img').src
+              };
+          });
+      });
+      
+      // Confirmar selección de ícono
+      if (btnConfirmarIcono) {
+          btnConfirmarIcono.addEventListener('click', function() {
+              if (iconoSeleccionado) {
+                  // Actualizar campo oculto con el nombre del ícono
+                  const iconoInput = document.getElementById('icono-seleccionado');
+                  if (iconoInput) {
+                      iconoInput.value = iconoSeleccionado.nombre;
+                  }
+                  
+                  // Cerrar modal de íconos
+                  modalIcono.style.display = 'none';
+              } else {
+                  alert('Por favor, selecciona un ícono');
+              }
+          });
+      }
+      
+      // Envío de formulario de electrodoméstico
+      if (formElectrodomestico) {
+          formElectrodomestico.addEventListener('submit', function(e) {
+              e.preventDefault();
+              
+              // Validar campos requeridos
+              const nombre = document.getElementById('nombre-dispositivo').value;
+              const voltaje = document.getElementById('voltaje').value;
+              
+              if (!nombre || !voltaje) {
+                  alert('Por favor, completa todos los campos requeridos');
+                  return;
+              }
+              
+              // Deshabilitar botón y mostrar carga
+              const submitBtn = this.querySelector('[type="submit"]');
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = 'Procesando... <span class="loading"></span>';
+              
+              // Crear FormData
+              const formData = new FormData(this);
+              
+              // Enviar formulario
+              fetch(this.action, {
+                  method: 'POST',
+                  body: formData,
+                  headers: {
+                      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                  }
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      // Éxito
+                      alert(data.message);
+                      
+                      // Cerrar modal y recargar página
+                      modalDispositivo.style.display = 'none';
+                      window.location.reload();
+                  } else {
+                      // Error
+                      alert(data.message);
+                      submitBtn.disabled = false;
+                      submitBtn.textContent = 'Aceptar';
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  alert('Error al agregar el electrodoméstico');
+                  submitBtn.disabled = false;
+                  submitBtn.textContent = 'Aceptar';
+              });
+          });
       }
       {% endif %}
       
       // Abrir modal
       btnAgregar.forEach(btn => {
-        btn.addEventListener('click', function() {
-          modalDispositivo.style.display = 'block';
-        });
+          btn.addEventListener('click', function() {
+              modalDispositivo.style.display = 'block';
+          });
       });
-      
-      // Abrir modal de seleccionar ícono
-      if (btnSeleccionarIcono) {
-        btnSeleccionarIcono.addEventListener('click', function() {
-          modalIcono.style.display = 'block';
-        });
-      }
       
       // Cerrar modales con botón X
       btnsCerrar.forEach(btn => {
-        btn.addEventListener('click', function() {
-          modalDispositivo.style.display = 'none';
-          modalIcono.style.display = 'none';
-        });
+          btn.addEventListener('click', function() {
+              modalDispositivo.style.display = 'none';
+              if (modalIcono) modalIcono.style.display = 'none';
+          });
       });
       
       // Cerrar modales con botón cancelar
       btnsCancel.forEach(btn => {
-        btn.addEventListener('click', function() {
-          modalDispositivo.style.display = 'none';
-          modalIcono.style.display = 'none';
-        });
+          btn.addEventListener('click', function() {
+              modalDispositivo.style.display = 'none';
+              if (modalIcono) modalIcono.style.display = 'none';
+          });
       });
       
       // Cerrar al hacer clic fuera del modal
       window.addEventListener('click', function(e) {
-        if (e.target === modalDispositivo) {
-          modalDispositivo.style.display = 'none';
-        }
-        if (e.target === modalIcono) {
-          modalIcono.style.display = 'none';
-        }
-      });
-      
-      {% if user_device %}
-      // Seleccionar ícono (solo para electrodomésticos)
-      iconoItems.forEach(item => {
-        item.addEventListener('click', function() {
-          // Quitar selección previa
-          iconoItems.forEach(i => i.classList.remove('seleccionado'));
-          // Agregar selección actual
-          this.classList.add('seleccionado');
-          
-          // Obtener el nombre del ícono desde el atributo data-icono del div
-          iconoSeleccionado = {
-            nombre: this.getAttribute('data-icono'),
-            src: this.querySelector('img').src
-          };
-        });
-      });
-      
-      // Confirmar selección de ícono
-      if (btnConfirmarIcono) {
-        btnConfirmarIcono.addEventListener('click', function() {
-          if (iconoSeleccionado) {
-            // Actualizar la vista previa del ícono en el contenedor
-            actualizarPreviewIcono(iconoSeleccionado);
-            // Cerrar modal de íconos
-            modalIcono.style.display = 'none';
-          } else {
-            alert('Por favor, selecciona un ícono');
-          }
-        });
-      }
-      
-      // Función para actualizar la vista previa del ícono
-      function actualizarPreviewIcono(icono) {
-        if (!previewIconoContainer) return;
-        
-        // Limpiar el contenedor
-        previewIconoContainer.innerHTML = '';
-        
-        // Crear la imagen
-        const img = document.createElement('img');
-        img.src = icono.src;
-        img.alt = icono.nombre;
-        
-        // Agregar elementos al contenedor
-        previewIconoContainer.appendChild(img);
-        
-        // Agregar campo oculto con el nombre del ícono
-        const iconoInput = document.createElement('input');
-        iconoInput.type = 'hidden';
-        iconoInput.name = 'icono';
-        iconoInput.value = icono.nombre;
-        
-        if (formDispositivo) {
-          // Eliminar campo oculto previo si existe
-          const prevInput = formDispositivo.querySelector('input[name="icono"]');
-          if (prevInput) {
-            prevInput.remove();
-          }
-          formDispositivo.appendChild(iconoInput);
-        }
-      }
-      
-      // Envío del formulario de electrodoméstico
-      if (formDispositivo) {
-        formDispositivo.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Validar campos requeridos
-          const nombre = document.getElementById('nombre-dispositivo').value;
-          const voltaje = document.getElementById('voltaje').value;
-          
-          if (!nombre || !voltaje) {
-            alert('Por favor, completa todos los campos requeridos');
-            return;
-          }
-          
-          if (!iconoSeleccionado) {
-            alert('Por favor, selecciona un ícono para el electrodoméstico');
-            return;
-          }
-          
-          // Enviar formulario
-          const formData = new FormData(this);
-          
-          // Deshabilitar botón y mostrar carga
-          const submitBtn = this.querySelector('[type="submit"]');
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = 'Procesando... <span class="loading"></span>';
-          
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              // Éxito
-              alert(data.message);
-              
-              // Cerrar modal y recargar página
+          if (e.target === modalDispositivo) {
               modalDispositivo.style.display = 'none';
-              window.location.reload();
-            } else {
-              // Error
-              alert(data.message);
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Aceptar';
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Error al agregar el electrodoméstico');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Aceptar';
-          });
-        });
-      }
-      {% endif %}
+          }
+          if (modalIcono && e.target === modalIcono) {
+              modalIcono.style.display = 'none';
+          }
+      });
       
       // Botones de Más Información
       document.querySelectorAll('.btn_mas_info').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const applianceId = this.getAttribute('data-id');
-          if (applianceId) {
-            window.location.href = `/devices/appliance/${applianceId}/`;
-          }
-        });
+          btn.addEventListener('click', function() {
+              const applianceId = this.getAttribute('data-id');
+              if (applianceId) {
+                  window.location.href = `/devices/appliance/${applianceId}/`;
+              }
+          });
       });
     });
   </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Formulario de electrodoméstico
-      const form = document.getElementById('form-electrodomestico') || document.getElementById('modal-agregar-dispositivo').querySelector('form');
-      
-      if (form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Obtener los datos del formulario
-          const formData = new FormData(form);
-          
-          // Añadir un campo oculto para el ícono si no existe
-          if (!formData.has('icono')) {
-            formData.append('icono', 'television');
-          }
-          
-          // Cambiar botón a "Procesando..."
-          const submitBtn = form.querySelector('[type="submit"]');
-          if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Procesando...';
-          }
-          
-          // Enviar formulario mediante fetch
-          fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Respuesta:', data);
-            
-            if (data.success) {
-              alert('Electrodoméstico agregado correctamente.');
-              window.location.reload(); // Recargar la página
-            } else {
-              alert('Error: ' + (data.message || 'No se pudo agregar el electrodoméstico.'));
-              // Restaurar botón
-              if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Aceptar';
-              }
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Error de comunicación con el servidor.');
-            
-            // Restaurar botón
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Aceptar';
-            }
-          });
-        });
-      }
-      
-      // Manejar cierre del modal
-      const cancelarBtn = document.getElementById('cancelar') || document.querySelector('.btn-cancelar');
-      const modal = document.querySelector('.modal') || document.getElementById('modal-agregar-dispositivo');
-      
-      if (cancelarBtn && modal) {
-        cancelarBtn.addEventListener('click', function() {
-          modal.style.display = 'none';
-        });
-      }
-    });
-    </script>
-    </body>
-    </html>
 </body>
 </html>
