@@ -234,11 +234,189 @@
         </div>
     </section>
 
-    <footer class="site-footer">
-        <div class="footer-container">
-            <p>Copyright © EnergySafe 2025 | Design by EnergySafe Development Team.</p>
+    <!-- Footer Component para EnergySafe -->
+<footer class="energysafe-footer">
+    <div class="footer-top">
+      <div class="footer-container">
+        <div class="footer-row">
+          <!-- Logo y descripción -->
+          <div class="footer-column footer-about">
+            <div class="footer-logo">
+              <img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo">
+            </div>
+            <p class="footer-description">
+              Soluciones inteligentes para el monitoreo y optimización del consumo energético en tu hogar y negocio.
+            </p>
+            <div class="footer-badges">
+              <span class="eco-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.18 6.68c1.22.57 2.28 1.43 3.15 2.5"></path><path d="M9.04 19.8c-3.18-.32-5.88-2.27-7.24-5.08"></path><path d="M9.04 4.2c-3.18.32-5.88 2.27-7.24 5.08"></path><path d="M18.18 17.32c1.22-.57 2.28-1.43 3.15-2.5"></path><path d="m5.97 15.32-.25 2.66c-.04.44.3.84.74.92l2.59.48c2.89.53 5.84-.83 7.25-3.39l.72-1.33c.23-.41.19-.92-.08-1.28l-1.59-2.11c-1.95-2.62-5.47-3.64-8.4-2.45l-2.36.96c-.41.17-.64.6-.57 1.04l.25 2.65"></path><path d="m15.91 13.04 1.58-1.98a.8.8 0 0 0-.02-1.05l-1.32-1.44"></path></svg>
+                Eco-friendly
+              </span>
+              <span class="secure-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+                Seguridad garantizada
+              </span>
+            </div>
+          </div>
+  
+          <!-- Enlaces rápidos -->
+          <div class="footer-column">
+            <h3 class="footer-title">EnergySafe</h3>
+            <ul class="footer-links">
+              <li><a href="{% url 'home' %}">Inicio</a></li>
+              <li><a href="{% url 'productos' %}">Nuestros productos</a></li>
+              <li><a href="{% url 'download' %}">Aplicación móvil</a></li>
+              <li><a href="/blog">Blog y recursos</a></li>
+              <li><a href="{% url 'aboutus' %}">Nuestra empresa</a></li>
+              <li><a href="/soporte">Centro de ayuda</a></li>
+            </ul>
+          </div>
+  
+          <!-- Productos -->
+          <div class="footer-column">
+            <h3 class="footer-title">Productos</h3>
+            <ul class="footer-links">
+              <li><a href="/products/energysafe-standard">EnergySafe Standard</a></li>
+              <li><a href="/products/energysafe-pro">EnergySafe Pro</a></li>
+              <li><a href="/products/accesorios">Accesorios</a></li>
+              <li><a href="/garantia">Garantía y soporte</a></li>
+              <li><a href="/descargas">Software y actualizaciones</a></li>
+              <li><a href="/donde-comprar">Dónde comprar</a></li>
+            </ul>
+          </div>
+  
+          <!-- Soluciones -->
+          <div class="footer-column">
+            <h3 class="footer-title">Soluciones</h3>
+            <ul class="footer-links">
+              <li><a href="/para-hogares">Para hogares</a></li>
+              <li><a href="/para-negocios">Para negocios</a></li>
+              <li><a href="/integraciones">Integraciones</a></li>
+              <li><a href="/calculadora">Calculadora de ahorro</a></li>
+              <li><a href="/testimonios">Casos de éxito</a></li>
+              <li><a href="/recursos">Recursos educativos</a></li>
+            </ul>
+          </div>
+  
+          <!-- Contacto y newsletter -->
+          <div class="footer-column footer-contact">
+            <h3 class="footer-title">Contáctanos</h3>
+            <ul class="footer-contact-info">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span>+52 (555) 123-4567</span>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>contacto@energysafe.com</span>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Av. Tecnológico 123, Col. Centro<br>Ciudad de México, México</span>
+              </li>
+            </ul>
+            
+            <div class="footer-newsletter">
+              <h4>Mantente informado</h4>
+              <p>Suscríbete a nuestro boletín para recibir consejos y novedades</p>
+              <form action="/suscribir" method="post" class="newsletter-form">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="Tu correo electrónico" required>
+                <button type="submit" class="subscribe-btn">Suscribirme</button>
+              </form>
+            </div>
+          </div>
         </div>
-    </footer>
+      </div>
+    </div>
+  
+    <!-- Apps y social -->
+    <div class="footer-middle">
+      <div class="footer-container">
+        <div class="footer-row">
+          <div class="footer-app-downloads">
+            <h3>Descarga nuestra aplicación</h3>
+            <div class="app-buttons">
+              <a href="https://play.google.com/store" class="app-button" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12l-10.183 10.186c-2.05-.618-3.283-2.645-3.283-4.735V6.549c0-2.09 1.232-4.117 3.283-4.735zm13.4 2.766l-2.974 2.974L5.008 2.483l.2-.129C7.009 1.162 9.865 2.283 11.95 4.099l5.059.481zM1.654 1.916C1.798 1.843 1.946 1.778 2 1.724l17.336 8.708L16.626 12l-2.677 2.677-12.262-12.79c-.068.033-.016-.006-.033.029zm15.42 15.446c-2.443 2.156-5.015 2.96-6.945 2.354l-.199-.08 8.126-8.125 2.777 2.777-3.759 3.074z"/></svg>
+                <span>Google Play</span>
+              </a>
+              <a href="https://www.apple.com/app-store/" class="app-button" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.462 8.624C16.928 8.065 17.205 7.278 17.116 6.5c-.771.062-1.729.421-2.284 1.001-.5.521-.96 1.365-.85 2.165.867.071 1.738-.357 2.48-1.042zm1.128 3.418c-1.721-.103-3.182 1.005-4.002 1.005-.82 0-2.064-.957-3.407-.932-1.749.026-3.371 1.059-4.256 2.677-1.838 3.157-.48 7.802 1.283 10.357.876 1.263 1.897 2.648 3.243 2.598 1.295-.05 1.79-.822 3.366-.822 1.576 0 2.048.822 3.429.797 1.43-.027 2.327-1.266 3.195-2.532.985-1.423 1.391-2.79 1.412-2.858-.032-.012-2.681-1.006-2.708-4.062-.024-2.542 2.061-3.762 2.144-3.822-1.191-1.731-3.02-1.911-3.679-1.949-1.711-.116-3.146.965-3.978.965-.831 0-2.078-.919-3.42-.919-1.736.004-3.37 1.064-4.254 2.7-1.799 3.142-.465 7.765 1.289 10.314.863 1.244 1.897 2.647 3.245 2.598 1.284-.05 1.784-.828 3.354-.828 1.568 0 2.028.828 3.416.803 1.418-.025 2.334-1.277 3.184-2.535.968-1.403 1.375-2.778 1.401-2.85-.035-.01-2.709-1.041-2.709-4.062 0-2.341 1.881-3.594 1.997-3.647z"/></svg>
+                <span>App Store</span>
+              </a>
+            </div>
+          </div>
+          
+          <div class="social-icons">
+            <a href="https://facebook.com/" target="_blank" class="social-icon facebook">
+              <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" width="20" height="20">
+            </a>
+            <a href="https://twitter.com/" target="_blank" class="social-icon twitter">
+              <img src="https://www.svgrepo.com/show/452123/twitter.svg" alt="Twitter" width="20" height="20">
+            </a>
+            <a href="https://www.instagram.com/" target="_blank" class="social-icon instagram">
+              <img src="https://www.svgrepo.com/show/452229/instagram-1.svg" alt="Instagram" width="20" height="20">
+            </a>
+            <a href="https://www.youtube.com/" target="_blank" class="social-icon youtube">
+              <img src="https://www.svgrepo.com/show/452138/youtube.svg" alt="YouTube" width="20" height="20">
+            </a>
+            <a href="https://www.linkedin.com/" target="_blank" class="social-icon linkedin">
+              <img src="https://www.svgrepo.com/show/452047/linkedin-1.svg" alt="LinkedIn" width="20" height="20">
+            </a>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Certificaciones y premios -->
+    <div class="footer-awards">
+      <div class="footer-container">
+        <div class="awards-row">
+          <div class="award">
+            <img src="{% static 'images/icons/iso-certified.svg' %}" alt="ISO Certified">
+            <span>ISO 9001:2015</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/energy-star.svg' %}" alt="Energy Star">
+            <span>Energy Star Partner</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/secure-payment.svg' %}" alt="Secure Payment">
+            <span>Pagos Seguros</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/eco-friendly.svg' %}" alt="Eco Friendly">
+            <span>Eco Friendly</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/innovative-tech.svg' %}" alt="Innovative Technology">
+            <span>Tecnología Innovadora 2024</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Bottom footer -->
+    <div class="footer-bottom">
+      <div class="footer-container">
+        <div class="footer-row">
+          <div class="copyright">
+            &copy; 2025 EnergySafe. Todos los derechos reservados | <a href="/terminos-y-condiciones">Términos y Condiciones</a> | <a href="/aviso-de-privacidad">Aviso de Privacidad</a>
+          </div>
+          <div class="payment-methods">
+            <span>Métodos de pago</span>
+            <img src="{% static 'images/icons/visa.svg' %}" alt="Visa">
+            <img src="{% static 'images/icons/mastercard.svg' %}" alt="Mastercard">
+            <img src="{% static 'images/icons/amex.svg' %}" alt="American Express">
+            <img src="{% static 'images/icons/paypal.svg' %}" alt="PayPal">
+            <img src="{% static 'images/icons/mercadopago.svg' %}" alt="Mercado Pago">
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 </body>
 <script>
     window.onscroll = function() {

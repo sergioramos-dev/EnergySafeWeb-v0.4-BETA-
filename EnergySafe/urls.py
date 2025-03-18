@@ -22,6 +22,11 @@ urlpatterns = [
     path('devices/', device_views.devices_dashboard, name='devices'),
     path('devices/verify/<str:numero_serie>/', device_views.verify_energy_safe, name='verify_device'),
     path('devices/register/', device_views.register_energy_safe, name='register_device'),
+
+    path('api/consumption/latest/<str:appliance_id>/', api_views.get_latest_consumption, name='get_latest_consumption'),
+    # Add this to EnergySafe/urls.py in the urlpatterns list
+    path('api/consumption/latest/<str:appliance_id>/', api_views.get_latest_consumption, name='get_latest_consumption'),
+
     # En EnergySafe/urls.py
     path('devices/appliance/add/', device_views.add_appliance, name='add_appliance'),
     path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='appliance_details'),

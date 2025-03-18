@@ -14,8 +14,53 @@
     <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <style>
+        .data-refresh-indicator {
+            position: fixed;
+            top: 95px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .data-refresh-indicator.active {
+            opacity: 1;
+        }
+        
+        .data-refresh-indicator::after {
+            content: "";
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(28, 66, 104, 0.3);
+            border-top: 2px solid #1C4268;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .data-updated-time {
+            position: fixed;
+            top: 95px;
+            right: 50px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+    </style>
 </head>
-<body>
+<body data-appliance-id="{{ appliance.id }}">
     <div class="header-container">
         <div class="logo">
             <a href="{% url 'home' %}">
@@ -35,6 +80,11 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Data refresh indicator -->
+    <div class="data-refresh-indicator" id="refresh-indicator"></div>
+    <div class="data-updated-time" id="last-update-time">Última actualización: Cargando...</div>
+    
     <div class="container">
         <div class="first-part">
             <img src="https://i.imgur.com/Gc9kzyb.png" alt="">
@@ -125,7 +175,8 @@
                 <h1 id="amperios-text">Amperios</h1>
                 <div class="amperios-info">
                     <div class="chart-container">
-                        <div id="chartdiv1" class="chartdiv"></div>
+                        <!-- Fixed gauge div without using division filter -->
+                        <div id="chartdiv1" class="chartdiv" data-value="50"></div>
                     </div>
                     <div class="information-a">
                         <h1 id="amperios-a">{{ latest_consumption.corriente|floatformat:1 }} <span>A</span></h1>
@@ -157,7 +208,8 @@
                         <img id="flash-a" src="https://i.imgur.com/J1obQa6.png" alt="">
                     </div>
                     <div class="chart-container">
-                        <div id="chartdiv2" class="chartdiv"></div>
+                        <!-- Fixed gauge div without using division filter -->
+                        <div id="chartdiv2" class="chartdiv" data-value="50"></div>
                     </div>
                     <div class="information-a">
                         <h1 id="amperios-a">{{ latest_consumption.potencia|floatformat:0 }} <span>W</span></h1>
@@ -260,7 +312,226 @@
         </div>
     </div>
 
+    <!-- Footer Component para EnergySafe -->
+<footer class="energysafe-footer">
+    <div class="footer-top">
+      <div class="footer-container">
+        <div class="footer-row">
+          <!-- Logo y descripción -->
+          <div class="footer-column footer-about">
+            <div class="footer-logo">
+              <img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo">
+            </div>
+            <p class="footer-description">
+              Soluciones inteligentes para el monitoreo y optimización del consumo energético en tu hogar y negocio.
+            </p>
+            <div class="footer-badges">
+              <span class="eco-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.18 6.68c1.22.57 2.28 1.43 3.15 2.5"></path><path d="M9.04 19.8c-3.18-.32-5.88-2.27-7.24-5.08"></path><path d="M9.04 4.2c-3.18.32-5.88 2.27-7.24 5.08"></path><path d="M18.18 17.32c1.22-.57 2.28-1.43 3.15-2.5"></path><path d="m5.97 15.32-.25 2.66c-.04.44.3.84.74.92l2.59.48c2.89.53 5.84-.83 7.25-3.39l.72-1.33c.23-.41.19-.92-.08-1.28l-1.59-2.11c-1.95-2.62-5.47-3.64-8.4-2.45l-2.36.96c-.41.17-.64.6-.57 1.04l.25 2.65"></path><path d="m15.91 13.04 1.58-1.98a.8.8 0 0 0-.02-1.05l-1.32-1.44"></path></svg>
+                Eco-friendly
+              </span>
+              <span class="secure-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+                Seguridad garantizada
+              </span>
+            </div>
+          </div>
+  
+          <!-- Enlaces rápidos -->
+          <div class="footer-column">
+            <h3 class="footer-title">EnergySafe</h3>
+            <ul class="footer-links">
+              <li><a href="{% url 'home' %}">Inicio</a></li>
+              <li><a href="{% url 'productos' %}">Nuestros productos</a></li>
+              <li><a href="{% url 'download' %}">Aplicación móvil</a></li>
+              <li><a href="/blog">Blog y recursos</a></li>
+              <li><a href="{% url 'aboutus' %}">Nuestra empresa</a></li>
+              <li><a href="/soporte">Centro de ayuda</a></li>
+            </ul>
+          </div>
+  
+          <!-- Productos -->
+          <div class="footer-column">
+            <h3 class="footer-title">Productos</h3>
+            <ul class="footer-links">
+              <li><a href="/products/energysafe-standard">EnergySafe Standard</a></li>
+              <li><a href="/products/energysafe-pro">EnergySafe Pro</a></li>
+              <li><a href="/products/accesorios">Accesorios</a></li>
+              <li><a href="/garantia">Garantía y soporte</a></li>
+              <li><a href="/descargas">Software y actualizaciones</a></li>
+              <li><a href="/donde-comprar">Dónde comprar</a></li>
+            </ul>
+          </div>
+  
+          <!-- Soluciones -->
+          <div class="footer-column">
+            <h3 class="footer-title">Soluciones</h3>
+            <ul class="footer-links">
+              <li><a href="/para-hogares">Para hogares</a></li>
+              <li><a href="/para-negocios">Para negocios</a></li>
+              <li><a href="/integraciones">Integraciones</a></li>
+              <li><a href="/calculadora">Calculadora de ahorro</a></li>
+              <li><a href="/testimonios">Casos de éxito</a></li>
+              <li><a href="/recursos">Recursos educativos</a></li>
+            </ul>
+          </div>
+  
+          <!-- Contacto y newsletter -->
+          <div class="footer-column footer-contact">
+            <h3 class="footer-title">Contáctanos</h3>
+            <ul class="footer-contact-info">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span>+52 (555) 123-4567</span>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>contacto@energysafe.com</span>
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Av. Tecnológico 123, Col. Centro<br>Ciudad de México, México</span>
+              </li>
+            </ul>
+            
+            <div class="footer-newsletter">
+              <h4>Mantente informado</h4>
+              <p>Suscríbete a nuestro boletín para recibir consejos y novedades</p>
+              <form action="/suscribir" method="post" class="newsletter-form">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="Tu correo electrónico" required>
+                <button type="submit" class="subscribe-btn">Suscribirme</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Apps y social -->
+    <div class="footer-middle">
+      <div class="footer-container">
+        <div class="footer-row">
+          <div class="footer-app-downloads">
+            <h3>Descarga nuestra aplicación</h3>
+            <div class="app-buttons">
+              <a href="https://play.google.com/store" class="app-button" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12l-10.183 10.186c-2.05-.618-3.283-2.645-3.283-4.735V6.549c0-2.09 1.232-4.117 3.283-4.735zm13.4 2.766l-2.974 2.974L5.008 2.483l.2-.129C7.009 1.162 9.865 2.283 11.95 4.099l5.059.481zM1.654 1.916C1.798 1.843 1.946 1.778 2 1.724l17.336 8.708L16.626 12l-2.677 2.677-12.262-12.79c-.068.033-.016-.006-.033.029zm15.42 15.446c-2.443 2.156-5.015 2.96-6.945 2.354l-.199-.08 8.126-8.125 2.777 2.777-3.759 3.074z"/></svg>
+                <span>Google Play</span>
+              </a>
+              <a href="https://www.apple.com/app-store/" class="app-button" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.462 8.624C16.928 8.065 17.205 7.278 17.116 6.5c-.771.062-1.729.421-2.284 1.001-.5.521-.96 1.365-.85 2.165.867.071 1.738-.357 2.48-1.042zm1.128 3.418c-1.721-.103-3.182 1.005-4.002 1.005-.82 0-2.064-.957-3.407-.932-1.749.026-3.371 1.059-4.256 2.677-1.838 3.157-.48 7.802 1.283 10.357.876 1.263 1.897 2.648 3.243 2.598 1.295-.05 1.79-.822 3.366-.822 1.576 0 2.048.822 3.429.797 1.43-.027 2.327-1.266 3.195-2.532.985-1.423 1.391-2.79 1.412-2.858-.032-.012-2.681-1.006-2.708-4.062-.024-2.542 2.061-3.762 2.144-3.822-1.191-1.731-3.02-1.911-3.679-1.949-1.711-.116-3.146.965-3.978.965-.831 0-2.078-.919-3.42-.919-1.736.004-3.37 1.064-4.254 2.7-1.799 3.142-.465 7.765 1.289 10.314.863 1.244 1.897 2.647 3.245 2.598 1.284-.05 1.784-.828 3.354-.828 1.568 0 2.028.828 3.416.803 1.418-.025 2.334-1.277 3.184-2.535.968-1.403 1.375-2.778 1.401-2.85-.035-.01-2.709-1.041-2.709-4.062 0-2.341 1.881-3.594 1.997-3.647z"/></svg>
+                <span>App Store</span>
+              </a>
+            </div>
+          </div>
+          
+          <div class="social-icons">
+            <a href="https://facebook.com/" target="_blank" class="social-icon facebook">
+              <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" width="20" height="20">
+            </a>
+            <a href="https://twitter.com/" target="_blank" class="social-icon twitter">
+              <img src="https://www.svgrepo.com/show/452123/twitter.svg" alt="Twitter" width="20" height="20">
+            </a>
+            <a href="https://www.instagram.com/" target="_blank" class="social-icon instagram">
+              <img src="https://www.svgrepo.com/show/452229/instagram-1.svg" alt="Instagram" width="20" height="20">
+            </a>
+            <a href="https://www.youtube.com/" target="_blank" class="social-icon youtube">
+              <img src="https://www.svgrepo.com/show/452138/youtube.svg" alt="YouTube" width="20" height="20">
+            </a>
+            <a href="https://www.linkedin.com/" target="_blank" class="social-icon linkedin">
+              <img src="https://www.svgrepo.com/show/452047/linkedin-1.svg" alt="LinkedIn" width="20" height="20">
+            </a>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Certificaciones y premios -->
+    <div class="footer-awards">
+      <div class="footer-container">
+        <div class="awards-row">
+          <div class="award">
+            <img src="{% static 'images/icons/iso-certified.svg' %}" alt="ISO Certified">
+            <span>ISO 9001:2015</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/energy-star.svg' %}" alt="Energy Star">
+            <span>Energy Star Partner</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/secure-payment.svg' %}" alt="Secure Payment">
+            <span>Pagos Seguros</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/eco-friendly.svg' %}" alt="Eco Friendly">
+            <span>Eco Friendly</span>
+          </div>
+          <div class="award">
+            <img src="{% static 'images/icons/innovative-tech.svg' %}" alt="Innovative Technology">
+            <span>Tecnología Innovadora 2024</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Bottom footer -->
+    <div class="footer-bottom">
+      <div class="footer-container">
+        <div class="footer-row">
+          <div class="copyright">
+            &copy; 2025 EnergySafe. Todos los derechos reservados | <a href="/terminos-y-condiciones">Términos y Condiciones</a> | <a href="/aviso-de-privacidad">Aviso de Privacidad</a>
+          </div>
+          <div class="payment-methods">
+            <span>Métodos de pago</span>
+            <img src="{% static 'images/icons/visa.svg' %}" alt="Visa">
+            <img src="{% static 'images/icons/mastercard.svg' %}" alt="Mastercard">
+            <img src="{% static 'images/icons/amex.svg' %}" alt="American Express">
+            <img src="{% static 'images/icons/paypal.svg' %}" alt="PayPal">
+            <img src="{% static 'images/icons/mercadopago.svg' %}" alt="Mercado Pago">
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
     <script>
+        // Calculate initial gauge values from data
+        function calculateGaugeValues() {
+            // For voltage gauge
+            const voltageElement = document.getElementById('chartdiv1');
+            const voltageValue = {{ latest_consumption.voltaje|default:0 }};
+            const voltageMax = {{ voltage_stats.max|default:120 }};
+            
+            // Calculate percentage (0-100)
+            let voltagePercentage = 0;
+            if (voltageMax > 0) {
+                voltagePercentage = Math.min(Math.max((voltageValue / voltageMax) * 100, 0), 100);
+            } else {
+                voltagePercentage = Math.min(Math.max((voltageValue / 120) * 100, 0), 100); // Default max
+            }
+            
+            // Set the data-value attribute
+            voltageElement.setAttribute('data-value', voltagePercentage.toFixed(0));
+            
+            // For current gauge
+            const currentElement = document.getElementById('chartdiv2');
+            const currentValue = {{ latest_consumption.corriente|default:0 }};
+            const currentMax = {{ current_stats.max|default:5 }};
+            
+            // Calculate percentage (0-100)
+            let currentPercentage = 0;
+            if (currentMax > 0) {
+                currentPercentage = Math.min(Math.max((currentValue / currentMax) * 100, 0), 100);
+            } else {
+                currentPercentage = Math.min(Math.max((currentValue / 5) * 100, 0), 100); // Default max
+            }
+            
+            // Set the data-value attribute
+            currentElement.setAttribute('data-value', currentPercentage.toFixed(0));
+        }
+
         // Valores de consumo diario desde el servidor
         const defaultValues = {{ daily_consumption|safe }};
         
@@ -286,6 +557,7 @@
         // Inicializar el gráfico con valores desde el servidor
         window.onload = function() {
             updateChart(defaultValues);
+            calculateGaugeValues();
         };
     </script>
 
@@ -462,13 +734,19 @@
         actualizarGrafico();
     </script>
 
+    <!-- Am5 gauge charts -->
     <script>
-        function createGaugeChart(chartId) {
+        // Am5 chart objects
+        let voltageGauge = null;
+        let currentGauge = null;
+
+        function createGaugeChart(chartId, color) {
             var root = am5.Root.new(chartId);
             root._logo.dispose();
             root.setThemes([
                 am5themes_Animated.new(root)
             ]);
+            
             var chart = root.container.children.push(
                 am5radar.RadarChart.new(root, {
                     panX: false,
@@ -477,6 +755,7 @@
                     endAngle: 360
                 })
             );
+            
             var axisRenderer = am5radar.AxisRendererCircular.new(root, {
                 innerRadius: -10,
                 strokeOpacity: 1,
@@ -491,6 +770,7 @@
                     ]
                 })
             });
+            
             var xAxis = chart.xAxes.push(
                 am5xy.ValueAxis.new(root, {
                     maxDeviation: 0,
@@ -500,60 +780,231 @@
                     renderer: axisRenderer
                 })
             );
+            
             var axisDataItem = xAxis.makeDataItem({});
             axisDataItem.set("value", 0);
+            
             var bullet = axisDataItem.set("bullet", am5xy.AxisBullet.new(root, {
                 sprite: am5radar.ClockHand.new(root, {
                     radius: am5.percent(99)
                 })
             }));
+            
             xAxis.createAxisRange(axisDataItem);
             axisDataItem.get("grid").set("visible", false);
             
-            // Mostrar valores reales en lugar de aleatorios
-            {% if latest_consumption.voltaje and voltage_stats.max %}
-                // Para el primer gráfico (voltaje), ajustar el valor entre 0-100 basado en voltaje máximo
-                if (chartId === "chartdiv1") {
-                    let voltageValue = ({{ latest_consumption.voltaje }} / {{ voltage_stats.max }} * 100);
-                    voltageValue = Math.min(Math.max(voltageValue, 0), 100); // Limitar entre 0-100
-                    
-                    axisDataItem.animate({
-                        key: "value",
-                        to: voltageValue,
-                        duration: 800,
-                        easing: am5.ease.out(am5.ease.cubic)
-                    });
-                }
-                // Para el segundo gráfico (corriente), ajustar el valor entre 0-100 basado en corriente máxima
-                else if (chartId === "chartdiv2") {
-                    let currentValue = ({{ latest_consumption.corriente }} / {{ current_stats.max }} * 100);
-                    currentValue = Math.min(Math.max(currentValue, 0), 100); // Limitar entre 0-100
-                    
-                    axisDataItem.animate({
-                        key: "value",
-                        to: currentValue,
-                        duration: 800,
-                        easing: am5.ease.out(am5.ease.cubic)
-                    });
-                }
-            {% else %}
-                // Valores aleatorios si no hay datos reales
-                setInterval(() => {
-                    axisDataItem.animate({
-                        key: "value",
-                        to: Math.round(Math.random() * 100),
-                        duration: 800,
-                        easing: am5.ease.out(am5.ease.cubic)
-                    });
-                }, 2000);
-            {% endif %}
-            
             chart.appear(1000, 100);
+            
+            return {
+                chart: chart,
+                axisDataItem: axisDataItem,
+                root: root
+            };
         }
-        
+
+        function updateGaugeValue(gauge, value) {
+            if (!gauge) return;
+            
+            // Ensure value is between 0-100
+            value = Math.min(Math.max(value, 0), 100);
+            
+            gauge.axisDataItem.animate({
+                key: "value",
+                to: value,
+                duration: 800,
+                easing: am5.ease.out(am5.ease.cubic)
+            });
+        }
+
         am5.ready(function() {
-            createGaugeChart("chartdiv1");
-            createGaugeChart("chartdiv2");
+            // Create the gauge charts
+            voltageGauge = createGaugeChart("chartdiv1");
+            currentGauge = createGaugeChart("chartdiv2");
+            
+            // Set initial values based on data-attributes if available
+            const initialVoltage = parseFloat(document.getElementById("chartdiv1").getAttribute("data-value") || "0");
+            const initialCurrent = parseFloat(document.getElementById("chartdiv2").getAttribute("data-value") || "0");
+            
+            // Set initial values
+            updateGaugeValue(voltageGauge, initialVoltage);
+            updateGaugeValue(currentGauge, initialCurrent);
+        });
+
+        // Function to update gauges with new data
+        function updateGauges(data) {
+            // If we have voltage stats, calculate percentage based on max voltage
+            if (data.voltage_stats && data.voltage_stats.max > 0) {
+                const voltageMax = data.voltage_stats.max;
+                const voltageValue = (data.latest.voltaje / voltageMax) * 100;
+                updateGaugeValue(voltageGauge, voltageValue);
+            }
+            
+            // If we have current stats, calculate percentage based on max current
+            if (data.current_stats && data.current_stats.max > 0) {
+                const currentMax = data.current_stats.max;
+                const currentValue = (data.latest.corriente / currentMax) * 100;
+                updateGaugeValue(currentGauge, currentValue);
+            }
+        }
+    </script>
+
+    <!-- Real-time updates script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get appliance ID from the data attribute or URL
+            const applianceId = "1836ce95af11db705b9d3602";     
+            
+            const lastUpdateTime = document.getElementById('last-update-time');
+            const refreshIndicator = document.getElementById('refresh-indicator');
+            
+            if (!applianceId) {
+                console.error('Appliance ID not found');
+                return;
+            }
+            
+            // Function to format date and time
+            function formatDateTime(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString('es-ES', {
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+            
+            // Function to update UI with new data
+            function updateUI(data) {
+                // Update last update time
+                lastUpdateTime.textContent = `Última actualización: ${new Date().toLocaleTimeString('es-ES')}`;
+                
+                // Update voltage display
+                document.getElementById('voltaje-v').textContent = `${data.latest.voltaje.toFixed(1)}V`;
+                document.getElementById('voltaje-date').textContent = formatDateTime(data.latest.fecha);
+                
+                // Update amperage display
+                document.getElementById('amperios-a').innerHTML = `${data.latest.corriente.toFixed(1)} <span>A</span>`;
+                document.getElementById('amperios-date').textContent = formatDateTime(data.latest.fecha);
+                
+                // Update power display (watts)
+                const powerElement = document.querySelector('.corriente #amperios-a');
+                if (powerElement) {
+                    powerElement.innerHTML = `${data.latest.potencia.toFixed(0)} <span>W</span>`;
+                }
+                
+                // Update consumption (kWh)
+                const kwhElement = document.getElementById('kw');
+                if (kwhElement) {
+                    kwhElement.innerHTML = `${data.latest.consumo.toFixed(1)} <span>kWh</span>`;
+                }
+                
+                // Update the second kWh display if it exists
+                const secondKwhElement = document.querySelector('.dashboard2 h1');
+                if (secondKwhElement) {
+                    secondKwhElement.textContent = `${data.latest.consumo.toFixed(1)}kWh`;
+                }
+                
+                // Update date under the second kWh display
+                const secondDateElement = document.querySelector('.dashboard2 h3');
+                if (secondDateElement) {
+                    secondDateElement.textContent = formatDateTime(data.latest.fecha);
+                }
+                
+                // Update chart data
+                updateChart(data.daily_consumption);
+                
+                // Update stats displays
+                if (data.voltage_stats.avg > 0) {
+                    document.getElementById('voltaje-porcentaje').textContent = `${data.voltage_stats.avg.toFixed(0)}% promedio`;
+                }
+                
+                // Update all instances of amperios-porcentaje
+                const amperiosPorcentajeElements = document.querySelectorAll('#amperios-porcentaje');
+                if (data.current_stats.avg > 0) {
+                    amperiosPorcentajeElements.forEach(element => {
+                        element.textContent = `${data.current_stats.avg.toFixed(0)}% promedio`;
+                    });
+                }
+                
+                // Update consumption history table
+                updateHistoryTable(data.history);
+                
+                // Update gauge charts
+                updateGauges(data);
+            }
+            
+            // Function to update the consumption history table
+            function updateHistoryTable(history) {
+                const tableBody = document.querySelector('#dispositivo-table tbody');
+                if (!tableBody) return;
+                
+                // Clear existing rows
+                tableBody.innerHTML = '';
+                
+                // Add new rows
+                history.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    const [date, time] = item.fecha.split(' ');
+                    
+                    row.innerHTML = `
+                        <td>#${item.id}</td>
+                        <td>${date}<br>${time}</td>
+                        <td>${item.voltaje.toFixed(1)} v</td>
+                        <td>${item.corriente.toFixed(1)} A</td>
+                        <td>${item.potencia.toFixed(0)} w</td>
+                        <td>${item.consumo.toFixed(1)} kWh</td>
+                        <td>${item.frecuencia.toFixed(0)}Hz</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // Function to fetch the latest data
+            function fetchLatestData() {
+                // Show loading indicator
+                refreshIndicator.classList.add('active');
+                
+                fetch(`/api/consumption/latest/${applianceId}/`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            updateUI(data);
+                        } else {
+                            console.error('Error fetching data:', data.message);
+                        }
+                        
+                        // Hide loading indicator after a short delay
+                        setTimeout(() => {
+                            refreshIndicator.classList.remove('active');
+                        }, 500);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        
+                        // Hide loading indicator
+                        refreshIndicator.classList.remove('active');
+                    });
+            }
+            
+            // Fetch data immediately
+            fetchLatestData();
+            
+            // Set up interval to fetch data every 5 seconds
+            const updateInterval = setInterval(fetchLatestData, 5000);
+            
+            // Clean up interval when page is unloaded
+            window.addEventListener('beforeunload', () => {
+                clearInterval(updateInterval);
+            });
         });
     </script>
 </body>

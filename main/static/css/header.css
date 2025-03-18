@@ -1,0 +1,368 @@
+/* Estilos para el header de EnergySafe */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500&display=swap');
+
+/* Variables de colores y estilos */
+:root {
+  --primary-color: #1C4268;
+  --primary-light: #3a6b9a;
+  --primary-dark: #0c2c4e;
+  --accent-color: #01C38D;
+  --accent-light: #3EF8C4;
+  --accent-hover: #00a87b;
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --bg-light: #ffffff;
+  --bg-translucent: rgba(255, 255, 255, 0.95);
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 20px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}
+
+/* Estilos base del header */
+.energysafe-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  font-family: 'Montserrat', sans-serif;
+  transition: all var(--transition-normal);
+  padding: 10px 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.energysafe-header .header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+/* Estilos del logo */
+.energysafe-header .logo {
+  display: flex;
+  align-items: center;
+  z-index: 1001;
+}
+
+.energysafe-header .logo img {
+  height: 50px;
+  transition: transform var(--transition-fast);
+}
+
+.energysafe-header .logo img:hover {
+  transform: scale(1.05);
+}
+
+/* Navegación */
+.energysafe-header .nav-menu {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.energysafe-header .nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.energysafe-header .nav-link {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  font-size: 15px;
+  padding: 10px 15px;
+  margin: 0 5px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.energysafe-header .nav-link:hover {
+  color: var(--primary-color);
+}
+
+.energysafe-header .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-color);
+  transition: width var(--transition-normal);
+}
+
+.energysafe-header .nav-link:hover::after,
+.energysafe-header .nav-link.active::after {
+  width: 80%;
+}
+
+.energysafe-header .nav-link.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Botones de usuario */
+.energysafe-header .user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.energysafe-header .login-btn {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+  border: 2px solid var(--primary-color);
+}
+
+.energysafe-header .login-btn:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Dropdown para usuario autenticado */
+.energysafe-header .dropdown {
+  position: relative;
+}
+
+.energysafe-header .dropbtn {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.energysafe-header .dropbtn:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.energysafe-header .user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: var(--text-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.energysafe-header .user-name {
+  font-size: 14px;
+  margin-right: 8px;
+  color: var(--text-dark);
+}
+
+.energysafe-header .dropdown-arrow {
+  border: solid var(--text-dark);
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  transition: transform var(--transition-fast);
+}
+
+.energysafe-header .dropdown:hover .dropdown-arrow {
+  transform: rotate(-135deg);
+}
+
+.energysafe-header .dropdown-content {
+  position: absolute;
+  right: 0;
+  top: 55px;
+  min-width: 180px;
+  background-color: var(--bg-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+  display: none;
+  z-index: 1002;
+}
+
+.energysafe-header .dropdown:hover .dropdown-content {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+.energysafe-header .dropdown-content a {
+  display: block;
+  text-decoration: none;
+  color: var(--text-dark);
+  padding: 15px 20px;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+}
+
+.energysafe-header .dropdown-content a:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--primary-color);
+}
+
+/* Efecto de scroll */
+.energysafe-header.scrolled {
+  background-color: var(--bg-translucent);
+  box-shadow: var(--shadow-soft);
+  padding: 8px 0;
+}
+
+.energysafe-header.scrolled .logo img {
+  height: 45px;
+}
+
+/* Menú móvil */
+.energysafe-header .mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.energysafe-header .mobile-menu-toggle span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: var(--primary-color);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Animación para el botón de menú móvil */
+.energysafe-header .mobile-menu-toggle.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.energysafe-header .mobile-menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.energysafe-header .mobile-menu-toggle.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media queries para responsividad */
+@media screen and (max-width: 992px) {
+  .energysafe-header .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  .energysafe-header .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 300px;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: var(--bg-light);
+    box-shadow: var(--shadow-medium);
+    padding: 80px 20px 20px;
+    transition: right var(--transition-normal);
+    overflow-y: auto;
+  }
+  
+  .energysafe-header .nav-menu.active {
+    right: 0;
+  }
+  
+  .energysafe-header .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .energysafe-header .nav-link {
+    width: 100%;
+    padding: 15px 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  
+  .energysafe-header .nav-link::after {
+    display: none;
+  }
+  
+  .energysafe-header .user-actions {
+    margin-top: 30px;
+    width: 100%;
+  }
+  
+  .energysafe-header .login-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .energysafe-header .dropdown {
+    width: 100%;
+  }
+  
+  .energysafe-header .dropbtn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .energysafe-header .dropdown-content {
+    position: static;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-sm);
+    margin-top: 5px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .energysafe-header .header-container {
+    padding: 0 15px;
+  }
+  
+  .energysafe-header .logo img {
+    height: 40px;
+  }
+  
+  .energysafe-header .nav-menu {
+    width: 100%;
+    padding: 70px 15px 20px;
+  }
+}
