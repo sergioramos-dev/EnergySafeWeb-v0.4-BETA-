@@ -1,0 +1,641 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog y Recursos - EnergySafe</title>
+    <link rel="stylesheet" href="{% static 'css/styleshome.css' %}">
+    <style>
+        /* Estilos específicos para el blog */
+        .blog-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 20px;
+        }
+
+        .blog-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .blog-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #160F9E 0%, #1C4268 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .blog-header p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .blog-header:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            border-radius: 2px;
+        }
+
+        .blog-categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .blog-category {
+            background-color: #f5f5f5;
+            border-radius: 30px;
+            padding: 8px 20px;
+            color: #1C4268;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .blog-category:hover, .blog-category.active {
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            color: white;
+        }
+
+        .blog-posts {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .blog-post {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .blog-post:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .blog-post-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .blog-post-content {
+            padding: 25px;
+        }
+
+        .blog-post-category {
+            display: inline-block;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            color: white;
+            font-size: 0.8rem;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .blog-post-title {
+            margin: 0 0 15px 0;
+            font-size: 1.5rem;
+            color: #1C4268;
+        }
+
+        .blog-post-excerpt {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .blog-post-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .blog-post-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .blog-post-author img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .blog-resources {
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 60px;
+        }
+
+        .blog-resources h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1C4268;
+            font-size: 2rem;
+        }
+
+        .resources-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .resource-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .resource-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .resource-title {
+            color: #1C4268;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .resource-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .resource-link {
+            color: #00A87B;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .resource-link:hover {
+            text-decoration: underline;
+        }
+
+        .blog-pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .pagination-button {
+            background-color: #f5f5f5;
+            border: none;
+            color: #1C4268;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .pagination-button.active {
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            color: white;
+        }
+
+        .newsletter-section {
+            background: linear-gradient(135deg, #3EF8C4, #54B6F4);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            margin: 60px 0;
+        }
+
+        .newsletter-section h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .newsletter-section p {
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex-grow: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+        }
+
+        .newsletter-form button {
+            background-color: #1C4268;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .newsletter-form button:hover {
+            background-color: #152f4a;
+        }
+
+        @media (max-width: 768px) {
+            .blog-posts {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-form input,
+            .newsletter-form button {
+                border-radius: 5px;
+                width: 100%;
+            }
+
+            .newsletter-form input {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo"></a>
+        </div>
+        <div class="optios">
+            <a href="/home"><h2>Inicio</h2></a>
+            <a href="/download"><h2>Descargar</h2></a>
+            <a href="/devices"><h2>Dispositivos</h2></a>
+            <a href="/products"><h2>Productos</h2></a>
+            <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+            {% else %}
+                <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="blog-container">
+        <div class="blog-header">
+            <h1>Blog y Recursos</h1>
+            <p>Descubre consejos, guías y recursos para optimizar el consumo energético en tu hogar o negocio.</p>
+        </div>
+
+        <div class="blog-categories">
+            <div class="blog-category active">Todos</div>
+            <div class="blog-category">Consejos de ahorro</div>
+            <div class="blog-category">Tecnología</div>
+            <div class="blog-category">Sostenibilidad</div>
+            <div class="blog-category">Casos de éxito</div>
+        </div>
+
+        <div class="blog-posts">
+            <!-- Artículo 1 -->
+            <div class="blog-post">
+                <div class="blog-post-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                <div class="blog-post-content">
+                    <span class="blog-post-category">Consejos de ahorro</span>
+                    <h2 class="blog-post-title">10 maneras de reducir tu consumo eléctrico este verano</h2>
+                    <p class="blog-post-excerpt">Descubre cómo mantener tu hogar fresco y cómodo mientras reduces significativamente el consumo energético durante los meses más calurosos del año.</p>
+                    <div class="blog-post-meta">
+                        <div class="blog-post-author">
+                            <img src="/api/placeholder/30/30" alt="Autor">
+                            <span>Ana García</span>
+                        </div>
+                        <div class="blog-post-date">15 marzo, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artículo 2 -->
+            <div class="blog-post">
+                <div class="blog-post-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                <div class="blog-post-content">
+                    <span class="blog-post-category">Tecnología</span>
+                    <h2 class="blog-post-title">Cómo integrar EnergySafe con tu casa inteligente</h2>
+                    <p class="blog-post-excerpt">Guía paso a paso para conectar EnergySafe con Google Home, Alexa y otros sistemas de domótica, creando un ecosistema inteligente y eficiente.</p>
+                    <div class="blog-post-meta">
+                        <div class="blog-post-author">
+                            <img src="/api/placeholder/30/30" alt="Autor">
+                            <span>Carlos Mendoza</span>
+                        </div>
+                        <div class="blog-post-date">8 marzo, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artículo 3 -->
+            <div class="blog-post">
+                <div class="blog-post-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                <div class="blog-post-content">
+                    <span class="blog-post-category">Sostenibilidad</span>
+                    <h2 class="blog-post-title">El impacto de los electrodomésticos en tu huella de carbono</h2>
+                    <p class="blog-post-excerpt">Análisis detallado sobre cómo el consumo eléctrico de tu hogar contribuye al cambio climático y cómo puedes reducir tu impacto ambiental.</p>
+                    <div class="blog-post-meta">
+                        <div class="blog-post-author">
+                            <img src="/api/placeholder/30/30" alt="Autor">
+                            <span>Elena Torres</span>
+                        </div>
+                        <div class="blog-post-date">1 marzo, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artículo 4 -->
+            <div class="blog-post">
+                <div class="blog-post-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                <div class="blog-post-content">
+                    <span class="blog-post-category">Casos de éxito</span>
+                    <h2 class="blog-post-title">Familia Rodríguez: 45% de ahorro en su factura mensual</h2>
+                    <p class="blog-post-excerpt">Conoce cómo la familia Rodríguez logró reducir casi a la mitad su consumo eléctrico implementando EnergySafe en su hogar y siguiendo nuestras recomendaciones.</p>
+                    <div class="blog-post-meta">
+                        <div class="blog-post-author">
+                            <img src="/api/placeholder/30/30" alt="Autor">
+                            <span>Miguel Ángel Pérez</span>
+                        </div>
+                        <div class="blog-post-date">22 febrero, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artículo 5 -->
+            <div class="blog-post">
+                <div class="blog-post-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                <div class="blog-post-content">
+                    <span class="blog-post-category">Tecnología</span>
+                    <h2 class="blog-post-title">Entendiendo el consumo fantasma: los electrodomésticos que más gastan</h2>
+                    <p class="blog-post-excerpt">Descubre qué dispositivos en tu hogar continúan consumiendo electricidad incluso cuando aparentemente están apagados y cómo EnergySafe te ayuda a identificarlos.</p>
+                    <div class="blog-post-meta">
+                        <div class="blog-post-author">
+                            <img src="/api/placeholder/30/30" alt="Autor">
+                            <span>Patricia López</span>
+                        </div>
+                        <div class="blog-post-date">15 febrero, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artículo 6 -->
+            <div class="blog-post">
+                <div class="blog-post-image" style="background-image: url('/api/placeholder/400/200');"></div>
+                <div class="blog-post-content">
+                    <span class="blog-post-category">Consejos de ahorro</span>
+                    <h2 class="blog-post-title">Guía completa: Entendiendo tu factura eléctrica</h2>
+                    <p class="blog-post-excerpt">Aprende a interpretar cada sección de tu factura de luz y descubre oportunidades de ahorro que podrías estar pasando por alto.</p>
+                    <div class="blog-post-meta">
+                        <div class="blog-post-author">
+                            <img src="/api/placeholder/30/30" alt="Autor">
+                            <span>Luis Ramírez</span>
+                        </div>
+                        <div class="blog-post-date">8 febrero, 2025</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blog-pagination">
+            <button class="pagination-button active">1</button>
+            <button class="pagination-button">2</button>
+            <button class="pagination-button">3</button>
+            <button class="pagination-button">Siguiente</button>
+        </div>
+
+        <div class="newsletter-section">
+            <h2>Suscríbete a nuestro boletín</h2>
+            <p>Recibe las últimas novedades, consejos de ahorro energético y guías de optimización directamente en tu bandeja de entrada.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Tu correo electrónico" required>
+                <button type="submit">Suscribirse</button>
+            </form>
+        </div>
+
+        <div class="blog-resources">
+            <h2>Recursos Útiles</h2>
+            <div class="resources-list">
+                <!-- Recurso 1 -->
+                <div class="resource-item">
+                    <img src="/api/placeholder/60/60" alt="Guías PDF" class="resource-icon">
+                    <h3 class="resource-title">Guías en PDF</h3>
+                    <p class="resource-description">Descarga nuestras guías completas sobre ahorro energético y optimización del consumo.</p>
+                    <a href="#" class="resource-link">Ver guías</a>
+                </div>
+
+                <!-- Recurso 2 -->
+                <div class="resource-item">
+                    <img src="/api/placeholder/60/60" alt="Calculadora" class="resource-icon">
+                    <h3 class="resource-title">Calculadora de ahorro</h3>
+                    <p class="resource-description">Estima cuánto puedes ahorrar en tu factura implementando nuestras soluciones.</p>
+                    <a href="/calculadora" class="resource-link">Usar calculadora</a>
+                </div>
+
+                <!-- Recurso 3 -->
+                <div class="resource-item">
+                    <img src="/api/placeholder/60/60" alt="Webinars" class="resource-icon">
+                    <h3 class="resource-title">Webinars gratuitos</h3>
+                    <p class="resource-description">Accede a nuestros seminarios web sobre eficiencia energética y sostenibilidad.</p>
+                    <a href="#" class="resource-link">Ver calendario</a>
+                </div>
+
+                <!-- Recurso 4 -->
+                <div class="resource-item">
+                    <img src="/api/placeholder/60/60" alt="Infografías" class="resource-icon">
+                    <h3 class="resource-title">Infografías</h3>
+                    <p class="resource-description">Visualiza de manera sencilla los conceptos más importantes sobre consumo energético.</p>
+                    <a href="#" class="resource-link">Ver galería</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Component para EnergySafe -->
+    <footer class="energysafe-footer">
+        <div class="footer-top">
+            <div class="footer-container">
+                <div class="footer-row">
+                    <!-- Logo y descripción -->
+                    <div class="footer-column footer-about">
+                        <div class="footer-logo">
+                            <img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo">
+                        </div>
+                        <p class="footer-description">
+                            Soluciones inteligentes para el monitoreo y optimización del consumo energético en tu hogar y negocio.
+                        </p>
+                        <div class="footer-badges">
+                            <span class="eco-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.18 6.68c1.22.57 2.28 1.43 3.15 2.5"></path><path d="M9.04 19.8c-3.18-.32-5.88-2.27-7.24-5.08"></path><path d="M9.04 4.2c-3.18.32-5.88 2.27-7.24 5.08"></path><path d="M18.18 17.32c1.22-.57 2.28-1.43 3.15-2.5"></path><path d="m5.97 15.32-.25 2.66c-.04.44.3.84.74.92l2.59.48c2.89.53 5.84-.83 7.25-3.39l.72-1.33c.23-.41.19-.92-.08-1.28l-1.59-2.11c-1.95-2.62-5.47-3.64-8.4-2.45l-2.36.96c-.41.17-.64.6-.57 1.04l.25 2.65"></path><path d="m15.91 13.04 1.58-1.98a.8.8 0 0 0-.02-1.05l-1.32-1.44"></path></svg>
+                                Eco-friendly
+                            </span>
+                            <span class="secure-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+                                Seguridad garantizada
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Enlaces rápidos -->
+                    <div class="footer-column">
+                        <h3 class="footer-title">EnergySafe</h3>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'home' %}">Inicio</a></li>
+                            <li><a href="{% url 'productos' %}">Nuestros productos</a></li>
+                            <li><a href="{% url 'download' %}">Aplicación móvil</a></li>
+                            <li><a href="/blog">Blog y recursos</a></li>
+                            <li><a href="{% url 'aboutus' %}">Nuestra empresa</a></li>
+                            <li><a href="/soporte">Centro de ayuda</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Productos -->
+                    <div class="footer-column">
+                        <h3 class="footer-title">Productos</h3>
+                        <ul class="footer-links">
+                            <li><a href="/products/energysafe-standard">EnergySafe Standard</a></li>
+                            <li><a href="/products/energysafe-pro">EnergySafe Pro</a></li>
+                            <li><a href="/products/accesorios">Accesorios</a></li>
+                            <li><a href="/garantia">Garantía y soporte</a></li>
+                            <li><a href="/descargas">Software y actualizaciones</a></li>
+                            <li><a href="/donde-comprar">Dónde comprar</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Soluciones -->
+                    <div class="footer-column">
+                        <h3 class="footer-title">Soluciones</h3>
+                        <ul class="footer-links">
+                            <li><a href="/para-hogares">Para hogares</a></li>
+                            <li><a href="/para-negocios">Para negocios</a></li>
+                            <li><a href="/integraciones">Integraciones</a></li>
+                            <li><a href="/calculadora">Calculadora de ahorro</a></li>
+                            <li><a href="/testimonios">Casos de éxito</a></li>
+                            <li><a href="/recursos">Recursos educativos</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contacto y newsletter -->
+                    <div class="footer-column footer-contact">
+                        <h3 class="footer-title">Contáctanos</h3>
+                        <ul class="footer-contact-info">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                <span>+52 (555) 123-4567</span>
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                <span>contacto@energysafe.com</span>
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span>Av. Tecnológico 123, Col. Centro<br>Ciudad de México, México</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="footer-newsletter">
+                            <h4>Mantente informado</h4>
+                            <p>Suscríbete a nuestro boletín para recibir consejos y novedades</p>
+                            <form action="/suscribir" method="post" class="newsletter-form">
+                                {% csrf_token %}
+                                <input type="email" name="email" placeholder="Tu correo electrónico" required>
+                                <button type="submit" class="subscribe-btn">Suscribirme</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom footer -->
+        <div class="footer-bottom">
+            <div class="footer-container">
+                <div class="footer-row">
+                    <div class="copyright">
+                        &copy; 2025 EnergySafe. Todos los derechos reservados | <a href="/terminos-y-condiciones">Términos y Condiciones</a> | <a href="/aviso-de-privacidad">Aviso de Privacidad</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para el efecto scroll del header
+        window.onscroll = function() {
+            var header = document.querySelector('.header-container');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        };
+
+        // Script para las categorías
+        document.querySelectorAll('.blog-category').forEach(category => {
+            category.addEventListener('click', function() {
+                document.querySelectorAll('.blog-category').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Script para la paginación
+        document.querySelectorAll('.pagination-button').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.textContent !== 'Siguiente') {
+                    document.querySelectorAll('.pagination-button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

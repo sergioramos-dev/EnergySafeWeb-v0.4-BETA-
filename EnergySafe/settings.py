@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.facebook',
     'main',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -61,8 +62,51 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'main.middleware.SocialLoginErrorMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     # El nuevo middleware de sesiones se agregará después
 ]
+CSRF_EXEMPT_URLS = [
+    '/mobile/login/',
+    '/mobile/register/',
+]
+
+# Allow all origins in development (restrict in production)
+CORS_ALLOW_ALL_ORIGINS = True  # Use only in development
+
+# Or specify allowed origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://192.168.1.231:8000",  # Your local IP
+]
+
+# Important CORS settings
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 
 ROOT_URLCONF = 'EnergySafe.urls'
 
@@ -86,6 +130,12 @@ WSGI_APPLICATION = 'EnergySafe.wsgi.application'
 
 # Database
 import os
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",  # Django server
+    "http://localhost:3000",  # Potential React/frontend server
+    "http://192.168.1.231:8000",  # Your local IP
+]
 
 DATABASES = {
     'default': {

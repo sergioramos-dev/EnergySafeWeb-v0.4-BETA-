@@ -232,9 +232,13 @@ def add_appliance(request):
             if not nombre:
                 nombre = request.POST.get('tv', 'Televisor')
             
-            tipo = request.POST.get('icono', 'television')
-            icono = request.POST.get('icono', 'television')
-            voltaje_str = request.POST.get('voltaje', '110 V')
+            tipo = request.POST.get('tipo', 'television')
+            
+            # Get the icon value from the form - this will now be the image identifier
+            # instead of just the icon name
+            icono = request.POST.get('icono', '')
+            
+            voltaje_str = request.POST.get('voltaje', '110')
             
             # Limpiar el valor de voltaje (quitar "V" y espacios)
             voltaje = ''.join(c for c in voltaje_str if c.isdigit())
@@ -246,12 +250,10 @@ def add_appliance(request):
             except:
                 voltaje_int = 110
             
-            # Obtener usuario y dispositivo manualmente, evitando consultas complejas
+            # Obtener usuario y dispositivo
             user_id = request.user.id
             print(f"User ID: {user_id}")
             
-            # Verificar si hay dispositivos para este usuario directamente por ID
-            # Esta es una solución alternativa que evita el problema de Djongo
             try:
                 # Obtener el primer dispositivo activo del usuario por ID
                 user_device = None
@@ -267,12 +269,12 @@ def add_appliance(request):
                         'message': 'No se encontró un dispositivo EnergySafe activo para este usuario.'
                     })
                 
-                # Crear el electrodoméstico
+                # Crear el electrodoméstico con el icono seleccionado
                 appliance = ConnectedAppliance(
                     user_device=user_device,
                     nombre=nombre,
                     tipo=tipo,
-                    icono=icono,
+                    icono=icono,  # This is now the image identifier, not just the icon name
                     voltaje=voltaje_int,
                     activo=True
                 )
@@ -311,6 +313,174 @@ def appliance_details(request, appliance_id):
 
 @login_required
 def appliance_details(request, appliance_id):
+    """Vista detallada para la información y datos de consumo de un electrodoméstico."""
+    from main.models import ConnectedAppliance, ApplianceConsumption
+    from django.db.models import Avg, Max, Min
+    import json
+    from datetime import datetime, timedelta
+    import traceback
+    
+    try:
+        # Obtener el electrodoméstico
+        appliance = ConnectedAppliance.objects.get(id=appliance_id)
+        
+        # Verificar que el usuario tenga acceso a este electrodoméstico
+        if str(appliance.user_device.usuario_id) != str(request.user.id):
+            return redirect('devices')
+        
+        # Obtener el último dato de consumo
+        latest_consumption = ApplianceConsumption.objects.filter(
+            appliance=appliance
+        ).order_by('-fecha').first()
+        
+        # Si no hay datos de consumo, usar valores predeterminados
+        if not latest_consumption:
+            latest_consumption = {
+                'voltaje': appliance.voltaje,
+                'corriente': 0,
+                'potencia': 0,
+                'consumo': 0,
+                'frecuencia': 60,
+                'fecha': datetime.now()
+            }
+        
+        # Obtener datos de los últimos 7 días para las gráficas
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        consumption_data = list(ApplianceConsumption.objects.filter(
+            appliance=appliance,
+            fecha__gte=seven_days_ago
+        ).order_by('fecha'))
+        
+        # Preparar datos para la gráfica de consumo diario
+        days = ['lun', 'mar', 'mir', 'jue', 'vie', 'sab', 'dom']
+        daily_consumption = {day: 0 for day in days}
+        
+        # Si hay datos de consumo, calcular el consumo diario
+        if consumption_data:
+            for consumption in consumption_data:
+                day_name = consumption.fecha.strftime('%a').lower()[:3]
+                if day_name in daily_consumption:
+                    daily_consumption[day_name] += consumption.consumo
+        else:
+            # Si no hay datos, usar datos de ejemplo
+            daily_consumption = {
+                'lun': 2,
+                'mar': 10,
+                'mir': 8,
+                'jue': 12,
+                'vie': 13,
+                'sab': 17,
+                'dom': 9
+            }
+        
+        # Obtener estadísticas de voltaje/corriente
+        voltage_stats = {
+            'avg': 110,
+            'max': 120,
+            'min': 100
+        }
+        current_stats = {
+            'avg': 2,
+            'max': 5,
+            'min': 1
+        }
+        
+        # Si hay datos, calcular estadísticas reales
+        if consumption_data:
+            voltage_stats = {
+                'avg': sum(c.voltaje for c in consumption_data) / len(consumption_data),
+                'max': max(c.voltaje for c in consumption_data),
+                'min': min(c.voltaje for c in consumption_data)
+            }
+            current_stats = {
+                'avg': sum(c.corriente for c in consumption_data) / len(consumption_data),
+                'max': max(c.corriente for c in consumption_data),
+                'min': min(c.corriente for c in consumption_data)
+            }
+        
+        # Obtener alertas con manejo de error mejorado
+        alerts = []
+        try:
+            # Intentar importar el modelo de alertas
+            from main.models import ApplianceAlert
+            
+            try:
+                # Esta consulta está causando problemas con Djongo - modificada para evitar NOT
+                # En lugar de atendida=False, usamos atendida__exact=False que es más compatible
+                alerts = list(ApplianceAlert.objects.filter(
+                    appliance=appliance
+                ).filter(atendida__exact=False).order_by('-fecha')[:5])
+            except Exception as e:
+                print(f"Error al obtener alertas con el primer método: {e}")
+                print(traceback.format_exc())
+                
+                try:
+                    # Segunda opción: obtener todas las alertas y filtrar manualmente
+                    all_alerts = list(ApplianceAlert.objects.filter(
+                        appliance=appliance
+                    ).order_by('-fecha')[:20])  # Obtenemos más para tener suficientes después de filtrar
+                    
+                    # Filtrar manualmente
+                    alerts = [alert for alert in all_alerts if not alert.atendida][:5]
+                except Exception as e2:
+                    print(f"Error al obtener alertas con el segundo método: {e2}")
+                    print(traceback.format_exc())
+                    
+                    # Si ambos métodos fallan, usar datos de ejemplo
+                    alerts = [{
+                        'mensaje': 'Se ha detectado un voltaje fuera del rango seguro en tu dispositivo.',
+                        'fecha': datetime.now()
+                    }]
+        except ImportError:
+            # Si el modelo no existe, usar datos de ejemplo
+            alerts = [{
+                'mensaje': 'Se ha detectado un voltaje fuera del rango seguro en tu dispositivo.',
+                'fecha': datetime.now()
+            }]
+        
+        # Obtener historial de consumo para la tabla
+        consumption_history = list(ApplianceConsumption.objects.filter(
+            appliance=appliance
+        ).order_by('-fecha')[:10])
+        
+        # Si no hay historial, crear datos de ejemplo
+        if not consumption_history:
+            dates = [datetime.now() - timedelta(days=i) for i in range(4)]
+            consumption_history = [
+                {'id': 1, 'fecha': dates[0], 'voltaje': 110, 'corriente': 5, 'potencia': 540, 'consumo': 1, 'frecuencia': 60},
+                {'id': 2, 'fecha': dates[1], 'voltaje': 70, 'corriente': 10, 'potencia': 430, 'consumo': 3, 'frecuencia': 60},
+                {'id': 3, 'fecha': dates[2], 'voltaje': 80, 'corriente': 2, 'potencia': 40, 'consumo': 5, 'frecuencia': 60},
+                {'id': 4, 'fecha': dates[3], 'voltaje': 10, 'corriente': 5, 'potencia': 426, 'consumo': 6, 'frecuencia': 60}
+            ]
+        
+        # Datos para el gráfico circular (ejemplo de distribución semanal)
+        pie_chart_data = [
+            {"nombre": "Semana 1", "valor": 20, "color": "#2196F3"},
+            {"nombre": "Semana 2", "valor": 15, "color": "#4CAF50"},
+            {"nombre": "Semana 3", "valor": 15, "color": "#FFEB3B"},
+            {"nombre": "Semana 4", "valor": 25, "color": "#F44336"},
+            {"nombre": "Semana 5", "valor": 0, "color": "#E91E63"}
+        ]
+        
+        context = {
+            'appliance': appliance,
+            'latest_consumption': latest_consumption,
+            'daily_consumption': json.dumps(daily_consumption),
+            'voltage_stats': voltage_stats,
+            'current_stats': current_stats,
+            'consumption_history': consumption_history,
+            'alerts': alerts,
+            'pie_chart_data': json.dumps(pie_chart_data)
+        }
+        
+        return render(request, 'devices-info.html', context)
+        
+    except ConnectedAppliance.DoesNotExist:
+        return redirect('devices')
+    except Exception as e:
+        print(f"Error general en appliance_details: {e}")
+        print(traceback.format_exc())
+        return redirect('devices')
     """Vista detallada para la información y datos de consumo de un electrodoméstico."""
     from main.models import ConnectedAppliance, ApplianceConsumption
     from django.db.models import Avg, Max, Min

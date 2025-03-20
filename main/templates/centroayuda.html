@@ -1,0 +1,850 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda - EnergySafe</title>
+    <link rel="stylesheet" href="{% static 'css/styleshome.css' %}">
+    <style>
+        /* Estilos específicos para el Centro de Ayuda */
+        .support-container {
+            max-width: 1200px;
+            margin: 120px auto 50px;
+            padding: 20px;
+        }
+
+        .support-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .support-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #160F9E 0%, #1C4268 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .support-header p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .support-header:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3EF8C4, #54B6F4);
+            border-radius: 2px;
+        }
+
+        .search-section {
+            background: linear-gradient(135deg, #3EF8C4, #54B6F4);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .search-section h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .search-form {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-form input {
+            width: 100%;
+            padding: 18px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-form button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #1C4268;
+            color: white;
+            border: none;
+            height: 44px;
+            width: 100px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form button:hover {
+            background-color: #152f4a;
+        }
+
+        .help-sections {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .help-section {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .help-section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .help-section img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .help-section h3 {
+            color: #1C4268;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .help-section p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .help-section a {
+            color: #01C38D;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .help-section a:hover {
+            text-decoration: underline;
+        }
+
+        .faq-section {
+            margin-bottom: 60px;
+        }
+
+        .faq-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #1C4268;
+            margin-bottom: 40px;
+        }
+
+        .faq-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #f9f9f9;
+        }
+
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #1C4268;
+            font-weight: 600;
+        }
+
+        .faq-toggle {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+            font-size: 1.5rem;
+            color: #1C4268;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 30px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 30px 20px;
+        }
+
+        .contact-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .contact-info {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .contact-info h2 {
+            color: #1C4268;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .contact-method {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3EF8C4, #54B6F4);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .contact-icon img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .contact-text h3 {
+            color: #1C4268;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .contact-text p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .contact-text a {
+            color: #01C38D;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .contact-text a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-form {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .contact-form h2 {
+            color: #1C4268;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #01C38D;
+            outline: none;
+        }
+
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            background-color: #01C38D;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-submit:hover {
+            background-color: #00A87B;
+        }
+
+        .support-channels {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .support-channels h2 {
+            color: #1C4268;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .channel-item {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .channel-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .channel-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        .channel-name {
+            color: #1C4268;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .channel-description {
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .channel-link {
+            color: #01C38D;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .channel-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 992px) {
+            .help-sections {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .contact-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .channels-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .help-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .channels-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .support-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .search-form button {
+                position: relative;
+                width: 100%;
+                right: 0;
+                top: 10px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}"><img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo"></a>
+        </div>
+        <div class="optios">
+            <a href="/home"><h2>Inicio</h2></a>
+            <a href="/download"><h2>Descargar</h2></a>
+            <a href="/devices"><h2>Dispositivos</h2></a>
+            <a href="/products"><h2>Productos</h2></a>
+            <a href="/about-us"><h2>Acerca de nosotros</h2></a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" id="Login-Register"><h2>Cerrar sesión</h2></a>
+            {% else %}
+                <a href="{% url 'login' %}" id="Login-Register"><h2>Login/Register</h2></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="support-container">
+        <div class="support-header">
+            <h1>Centro de Ayuda</h1>
+            <p>Estamos aquí para ayudarte. Encuentra soluciones rápidas a tus problemas, tutoriales detallados y recursos para sacar el máximo provecho de tus dispositivos EnergySafe.</p>
+        </div>
+
+        <section class="search-section">
+            <h2>¿Cómo podemos ayudarte hoy?</h2>
+            <form class="search-form">
+                <input type="text" placeholder="Escribe tu pregunta o busca por palabras clave">
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
+
+        <section class="help-sections">
+            <!-- Sección 1: Guías y tutoriales -->
+            <div class="help-section">
+                <img src="/api/placeholder/80/80" alt="Guías y tutoriales">
+                <h3>Guías y tutoriales</h3>
+                <p>Aprende a configurar, usar y solucionar problemas con tu dispositivo EnergySafe mediante nuestras guías paso a paso.</p>
+                <a href="#">Ver guías ></a>
+            </div>
+
+            <!-- Sección 2: Preguntas frecuentes -->
+            <div class="help-section">
+                <img src="/api/placeholder/80/80" alt="Preguntas frecuentes">
+                <h3>Preguntas frecuentes</h3>
+                <p>Encuentra respuestas rápidas a las preguntas más comunes sobre nuestros productos y servicios.</p>
+                <a href="#">Ver FAQs ></a>
+            </div>
+
+            <!-- Sección 3: Resolución de problemas -->
+            <div class="help-section">
+                <img src="/api/placeholder/80/80" alt="Resolución de problemas">
+                <h3>Resolución de problemas</h3>
+                <p>Soluciona problemas técnicos con tu dispositivo o aplicación utilizando nuestras herramientas de diagnóstico.</p>
+                <a href="#">Ver soluciones ></a>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <h2>Preguntas frecuentes</h2>
+
+            <div class="faq-container">
+                <!-- Pregunta 1 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Cómo instalo mi dispositivo EnergySafe?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>La instalación es muy sencilla: solo tienes que conectar EnergySafe a la toma de corriente y luego conectar tu electrodoméstico al dispositivo. Descarga nuestra aplicación desde la App Store o Google Play, crea una cuenta y sigue las instrucciones para vincular tu dispositivo. El proceso completo toma menos de 5 minutos.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Qué hago si mi dispositivo no se conecta a la WiFi?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Si tu dispositivo tiene problemas para conectarse a la WiFi, sigue estos pasos:</p>
+                        <p>1. Asegúrate de que tu red WiFi es de 2.4GHz (no 5GHz).</p>
+                        <p>2. Reinicia tu router y tu dispositivo EnergySafe.</p>
+                        <p>3. Mantén tu dispositivo y smartphone cerca del router durante la configuración.</p>
+                        <p>4. Verifica que estás ingresando la contraseña WiFi correctamente.</p>
+                        <p>Si el problema persiste, contacta con nuestro servicio técnico.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Es compatible EnergySafe con todos los electrodomésticos?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>EnergySafe es compatible con la mayoría de electrodomésticos que se conectan a una toma de corriente estándar y consumen hasta 2000W (modelo Standard) o 3000W (modelo Pro). Esto incluye televisores, refrigeradores, lavadoras, computadoras, cargadores, y muchos más. No es compatible con dispositivos de alta potencia como hornos eléctricos o sistemas de aire acondicionado central que requieren instalación fija.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Cómo puedo actualizar el firmware de mi dispositivo?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Las actualizaciones de firmware se realizan automáticamente a través de la aplicación EnergySafe cuando tu dispositivo está conectado a internet. Para comprobar si tienes la última versión, abre la aplicación, ve a Configuración > Dispositivos > [tu dispositivo] > Información y verifica la versión del firmware. Si deseas forzar una actualización, puedes pulsar en "Buscar actualizaciones" en ese mismo menú.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 5 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>¿Qué medidas de seguridad implementa EnergySafe?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>EnergySafe implementa múltiples medidas de seguridad:</p>
+                        <p>1. Protección contra sobretensiones y picos de voltaje.</p>
+                        <p>2. Monitoreo constante de temperatura para prevenir sobrecalentamiento.</p>
+                        <p>3. Encriptación de datos de extremo a extremo para proteger tu información.</p>
+                        <p>4. Cumplimiento con estándares internacionales de seguridad eléctrica.</p>
+                        <p>5. Alertas en tiempo real ante comportamientos anómalos de tus dispositivos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="contact-info">
+                <h2>Contáctanos</h2>
+                <div class="contact-methods">
+                    <!-- Teléfono -->
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <img src="/api/placeholder/20/20" alt="Teléfono">
+                        </div>
+                        <div class="contact-text">
+                            <h3>Llámanos</h3>
+                            <p>Disponible de lunes a viernes, 9am - 6pm</p>
+                            <a href="tel:+525551234567">+52 (555) 123-4567</a>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <img src="/api/placeholder/20/20" alt="Email">
+                        </div>
+                        <div class="contact-text">
+                            <h3>Escríbenos</h3>
+                            <p>Te responderemos en menos de 24 horas</p>
+                            <a href="mailto:soporte@energysafe.com">soporte@energysafe.com</a>
+                        </div>
+                    </div>
+
+                    <!-- Chat -->
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <img src="/api/placeholder/20/20" alt="Chat">
+                        </div>
+                        <div class="contact-text">
+                            <h3>Chat en vivo</h3>
+                            <p>Soporte instantáneo en tiempo real</p>
+                            <a href="#">Iniciar chat</a>
+                        </div>
+                    </div>
+
+                    <!-- Redes sociales -->
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <img src="/api/placeholder/20/20" alt="Redes sociales">
+                        </div>
+                        <div class="contact-text">
+                            <h3>Redes sociales</h3>
+                            <p>Síguenos para actualizaciones y soporte</p>
+                            <a href="#">@EnergySafeMX</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h2>Envíanos un mensaje</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="name">Nombre completo</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="topic">Asunto</label>
+                        <select id="topic" name="topic" required>
+                            <option value="">Selecciona un tema</option>
+                            <option value="technical">Soporte técnico</option>
+                            <option value="account">Cuenta y facturación</option>
+                            <option value="general">Información general</option>
+                            <option value="feedback">Sugerencias</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mensaje</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit">Enviar mensaje</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="support-channels">
+            <h2>Otros canales de soporte</h2>
+            <div class="channels-grid">
+                <!-- Canal 1: Community Forum -->
+                <div class="channel-item">
+                    <img src="/api/placeholder/50/50" alt="Foro" class="channel-icon">
+                    <div class="channel-name">Foro comunitario</div>
+                    <div class="channel-description">Conecta con otros usuarios y comparte experiencias</div>
+                    <a href="#" class="channel-link">Visitar foro</a>
+                </div>
+
+                <!-- Canal 2: Video Tutorials -->
+                <div class="channel-item">
+                    <img src="/api/placeholder/50/50" alt="Vídeos" class="channel-icon">
+                    <div class="channel-name">Videotutoriales</div>
+                    <div class="channel-description">Aprende visualmente con nuestras guías en vídeo</div>
+                    <a href="#" class="channel-link">Ver canal</a>
+                </div>
+
+                <!-- Canal 3: Remote Support -->
+                <div class="channel-item">
+                    <img src="/api/placeholder/50/50" alt="Remoto" class="channel-icon">
+                    <div class="channel-name">Soporte remoto</div>
+                    <div class="channel-description">Soporte técnico a distancia para casos complejos</div>
+                    <a href="#" class="channel-link">Solicitar ayuda</a>
+                </div>
+
+                <!-- Canal 4: Developers -->
+                <div class="channel-item">
+                    <img src="/api/placeholder/50/50" alt="Desarrolladores" class="channel-icon">
+                    <div class="channel-name">Portal para desarrolladores</div>
+                    <div class="channel-description">Documentación técnica e integraciones API</div>
+                    <a href="#" class="channel-link">Acceder</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer Component para EnergySafe -->
+    <footer class="energysafe-footer">
+        <div class="footer-top">
+            <div class="footer-container">
+                <div class="footer-row">
+                    <!-- Logo y descripción -->
+                    <div class="footer-column footer-about">
+                        <div class="footer-logo">
+                            <img src="https://i.imgur.com/2EhmVK6.png" alt="EnergySafe Logo">
+                        </div>
+                        <p class="footer-description">
+                            Soluciones inteligentes para el monitoreo y optimización del consumo energético en tu hogar y negocio.
+                        </p>
+                        <div class="footer-badges">
+                            <span class="eco-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.18 6.68c1.22.57 2.28 1.43 3.15 2.5"></path><path d="M9.04 19.8c-3.18-.32-5.88-2.27-7.24-5.08"></path><path d="M9.04 4.2c-3.18.32-5.88 2.27-7.24 5.08"></path><path d="M18.18 17.32c1.22-.57 2.28-1.43 3.15-2.5"></path><path d="m5.97 15.32-.25 2.66c-.04.44.3.84.74.92l2.59.48c2.89.53 5.84-.83 7.25-3.39l.72-1.33c.23-.41.19-.92-.08-1.28l-1.59-2.11c-1.95-2.62-5.47-3.64-8.4-2.45l-2.36.96c-.41.17-.64.6-.57 1.04l.25 2.65"></path><path d="m15.91 13.04 1.58-1.98a.8.8 0 0 0-.02-1.05l-1.32-1.44"></path></svg>
+                                Eco-friendly
+                            </span>
+                            <span class="secure-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+                                Seguridad garantizada
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Enlaces rápidos -->
+                    <div class="footer-column">
+                        <h3 class="footer-title">EnergySafe</h3>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'home' %}">Inicio</a></li>
+                            <li><a href="{% url 'productos' %}">Nuestros productos</a></li>
+                            <li><a href="{% url 'download' %}">Aplicación móvil</a></li>
+                            <li><a href="/blog">Blog y recursos</a></li>
+                            <li><a href="{% url 'aboutus' %}">Nuestra empresa</a></li>
+                            <li><a href="/soporte">Centro de ayuda</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Productos -->
+                    <div class="footer-column">
+                        <h3 class="footer-title">Productos</h3>
+                        <ul class="footer-links">
+                            <li><a href="/products/energysafe-standard">EnergySafe Standard</a></li>
+                            <li><a href="/products/energysafe-pro">EnergySafe Pro</a></li>
+                            <li><a href="/products/accesorios">Accesorios</a></li>
+                            <li><a href="/garantia">Garantía y soporte</a></li>
+                            <li><a href="/descargas">Software y actualizaciones</a></li>
+                            <li><a href="/donde-comprar">Dónde comprar</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Soluciones -->
+                    <div class="footer-column">
+                        <h3 class="footer-title">Soluciones</h3>
+                        <ul class="footer-links">
+                            <li><a href="/para-hogares">Para hogares</a></li>
+                            <li><a href="/para-negocios">Para negocios</a></li>
+                            <li><a href="/integraciones">Integraciones</a></li>
+                            <li><a href="/calculadora">Calculadora de ahorro</a></li>
+                            <li><a href="/testimonios">Casos de éxito</a></li>
+                            <li><a href="/recursos">Recursos educativos</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contacto y newsletter -->
+                    <div class="footer-column footer-contact">
+                        <h3 class="footer-title">Contáctanos</h3>
+                        <ul class="footer-contact-info">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                <span>+52 (555) 123-4567</span>
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                <span>contacto@energysafe.com</span>
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span>Av. Tecnológico 123, Col. Centro<br>Ciudad de México, México</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="footer-newsletter">
+                            <h4>Mantente informado</h4>
+                            <p>Suscríbete a nuestro boletín para recibir consejos y novedades</p>
+                            <form action="/suscribir" method="post" class="newsletter-form">
+                                {% csrf_token %}
+                                <input type="email" name="email" placeholder="Tu correo electrónico" required>
+                                <button type="submit" class="subscribe-btn">Suscribirme</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom footer -->
+        <div class="footer-bottom">
+            <div class="footer-container">
+                <div class="footer-row">
+                    <div class="copyright">
+                        &copy; 2025 EnergySafe. Todos los derechos reservados | <a href="/terminos-y-condiciones">Términos y Condiciones</a> | <a href="/aviso-de-privacidad">Aviso de Privacidad</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para el efecto scroll del header
+        window.onscroll = function() {
+            var header = document.querySelector('.header-container');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        };
+
+        // Script para las preguntas frecuentes
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const item = this.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Cerrar todos los elementos activos
+                document.querySelectorAll('.faq-item').forEach(faqItem => {
+                    faqItem.classList.remove('active');
+                });
+                
+                // Si el elemento clickeado no estaba activo, abrirlo
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -26,6 +26,10 @@ urlpatterns = [
     path('api/consumption/latest/<str:appliance_id>/', api_views.get_latest_consumption, name='get_latest_consumption'),
     # Add this to EnergySafe/urls.py in the urlpatterns list
     path('api/consumption/latest/<str:appliance_id>/', api_views.get_latest_consumption, name='get_latest_consumption'),
+        path('get-csrf-token/', views.get_csrf_token, name='get_csrf_token'),
+            path('mobile/login/', views.mobile_login, name='mobile_login'),
+
+
 
     # En EnergySafe/urls.py
     path('devices/appliance/add/', device_views.add_appliance, name='add_appliance'),
@@ -33,7 +37,10 @@ urlpatterns = [
     path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='devices-info'),
 
 
-    
+    path('blog/', views.blog, name='blog'),
+    path('soporte/', views.soporte, name='soporte'),
+    path('aviso-de-privacidad/', views.aviso_de_privacidad, name='aviso_de_privacidad'),
+
     # Mantener esta ruta para compatibilidad
     path('devices-info/', views.device_info, name='devices-info'),
 
