@@ -288,7 +288,7 @@
                     <div class="alert-header"><h2>Anomalías detectadas</h2></div>
                     <div id="alertas-container">
                         {% for alert in alerts %}
-                        <div class="alert-item">
+                        <div class="alert-item" data-alert-id="{{ alert.id }}">
                             <div class="alert-icon"><img src="https://i.imgur.com/j3d5GBP.png" alt=""></div>
                             <div id="alert-alarm">
                                 {% if alert.mensaje %}
@@ -300,10 +300,9 @@
                             <div class="close-btn">✕</div>
                         </div>
                         {% empty %}
-                        <div class="alert-item">
+                        <div class="alert-item" id="no-alerts-message">
                             <div class="alert-icon"><img src="https://i.imgur.com/j3d5GBP.png" alt=""></div>
                             <div id="alert-alarm">No hay alertas activas en este momento.</div>
-                            <div class="close-btn">✕</div>
                         </div>
                         {% endfor %}
                     </div>
@@ -993,6 +992,178 @@
             window.addEventListener('beforeunload', () => {
                 clearInterval(updateInterval);
             });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener el ID del aparato de la URL o del cuerpo de la página
+            const applianceId = document.body.getAttribute('data-appliance-id');
+            
+            // Configurar el intervalo de actualización (cada 5 segundos)
+            const UPDATE_INTERVAL = 5000;
+            let lastUpdateTime = Date.now();
+            
+            // Función para actualizar las alertas
+            function updateAlerts() {
+                fetch(`/api/consumption/latest/${applianceId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.alerts && data.alerts.length > 0) {
+                            // Actualizar la última hora de actualización
+                            document.getElementById('last-update-time').textContent = 
+                                `Última actualización: ${new Date().toLocaleTimeString()}`;
+                            
+                            // Borrar el mensaje de "no hay alertas" si existe
+                            const noAlertsMsg = document.getElementById('no-alerts-message');
+                            if (noAlertsMsg) {
+                                noAlertsMsg.remove();
+                            }
+                            
+                            // Contenedor de alertas
+                            const alertsContainer = document.getElementById('alertas-container');
+                            
+                            // Añadir nuevas alertas que no estén ya en la página
+                            data.alerts.forEach(alert => {
+                                // Comprobar si la alerta ya existe en la página
+                                if (!document.querySelector(`.alert-item[data-alert-id="${alert.id}"]`)) {
+                                    // Crear nueva alerta
+                                    const alertItem = document.createElement('div');
+                                    alertItem.className = 'alert-item';
+                                    alertItem.setAttribute('data-alert-id', alert.id);
+                                    
+                                    // Icono
+                                    const alertIcon = document.createElement('div');
+                                    alertIcon.className = 'alert-icon';
+                                    alertIcon.innerHTML = '<img src="https://i.imgur.com/j3d5GBP.png" alt="">';
+                                    alertItem.appendChild(alertIcon);
+                                    
+                                    // Mensaje
+                                    const alertMessage = document.createElement('div');
+                                    alertMessage.id = 'alert-alarm';
+                                    alertMessage.textContent = alert.mensaje || alert;
+                                    alertItem.appendChild(alertMessage);
+                                    
+                                    // Botón de cerrar
+                                    const closeBtn = document.createElement('div');
+                                    closeBtn.className = 'close-btn';
+                                    closeBtn.textContent = '✕';
+                                    closeBtn.addEventListener('click', function() {
+                                        markAlertAttended(alert.id, alertItem);
+                                    });
+                                    alertItem.appendChild(closeBtn);
+                                    
+                                    // Añadir al contenedor con efecto de aparición
+                                    alertItem.style.opacity = '0';
+                                    alertsContainer.prepend(alertItem); // Añadir al principio
+                                    
+                                    // Animar la aparición
+                                    setTimeout(() => {
+                                        alertItem.style.transition = 'opacity 0.5s ease';
+                                        alertItem.style.opacity = '1';
+                                    }, 10);
+                                }
+                            });
+                        } else if (document.querySelectorAll('.alert-item').length === 0) {
+                            // Si no hay alertas y no hay elementos en la página, mostrar mensaje
+                            const alertsContainer = document.getElementById('alertas-container');
+                            
+                            alertsContainer.innerHTML = `
+                                <div class="alert-item" id="no-alerts-message">
+                                    <div class="alert-icon"><img src="https://i.imgur.com/j3d5GBP.png" alt=""></div>
+                                    <div id="alert-alarm">No hay alertas activas en este momento.</div>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => console.error('Error al actualizar alertas:', error));
+            }
+            
+            // Función para marcar una alerta como atendida
+            function markAlertAttended(alertId, alertElement) {
+                // Mostrar efecto de "cargando" en el elemento
+                alertElement.style.opacity = '0.5';
+                
+                fetch(`/api/alerts/attend/${alertId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Animar la desaparición de la alerta
+                        alertElement.style.transition = 'all 0.5s ease';
+                        alertElement.style.height = '0';
+                        alertElement.style.opacity = '0';
+                        alertElement.style.margin = '0';
+                        alertElement.style.padding = '0';
+                        
+                        // Eliminar el elemento después de la animación
+                        setTimeout(() => {
+                            alertElement.remove();
+                            
+                            // Si no quedan alertas, mostrar el mensaje
+                            if (document.querySelectorAll('.alert-item').length === 0) {
+                                const alertsContainer = document.getElementById('alertas-container');
+                                
+                                alertsContainer.innerHTML = `
+                                    <div class="alert-item" id="no-alerts-message">
+                                        <div class="alert-icon"><img src="https://i.imgur.com/j3d5GBP.png" alt=""></div>
+                                        <div id="alert-alarm">No hay alertas activas en este momento.</div>
+                                    </div>
+                                `;
+                            }
+                        }, 500);
+                    } else {
+                        // Restaurar la opacidad si hay error
+                        alertElement.style.opacity = '1';
+                        console.error('Error al marcar alerta como atendida:', data.message);
+                    }
+                })
+                .catch(error => {
+                    // Restaurar la opacidad si hay error
+                    alertElement.style.opacity = '1';
+                    console.error('Error en la petición:', error);
+                });
+            }
+            
+            // Obtener valor de cookie (para CSRF token)
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Configurar los botones de cerrar existentes
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const alertItem = this.closest('.alert-item');
+                    const alertId = alertItem.getAttribute('data-alert-id');
+                    
+                    // Si tiene ID, es una alerta real
+                    if (alertId) {
+                        markAlertAttended(alertId, alertItem);
+                    } else {
+                        // Si no tiene ID, solo eliminar del DOM
+                        alertItem.remove();
+                    }
+                });
+            });
+            
+            // Iniciar actualización periódica
+            updateAlerts(); // Primera llamada inmediata
+            setInterval(updateAlerts, UPDATE_INTERVAL);
         });
     </script>
 </body>

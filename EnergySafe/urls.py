@@ -47,4 +47,9 @@ urlpatterns = [
     # API
     path('api/device-readings/', api_views.device_readings, name='device_readings'),
 
+    path('api/device-readings/', api_views.device_readings, name='device_readings'),
+    path('api/device-alerts/', api_views.device_alerts, name='device_alerts'),
+
+    # Añade esta línea a tus urlpatterns
+path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
 ]

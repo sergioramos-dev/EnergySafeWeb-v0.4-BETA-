@@ -408,7 +408,7 @@ def appliance_details(request, appliance_id):
                 # Esta consulta está causando problemas con Djongo - modificada para evitar NOT
                 # En lugar de atendida=False, usamos atendida__exact=False que es más compatible
                 alerts = list(ApplianceAlert.objects.filter(
-                    appliance=appliance
+                appliance=appliance
                 ).filter(atendida__exact=False).order_by('-fecha')[:5])
             except Exception as e:
                 print(f"Error al obtener alertas con el primer método: {e}")
