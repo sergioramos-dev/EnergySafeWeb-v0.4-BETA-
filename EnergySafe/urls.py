@@ -53,3 +53,6 @@ urlpatterns = [
     # Añade esta línea a tus urlpatterns
 path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
 ]
+
+# Añade esta línea a tus urlpatterns
+path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),

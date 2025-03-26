@@ -213,6 +213,7 @@ def register_energy_safe(request):
         'message': 'Método no permitido'
     })
 
+
 @login_required
 @csrf_exempt
 def add_appliance(request):
@@ -234,9 +235,26 @@ def add_appliance(request):
             
             tipo = request.POST.get('tipo', 'television')
             
-            # Get the icon value from the form - this will now be the image identifier
-            # instead of just the icon name
+            # Get the icon value from the form
             icono = request.POST.get('icono', '')
+            
+            # Mapear el tipo de electrodoméstico al ID de imagen de imgur correspondiente
+            # Esta es la parte importante que faltaba
+            icono_map = {
+                'television': '1cp16yr',
+                'refrigerador': 'y6vQp4I',
+                'lavadora': 'HKZWrSP',
+                'microondas': 'QFNUZvz',
+                'computadora': 'G9W3kSS',
+                'impresora': 'QTNk9c5',
+                'consola': 'MYNXLrB',
+                'cargador': 'J3y4lRs',
+                'pc': 'Xwh0HPl'
+            }
+            
+            # Si el icono enviado está en el mapa, usar ese valor, de lo contrario mantener el valor original
+            if icono in icono_map:
+                icono = icono_map[icono]
             
             voltaje_str = request.POST.get('voltaje', '110')
             
@@ -274,7 +292,7 @@ def add_appliance(request):
                     user_device=user_device,
                     nombre=nombre,
                     tipo=tipo,
-                    icono=icono,  # This is now the image identifier, not just the icon name
+                    icono=icono,  # Ahora este es el ID de imgur, no solo el tipo
                     voltaje=voltaje_int,
                     activo=True
                 )

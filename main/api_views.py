@@ -186,6 +186,7 @@ def get_latest_consumption(request, appliance_id):
             print(f"Error al obtener alertas: {e}")
             import traceback
             print(traceback.format_exc())
+
         
         # Return the processed data
         return JsonResponse({
