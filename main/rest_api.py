@@ -342,20 +342,3 @@ def api_add_appliance(request):
         })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
-@csrf_exempt
-@require_http_methods(["GET"])
-def api_get_appliance_consumption(request, appliance_id):
-    """API endpoint to get consumption data for an appliance"""
-    try:
-        appliance = ConnectedAppliance.objects.get(id=appliance_id)
-        
-        # Verify user has access to this appliance
-        user_id = _get_user_id_from_request(request)
-        if appliance.user_device.usuario_id != user_id:
-            return JsonResponse({'error': 'Unauthorized'}, status=403)
-        
-        # Get consumption data
-        consumption_data = ApplianceConsumption.objects.filter(
-            appliance=appliance
-        )

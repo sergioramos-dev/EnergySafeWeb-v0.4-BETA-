@@ -291,6 +291,7 @@ def mobile_register(request):
         }, status=500)
     
 # Añadir estas funciones a main/views.py
+# Replace the verify_token function in main/views.py with this version
 
 @csrf_exempt
 def verify_token(request):
@@ -310,9 +311,17 @@ def verify_token(request):
     
     token_key = auth_header.split(' ')[1].strip()
     
-    # Buscar el token
+    # Buscar el token - Modificado para prevenir el error de Djongo
     try:
-        token = AuthToken.objects.get(id=token_key, is_active=True)
+        # Primero buscar el token sin incluir el is_active en la consulta 
+        token = AuthToken.objects.get(id=token_key)
+        
+        # Luego verificar manualmente si está activo
+        if not token.is_active:
+            return JsonResponse({
+                'success': False,
+                'message': 'Token inactivo'
+            }, status=401)
         
         # Verificar si el token está expirado
         if token.is_expired:
@@ -336,8 +345,15 @@ def verify_token(request):
             'success': False,
             'message': 'Token inválido'
         }, status=401)
-        
-
+    except Exception as e:
+        import traceback
+        print(f"Error en verify_token: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }, status=500)
+    
 @csrf_exempt
 @require_POST
 def mobile_logout(request):
@@ -373,3 +389,4 @@ def mobile_logout(request):
             'success': False,
             'message': 'Token inválido'
         }, status=400)
+    

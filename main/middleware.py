@@ -76,8 +76,7 @@ class SocialLoginErrorMiddleware:
                     except Exception:
                         pass
             return redirect(reverse('login'))
-    
-# Añadir a main/middleware.py
+        # Add this to the end of your main/middleware.py file
 
 class TokenAuthMiddleware:
     def __init__(self, get_response):
@@ -93,10 +92,19 @@ class TokenAuthMiddleware:
         if auth_header.startswith('Token '):
             token_key = auth_header.split(' ')[1].strip()
             
-            # Buscar el token
+            # Buscar el token - Modificado para evitar problemas con Djongo
             from main.models import AuthToken
             try:
-                token = AuthToken.objects.get(id=token_key, is_active=True)
+                # Primero buscar por ID sin incluir is_active en la consulta
+                token = AuthToken.objects.get(id=token_key)
+                
+                # Verificar manualmente si está activo
+                if not token.is_active:
+                    from django.http import JsonResponse
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Token inactivo'
+                    }, status=401)
                 
                 # Verificar si el token está expirado
                 if token.is_expired:
@@ -113,6 +121,11 @@ class TokenAuthMiddleware:
             except AuthToken.DoesNotExist:
                 # No hacer nada si el token no existe, seguirá como anonymous user
                 pass
+            except Exception as e:
+                import traceback
+                print(f"Error en TokenAuthMiddleware: {str(e)}")
+                print(traceback.format_exc())
+                # Continuar como usuario anónimo en caso de error
         
         # Continuar con la solicitud
         response = self.get_response(request)
