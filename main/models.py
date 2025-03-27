@@ -52,7 +52,6 @@ class UserSession(models.Model):
         return f"{self.user.username} - {self.session_key[:8]}"
 
 class Device(models.Model):
-    """Dispositivo físico EnergySafe"""
     def generate_id():
         return get_random_string(24, allowed_chars='abcdef0123456789')
         
@@ -75,7 +74,6 @@ class Device(models.Model):
         return f"{self.nombre} - {self.numero_serie}"
 
 class UserDevice(models.Model):
-    """Dispositivo EnergySafe asociado a un usuario"""
     def generate_id():
         return get_random_string(24, allowed_chars='abcdef0123456789')
         
@@ -85,8 +83,8 @@ class UserDevice(models.Model):
         default=generate_id,
         editable=False
     )
-    usuario_id = models.CharField(max_length=24)  # Simplificado para evitar ForeignKey
-    dispositivo_id = models.CharField(max_length=24)  # Simplificado para evitar ForeignKey
+    usuario_id = models.CharField(max_length=24)  
+    dispositivo_id = models.CharField(max_length=24)  
     fecha_adquisicion = models.DateTimeField(auto_now_add=True)
     nombre_personalizado = models.CharField(max_length=100, blank=True, null=True)
     ubicacion = models.CharField(max_length=100, blank=True, null=True)
@@ -96,7 +94,6 @@ class UserDevice(models.Model):
         db_table = "user_devices"
 
 class ConnectedAppliance(models.Model):
-    """Electrodoméstico conectado a un dispositivo EnergySafe"""
     def generate_id():
         return get_random_string(24, allowed_chars='abcdef0123456789')
         
@@ -108,12 +105,12 @@ class ConnectedAppliance(models.Model):
     )
     user_device = models.ForeignKey(UserDevice, on_delete=models.CASCADE, related_name='electrodomesticos')
     nombre = models.CharField(max_length=100)
-    tipo = models.CharField(max_length=50)  # refrigerador, tv, lavadora, etc.
+    tipo = models.CharField(max_length=50)  
     icono = models.CharField(max_length=50, blank=True, null=True)
     voltaje = models.IntegerField(default=120)
     fecha_conexion = models.DateTimeField(auto_now_add=True)
     activo = models.BooleanField(default=True)
-    apagado_periodico = models.JSONField(blank=True, null=True)  # Programación
+    apagado_periodico = models.JSONField(blank=True, null=True)  
     
     class Meta:
         db_table = "connected_appliances"
@@ -122,7 +119,6 @@ class ConnectedAppliance(models.Model):
         return f"{self.nombre} - {self.user_device.usuario.username}"
 
 class ApplianceConsumption(models.Model):
-    """Registro de consumo de un electrodoméstico"""
     def generate_id():
         return get_random_string(24, allowed_chars='abcdef0123456789')
         
@@ -147,7 +143,6 @@ class ApplianceConsumption(models.Model):
         return f"{self.appliance.nombre} - {self.fecha}"
     
 class ApplianceAlert(models.Model):
-    """Registro de alertas para electrodomésticos"""
     def generate_id():
         return get_random_string(24, allowed_chars='abcdef0123456789')
         
@@ -159,7 +154,7 @@ class ApplianceAlert(models.Model):
     )
     appliance = models.ForeignKey(ConnectedAppliance, on_delete=models.CASCADE, related_name='alertas')
     fecha = models.DateTimeField(auto_now_add=True)
-    tipo = models.CharField(max_length=50)  # voltaje, corriente, etc.
+    tipo = models.CharField(max_length=50)  
     mensaje = models.TextField()
     atendida = models.BooleanField(default=False)
     
@@ -168,3 +163,28 @@ class ApplianceAlert(models.Model):
         
     def __str__(self):
         return f"{self.appliance.nombre} - {self.tipo} - {self.fecha}"
+    
+# Añadir este modelo a main/models.py después de los modelos existentes
+
+class AuthToken(models.Model):
+    def generate_id():
+        return get_random_string(40, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+    
+    id = models.CharField(primary_key=True, max_length=40, default=generate_id, editable=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tokens')
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    device_info = models.TextField(blank=True, null=True)  # Para almacenar info del dispositivo móvil
+    
+    class Meta:
+        db_table = "auth_tokens"
+        
+    def __str__(self):
+        return f"{self.user.username} - {self.id[:8]}"
+    
+    @property
+    def is_expired(self):
+        if not self.expires_at:
+            return False
+        return timezone.now() > self.expires_at

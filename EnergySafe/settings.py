@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'main.middleware.TokenAuthMiddleware',
     # El nuevo middleware de sesiones se agregará después
 ]
 CSRF_EXEMPT_URLS = [

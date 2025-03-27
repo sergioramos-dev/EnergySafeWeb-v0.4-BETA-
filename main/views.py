@@ -113,54 +113,80 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
 
+
+# Reemplazar la función mobile_login existente en main/views.py
+
+
+# Reemplaza la función mobile_login actual con esta versión
+
 @csrf_exempt
 @require_POST
 def mobile_login(request):
     """
-    Custom login view for mobile authentication
-    Bypasses CSRF protection for mobile apps
+    Vista de autenticación para aplicaciones móviles.
+    Utiliza autenticación basada en tokens en lugar de sesiones.
     """
     try:
-        # Parse JSON data
+        # Analizar datos JSON
         data = json.loads(request.body)
         username_or_email = data.get('username_or_email')
         password = data.get('password')
-
-        # Validate input
+        device_info = data.get('device_info', {})  # Información opcional del dispositivo
+        
+        # Validar entrada
         if not username_or_email or not password:
             return JsonResponse({
                 'success': False, 
-                'message': 'Username/email and password are required'
+                'message': 'Se requiere nombre de usuario/correo y contraseña'
             }, status=400)
 
-        # Use custom authentication backend
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-
-        # Try to find user by email or username
+        # Buscar usuario por email o nombre de usuario
         try:
-            # First try to find by email
-            user = User.objects.get(email=username_or_email)
+            # Primero intentar buscar por email
+            user = User.objects.get(email=username_or_email)  
         except User.DoesNotExist:
-            # If not found by email, try by username
             try:
-                user = User.objects.get(username=username_or_email)
+                # Si no se encuentra por email, intentar por nombre de usuario
+                user = User.objects.get(username=username_or_email)  
             except User.DoesNotExist:
                 return JsonResponse({
                     'success': False, 
-                    'message': 'User not found'
+                    'message': 'Usuario no encontrado'
                 }, status=404)
 
-        # Authenticate user
+        # Autenticar usuario
         auth_user = authenticate(request, username=user.username, password=password)
         
         if auth_user is not None:
-            # Log the user in
-            login(request, auth_user)
+            # Crear o obtener token
+            from main.models import AuthToken
             
+            # Desactivar tokens antiguos - MODIFICACIÓN AQUÍ
+            # Usando dos filtros separados para evitar el problema de Djongo
+            try:
+                user_tokens = AuthToken.objects.filter(user=auth_user)
+                for token in user_tokens:
+                    if token.is_active:
+                        token.is_active = False
+                        token.save()
+            except Exception as e:
+                print(f"Advertencia: No se pudieron desactivar tokens antiguos: {e}")
+                # Continuamos aunque haya error en este paso
+            
+            # Crear nuevo token
+            device_info_str = json.dumps(device_info) if device_info else None
+            token = AuthToken.objects.create(
+                user=auth_user,
+                device_info=device_info_str,
+                # Establecer expiración si es necesario - p.ej., 30 días desde ahora
+                expires_at=timezone.now() + timezone.timedelta(days=30)
+            )
+            
+            # Devolver token y datos de usuario
             return JsonResponse({
                 'success': True, 
-                'message': 'Login successful',
+                'message': 'Inicio de sesión exitoso',
+                'token': token.id,
                 'user': {
                     'id': auth_user.id,
                     'username': auth_user.username,
@@ -170,16 +196,180 @@ def mobile_login(request):
         else:
             return JsonResponse({
                 'success': False, 
-                'message': 'Invalid credentials'
+                'message': 'Credenciales inválidas'
             }, status=401)
 
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False, 
-            'message': 'Invalid JSON'
+            'message': 'JSON inválido'
         }, status=400)
     except Exception as e:
+        import traceback
+        print(f"Error en mobile_login: {str(e)}")
+        print(traceback.format_exc())
         return JsonResponse({
             'success': False, 
-            'message': str(e)
+            'message': f'Error: {str(e)}'
         }, status=500)
+            
+@csrf_exempt
+@require_POST
+def mobile_register(request):
+    """
+    Vista de registro para aplicaciones móviles.
+    Crea un nuevo usuario y devuelve un token de autenticación.
+    """
+    try:
+        # Analizar datos JSON
+        data = json.loads(request.body)
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        device_info = data.get('device_info', {})
+        
+        # Validar entrada
+        if not username or not email or not password:
+            return JsonResponse({
+                'success': False, 
+                'message': 'Se requiere nombre de usuario, correo y contraseña'
+            }, status=400)
+        
+        # Verificar si el nombre de usuario o correo ya existen
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                'success': False, 
+                'message': 'El nombre de usuario ya existe'
+            }, status=400)
+        
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({
+                'success': False, 
+                'message': 'El correo electrónico ya existe'
+            }, status=400)
+        
+        # Crear nuevo usuario
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        
+        # Crear token para el nuevo usuario
+        from main.models import AuthToken
+        device_info_str = json.dumps(device_info) if device_info else None
+        token = AuthToken.objects.create(
+            user=user,
+            device_info=device_info_str,
+            expires_at=timezone.now() + timezone.timedelta(days=30)
+        )
+        
+        # Devolver respuesta exitosa
+        return JsonResponse({
+            'success': True, 
+            'message': 'Registro exitoso',
+            'token': token.id,
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email
+            }
+        })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False, 
+            'message': 'JSON inválido'
+        }, status=400)
+    except Exception as e:
+        import traceback
+        print(f"Error en mobile_register: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False, 
+            'message': f'Error: {str(e)}'
+        }, status=500)
+    
+# Añadir estas funciones a main/views.py
+
+@csrf_exempt
+def verify_token(request):
+    """
+    Verifica si un token es válido.
+    GET con Authorization: Token <token>
+    """
+    from main.models import AuthToken
+    
+    # Verificar si hay token en el encabezado Authorization
+    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+    if not auth_header.startswith('Token '):
+        return JsonResponse({
+            'success': False,
+            'message': 'Token no proporcionado'
+        }, status=401)
+    
+    token_key = auth_header.split(' ')[1].strip()
+    
+    # Buscar el token
+    try:
+        token = AuthToken.objects.get(id=token_key, is_active=True)
+        
+        # Verificar si el token está expirado
+        if token.is_expired:
+            return JsonResponse({
+                'success': False,
+                'message': 'Token expirado'
+            }, status=401)
+        
+        # Token válido
+        return JsonResponse({
+            'success': True,
+            'message': 'Token válido',
+            'user': {
+                'id': token.user.id,
+                'username': token.user.username,
+                'email': token.user.email
+            }
+        })
+    except AuthToken.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Token inválido'
+        }, status=401)
+        
+
+@csrf_exempt
+@require_POST
+def mobile_logout(request):
+    """
+    Cierra la sesión invalida el token actual.
+    POST con Authorization: Token <token>
+    """
+    from main.models import AuthToken
+    
+    # Verificar si hay token en el encabezado Authorization
+    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+    if not auth_header.startswith('Token '):
+        return JsonResponse({
+            'success': False,
+            'message': 'Token no proporcionado'
+        }, status=400)
+    
+    token_key = auth_header.split(' ')[1].strip()
+    
+    # Buscar y desactivar el token
+    try:
+        # Modificado para Djongo - en vez de hacer update()
+        token = AuthToken.objects.get(id=token_key)
+        token.is_active = False
+        token.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Sesión cerrada exitosamente'
+        })
+    except AuthToken.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Token inválido'
+        }, status=400)

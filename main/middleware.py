@@ -76,3 +76,44 @@ class SocialLoginErrorMiddleware:
                     except Exception:
                         pass
             return redirect(reverse('login'))
+    
+# Añadir a main/middleware.py
+
+class TokenAuthMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # No procesamos para rutas administrativas o de autenticación
+        if request.path.startswith('/admin/') or request.path.startswith('/api/mobile/login/') or request.path.startswith('/api/mobile/register/'):
+            return self.get_response(request)
+            
+        # Verificar si hay token en el encabezado Authorization
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if auth_header.startswith('Token '):
+            token_key = auth_header.split(' ')[1].strip()
+            
+            # Buscar el token
+            from main.models import AuthToken
+            try:
+                token = AuthToken.objects.get(id=token_key, is_active=True)
+                
+                # Verificar si el token está expirado
+                if token.is_expired:
+                    from django.http import JsonResponse
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Token expirado'
+                    }, status=401)
+                
+                # Establecer el usuario autenticado en la solicitud
+                request.user = token.user
+                request.auth_token = token
+                request.is_token_auth = True
+            except AuthToken.DoesNotExist:
+                # No hacer nada si el token no existe, seguirá como anonymous user
+                pass
+        
+        # Continuar con la solicitud
+        response = self.get_response(request)
+        return response

@@ -52,7 +52,16 @@ urlpatterns = [
 
     # Añade esta línea a tus urlpatterns
 path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
-]
 
 # Añade esta línea a tus urlpatterns
 path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
+
+# Añadir estas líneas a EnergySafe/urls.py en el urlpatterns
+
+# API para aplicación móvil
+path('api/mobile/login/', views.mobile_login, name='api_mobile_login'),
+path('api/mobile/register/', views.mobile_register, name='api_mobile_register'),
+path('api/mobile/verify-token/', views.verify_token, name='api_verify_token'),
+path('api/mobile/logout/', views.mobile_logout, name='api_mobile_logout'),
+]
+
