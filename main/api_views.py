@@ -508,3 +508,202 @@ def mark_alert_attended(request, alert_id):
             'success': False,
             'message': f'Error: {str(e)}'
         }, status=500)
+    
+# Add this to main/api_views.py
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from main.models import UserDevice, ConnectedAppliance
+
+# Replace the get_user_appliances function in main/api_views.py with this version
+
+@csrf_exempt
+def get_user_appliances(request):
+    """
+    API endpoint to get the user's appliances for mobile app
+    GET /api/mobile/appliances/
+    """
+    try:
+        # Check for authorization header
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if not auth_header.startswith('Token '):
+            return JsonResponse({
+                'success': False,
+                'message': 'No authentication token provided'
+            }, status=401)
+        
+        token_key = auth_header.split(' ')[1].strip()
+        
+        # Verify token
+        from main.models import AuthToken
+        try:
+            token = AuthToken.objects.get(id=token_key)
+            if not token.is_active:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Token inactive'
+                }, status=401)
+            
+            if token.is_expired:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Token expired'
+                }, status=401)
+            
+            # Get the user from the token
+            user = token.user
+            
+            # Get the user's devices - Avoid using complex filters with Djongo
+            # First get all user devices
+            all_user_devices = list(UserDevice.objects.all())
+            
+            # Then manually filter for this user and active devices
+            user_devices = []
+            for device in all_user_devices:
+                if device.usuario_id == str(user.id) and device.activo:
+                    user_devices.append(device)
+            
+            if not user_devices:
+                return JsonResponse({
+                    'success': True,
+                    'appliances': [],
+                    'message': 'No EnergySafe device found for this user'
+                })
+            
+            # Get the appliances for each user device
+            all_appliances = []
+            for user_device in user_devices:
+                # Get all appliances
+                all_device_appliances = list(ConnectedAppliance.objects.filter(user_device=user_device))
+                
+                # Manually filter for active appliances
+                for appliance in all_device_appliances:
+                    if appliance.activo:
+                        all_appliances.append({
+                            'id': str(appliance.id),
+                            'name': appliance.nombre,
+                            'type': appliance.tipo,
+                            'icon': appliance.icono,
+                            'voltage': appliance.voltaje,
+                            'connectionDate': str(appliance.fecha_conexion),
+                            'active': appliance.activo
+                        })
+            
+            return JsonResponse({
+                'success': True,
+                'appliances': all_appliances
+            })
+            
+        except AuthToken.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid token'
+            }, status=401)
+            
+    except Exception as e:
+        import traceback
+        print(f"Error in get_user_appliances: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }, status=500)
+    
+# Add this to main/api_vi# Replace the get_appliance_data function in main/api_views.py with this version
+
+@csrf_exempt
+def get_appliance_data(request, appliance_id):
+    """
+    API endpoint to get real-time energy data for a specific appliance
+    GET /api/mobile/appliance/{appliance_id}/data/
+    """
+    try:
+        # Check for authorization header
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if not auth_header.startswith('Token '):
+            return JsonResponse({
+                'success': False,
+                'message': 'No authentication token provided'
+            }, status=401)
+        
+        token_key = auth_header.split(' ')[1].strip()
+        
+        # Verify token
+        from main.models import AuthToken
+        try:
+            token = AuthToken.objects.get(id=token_key)
+            if not token.is_active or token.is_expired:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Invalid token'
+                }, status=401)
+            
+            # Get the appliance
+            from main.models import ConnectedAppliance, ApplianceConsumption
+            try:
+                appliance = ConnectedAppliance.objects.get(id=appliance_id)
+                
+                # Verify this appliance belongs to the user - manual check to avoid complex Djongo queries
+                if str(appliance.user_device.usuario_id) != str(token.user.id):
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Unauthorized access to this appliance'
+                    }, status=403)
+                
+                # Get all consumption data and sort manually to find the latest
+                all_consumption = list(ApplianceConsumption.objects.filter(appliance=appliance))
+                
+                # Sort by date (descending)
+                all_consumption.sort(key=lambda x: x.fecha, reverse=True)
+                
+                # Get the first item (latest)
+                consumption = all_consumption[0] if all_consumption else None
+                
+                # If no consumption data, return default values
+                if not consumption:
+                    return JsonResponse({
+                        'success': True,
+                        'data': {
+                            'voltage': appliance.voltaje,
+                            'current': 0,
+                            'power': 0,
+                            'energy': 0,
+                            'frequency': 60,
+                            'timestamp': str(appliance.fecha_conexion)
+                        }
+                    })
+                
+                # Return the data
+                return JsonResponse({
+                    'success': True,
+                    'data': {
+                        'voltage': consumption.voltaje,
+                        'current': consumption.corriente,
+                        'power': consumption.potencia,
+                        'energy': consumption.consumo,
+                        'frequency': consumption.frecuencia,
+                        'timestamp': str(consumption.fecha)
+                    }
+                })
+                
+            except ConnectedAppliance.DoesNotExist:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Appliance not found'
+                }, status=404)
+                
+        except AuthToken.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid token'
+            }, status=401)
+            
+    except Exception as e:
+        import traceback
+        print(f"Error in get_appliance_data: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }, status=500)

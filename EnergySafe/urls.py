@@ -63,5 +63,14 @@ path('api/mobile/login/', views.mobile_login, name='api_mobile_login'),
 path('api/mobile/register/', views.mobile_register, name='api_mobile_register'),
 path('api/mobile/verify-token/', views.verify_token, name='api_verify_token'),
 path('api/mobile/logout/', views.mobile_logout, name='api_mobile_logout'),
+
+# Add this to EnergySafe/urls.py in the urlpatterns list
+
+# API for mobile app - user appliances
+path('api/mobile/appliances/', api_views.get_user_appliances, name='api_mobile_appliances'),
+# Add this to EnergySafe/urls.py in the urlpatterns list
+
+# API for mobile app - appliance data
+path('api/mobile/appliance/<str:appliance_id>/data/', api_views.get_appliance_data, name='api_appliance_data'),
 ]
 
