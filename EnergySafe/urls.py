@@ -61,4 +61,10 @@ urlpatterns = [
     path('devices/device/edit/', device_views.edit_device, name='edit_device'),
     path('devices/appliance/delete/', device_views.delete_appliance, name='delete_appliance'),
     path('devices/appliance/edit/', device_views.edit_appliance, name='edit_appliance'),
-]
+
+    # Agregar esta línea a urlpatterns en EnergySafe/urls.py
+# Justo debajo de path('api/device-control/', api_views.device_control, name='device_control'),
+
+path('api/device-auto-shutdown/', api_views.device_auto_shutdown, name='device_auto_shutdown'),
+    path('api/device-auto-shutdown-config/', api_views.device_auto_shutdown_config, name='device_auto_shutdown_config'),
+    ]

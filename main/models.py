@@ -206,3 +206,33 @@ class ApplianceControlState(models.Model):
         
     def __str__(self):
         return f"{self.appliance.nombre} - {'ON' if self.state else 'OFF'}"
+    
+# main/models.py - Añadir esta clase al final
+
+class ApplianceAutoShutdown(models.Model):
+    def generate_id():
+        return get_random_string(24, allowed_chars='abcdef0123456789')
+        
+    id = models.CharField(
+        primary_key=True,
+        max_length=24,
+        default=generate_id,
+        editable=False
+    )
+    appliance = models.OneToOneField(ConnectedAppliance, on_delete=models.CASCADE, related_name='auto_shutdown')
+    hours_on = models.IntegerField(default=0)
+    minutes_on = models.IntegerField(default=0)
+    hours_off = models.IntegerField(default=0)
+    minutes_off = models.IntegerField(default=0)
+    enabled = models.BooleanField(default=False)
+    current_state = models.BooleanField(default=True)  # True = ON, False = OFF
+    last_switch = models.DateTimeField(auto_now_add=True)
+    next_switch = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = "appliance_auto_shutdown"
+        
+    def __str__(self):
+        return f"{self.appliance.nombre} - {'Activo' if self.enabled else 'Inactivo'}"
