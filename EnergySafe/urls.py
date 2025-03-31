@@ -67,4 +67,5 @@ urlpatterns = [
 
 path('api/device-auto-shutdown/', api_views.device_auto_shutdown, name='device_auto_shutdown'),
     path('api/device-auto-shutdown-config/', api_views.device_auto_shutdown_config, name='device_auto_shutdown_config'),
+    path('api/auto-shutdown-status/<str:appliance_id>/', api_views.get_auto_shutdown_status, name='auto_shutdown_status'),
     ]

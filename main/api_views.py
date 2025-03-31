@@ -767,6 +767,13 @@ def device_auto_shutdown(request):
     Endpoint para configurar el auto-apagado de un dispositivo
     POST /api/device-auto-shutdown/
     """
+    # Imprimir información detallada de la solicitud
+    print("\n" + "=" * 50)
+    print("CONFIGURACIÓN DE AUTO-SHUTDOWN")
+    print("=" * 50)
+    print(f"Método de solicitud: {request.method}")
+    print(f"Contenido de la solicitud: {request.body}")
+
     # Manejar CORS manualmente
     response = JsonResponse({'status': 'ok'})
     response['Access-Control-Allow-Origin'] = '*'
@@ -781,7 +788,7 @@ def device_auto_shutdown(request):
         # Decodificar los datos JSON recibidos
         data = json.loads(request.body)
         
-        # Extraer los datos de la solicitud
+        # Extraer los datos de la solicitud con más información de depuración
         appliance_id = data.get('appliance_id')
         hours_on = data.get('hours_on', 0)
         minutes_on = data.get('minutes_on', 0)
@@ -789,21 +796,34 @@ def device_auto_shutdown(request):
         minutes_off = data.get('minutes_off', 0)
         enabled = data.get('enabled', False)
         
+        # Log detallado de los datos recibidos
+        print("Datos recibidos:")
+        print(f"Appliance ID: {appliance_id}")
+        print(f"Horas encendido: {hours_on}")
+        print(f"Minutos encendido: {minutes_on}")
+        print(f"Horas apagado: {hours_off}")
+        print(f"Minutos apagado: {minutes_off}")
+        print(f"Habilitado: {enabled}")
+        
         # Validar datos mínimos requeridos
         if not appliance_id:
+            print("ERROR: No se proporcionó ID de electrodoméstico")
             return JsonResponse({'error': 'Se requiere ID del electrodoméstico'}, status=400)
         
-        # Buscar el electrodoméstico
+        # Buscar el electrodoméstico con más información de depuración
         try:
             appliance = ConnectedAppliance.objects.get(id=appliance_id)
+            print(f"Electrodoméstico encontrado: {appliance.nombre}")
         except ConnectedAppliance.DoesNotExist:
+            print(f"ERROR: Electrodoméstico con ID {appliance_id} no encontrado")
             return JsonResponse({'error': f'Electrodoméstico con ID {appliance_id} no encontrado'}, status=404)
         
         # Usar timezone-aware datetime
         from django.utils import timezone
         now = timezone.now()
         
-        # Crear o actualizar la configuración de auto-apagado
+        # Crear o actualizar la configuración de auto-apagado con más logs
+        print("Creando/Actualizando configuración de auto-apagado...")
         auto_shutdown, created = ApplianceAutoShutdown.objects.update_or_create(
             appliance=appliance,
             defaults={
@@ -818,16 +838,21 @@ def device_auto_shutdown(request):
             }
         )
         
+        print(f"Configuración {'creada' if created else 'actualizada'} exitosamente")
+        print(f"ID de configuración: {auto_shutdown.id}")
+        print(f"Próximo cambio: {auto_shutdown.next_switch}")
+        
         # Si se está activando, asegurarse de que el dispositivo esté encendido
         if enabled:
-            # Crear o actualizar el estado de control
-            ApplianceControlState.objects.update_or_create(
+            print("Actualizando estado de control del dispositivo...")
+            control_state, control_created = ApplianceControlState.objects.update_or_create(
                 appliance=appliance,
                 defaults={
                     'state': True,
                     'last_updated': now
                 }
             )
+            print(f"Estado de control {'creado' if control_created else 'actualizado'}")
         
         # Generar la respuesta
         return JsonResponse({
@@ -842,11 +867,13 @@ def device_auto_shutdown(request):
         })
         
     except json.JSONDecodeError:
+        print("ERROR: JSON inválido")
         return JsonResponse({'error': 'JSON inválido'}, status=400)
     except Exception as e:
         import traceback
-        print(f"Error al configurar auto-apagado: {str(e)}")
-        print(traceback.format_exc())
+        print("ERROR CRÍTICO AL CONFIGURAR AUTO-APAGADO:")
+        print(f"Error: {str(e)}")
+        traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
@@ -920,3 +947,33 @@ def device_auto_shutdown_config(request):
         print(f"Error al obtener configuración de auto-apagado: {str(e)}")
         print(traceback.format_exc())
         return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+def get_auto_shutdown_status(request, appliance_id):
+    try:
+        config = ApplianceAutoShutdown.objects.get(appliance_id=appliance_id)
+        
+        # Obtener estado de control actual
+        control_state, _ = ApplianceControlState.objects.get_or_create(
+            appliance_id=appliance_id,
+            defaults={'state': True}
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'config': {
+                'enabled': config.enabled,
+                'hours_on': config.hours_on,
+                'minutes_on': config.minutes_on,
+                'hours_off': config.hours_off,
+                'minutes_off': config.minutes_off,
+                'current_state': config.current_state,
+                'next_switch': config.next_switch.isoformat(),
+                'current_device_state': control_state.state
+            }
+        })
+    except ApplianceAutoShutdown.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'No hay configuración de auto-apagado'
+        }, status=404)

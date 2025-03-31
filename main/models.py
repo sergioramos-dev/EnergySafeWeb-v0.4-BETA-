@@ -208,7 +208,6 @@ class ApplianceControlState(models.Model):
         return f"{self.appliance.nombre} - {'ON' if self.state else 'OFF'}"
     
 # main/models.py - Añadir esta clase al final
-
 class ApplianceAutoShutdown(models.Model):
     def generate_id():
         return get_random_string(24, allowed_chars='abcdef0123456789')
@@ -236,3 +235,12 @@ class ApplianceAutoShutdown(models.Model):
         
     def __str__(self):
         return f"{self.appliance.nombre} - {'Activo' if self.enabled else 'Inactivo'}"
+
+    def save(self, *args, **kwargs):
+        # Asegurarse de que next_switch se actualice correctamente
+        if not self.next_switch or self.next_switch <= timezone.now():
+            self.next_switch = timezone.now() + timezone.timedelta(
+                hours=self.hours_on if self.current_state else self.hours_off,
+                minutes=self.minutes_on if self.current_state else self.minutes_off
+            )
+        super().save(*args, **kwargs)
