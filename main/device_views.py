@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+from main.models import ConnectedAppliance, UserDevice
+
 @login_required
 def devices_dashboard(request):
     """Vista principal para dispositivos"""
@@ -330,6 +332,269 @@ def appliance_details(request, appliance_id):
     return redirect('devices')
 
 @login_required
+@csrf_exempt
+def delete_device(request):
+    """Elimina un dispositivo EnergySafe del usuario"""
+    if request.method == 'POST':
+        try:
+            # Check if request is JSON
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                device_id = data.get('device_id')
+            else:
+                # Handle form data
+                device_id = request.POST.get('device_id')
+            
+            if not device_id:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'ID del dispositivo no proporcionado'
+                }, status=400)
+                
+            # Verificar que el dispositivo pertenece al usuario
+            user_device = UserDevice.objects.get(id=device_id, usuario_id=str(request.user.id))
+            
+            # Desactivar el dispositivo en lugar de eliminarlo permanentemente
+            user_device.activo = False
+            user_device.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Dispositivo eliminado correctamente'
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Formato JSON inválido'
+            }, status=400)
+        except UserDevice.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'No se encontró el dispositivo o no tienes permisos para eliminarlo'
+            }, status=404)
+        except Exception as e:
+            import traceback
+            print(f"Error al eliminar dispositivo: {str(e)}")
+            print(traceback.format_exc())
+            return JsonResponse({
+                'success': False,
+                'message': f'Error: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Método no permitido'
+    }, status=405)
+
+@login_required
+@csrf_exempt
+def delete_appliance(request):
+    """Elimina un electrodoméstico"""
+    if request.method == 'POST':
+        try:
+            # Check if request is JSON
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                appliance_id = data.get('appliance_id')
+            else:
+                # Handle form data
+                appliance_id = request.POST.get('appliance_id')
+                
+            if not appliance_id:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'ID del electrodoméstico no proporcionado'
+                }, status=400)
+            
+            # Obtener el electrodoméstico
+            appliance = ConnectedAppliance.objects.get(id=appliance_id)
+            
+            # Verificar que el usuario tiene permisos para este electrodoméstico
+            if str(appliance.user_device.usuario_id) != str(request.user.id):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No tienes permisos para eliminar este electrodoméstico'
+                }, status=403)
+            
+            # Desactivar en lugar de eliminar
+            appliance.activo = False
+            appliance.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Electrodoméstico eliminado correctamente'
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Formato JSON inválido'
+            }, status=400)
+        except ConnectedAppliance.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'No se encontró el electrodoméstico'
+            }, status=404)
+        except Exception as e:
+            import traceback
+            print(f"Error al eliminar electrodoméstico: {str(e)}")
+            print(traceback.format_exc())
+            return JsonResponse({
+                'success': False,
+                'message': f'Error: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Método no permitido'
+    }, status=405)
+
+@login_required
+@csrf_exempt
+def edit_device(request):
+    """Edita un dispositivo EnergySafe"""
+    if request.method == 'POST':
+        try:
+            # Check if request is JSON
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                device_id = data.get('device_id')
+                nombre_personalizado = data.get('nombre_personalizado')
+                ubicacion = data.get('ubicacion')
+            else:
+                # Handle form data
+                device_id = request.POST.get('device_id')
+                nombre_personalizado = request.POST.get('nombre_personalizado')
+                ubicacion = request.POST.get('ubicacion')
+            
+            if not device_id:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'ID del dispositivo no proporcionado'
+                }, status=400)
+                
+            # Verificar que el dispositivo pertenece al usuario
+            user_device = UserDevice.objects.get(id=device_id, usuario_id=str(request.user.id))
+            
+            # Actualizar campos
+            if nombre_personalizado:
+                user_device.nombre_personalizado = nombre_personalizado
+            if ubicacion:
+                user_device.ubicacion = ubicacion
+            
+            user_device.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Dispositivo actualizado correctamente'
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Formato JSON inválido'
+            }, status=400)
+        except UserDevice.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'No se encontró el dispositivo o no tienes permisos para editarlo'
+            }, status=404)
+        except Exception as e:
+            import traceback
+            print(f"Error al editar dispositivo: {str(e)}")
+            print(traceback.format_exc())
+            return JsonResponse({
+                'success': False,
+                'message': f'Error: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Método no permitido'
+    }, status=405)
+
+@login_required
+@csrf_exempt
+def edit_appliance(request):
+    """Edita un electrodoméstico"""
+    if request.method == 'POST':
+        try:
+            # Check if request is JSON
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                appliance_id = data.get('appliance_id')
+                nombre = data.get('nombre')
+                tipo = data.get('tipo')
+                icono = data.get('icono')
+                voltaje_str = data.get('voltaje')
+            else:
+                # Handle form data
+                appliance_id = request.POST.get('appliance_id')
+                nombre = request.POST.get('nombre')
+                tipo = request.POST.get('tipo')
+                icono = request.POST.get('icono')
+                voltaje_str = request.POST.get('voltaje')
+            
+            if not appliance_id:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'ID del electrodoméstico no proporcionado'
+                }, status=400)
+                
+            # Obtener el electrodoméstico
+            appliance = ConnectedAppliance.objects.get(id=appliance_id)
+            
+            # Verificar que el usuario tiene permisos para este electrodoméstico
+            if str(appliance.user_device.usuario_id) != str(request.user.id):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No tienes permisos para editar este electrodoméstico'
+                }, status=403)
+            
+            # Actualizar campos
+            if nombre:
+                appliance.nombre = nombre
+            if tipo:
+                appliance.tipo = tipo
+            if icono:
+                appliance.icono = icono
+                
+            if voltaje_str:
+                try:
+                    voltaje = int(voltaje_str)
+                    appliance.voltaje = voltaje
+                except ValueError:
+                    pass  # Ignorar error de conversión
+            
+            appliance.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Electrodoméstico actualizado correctamente'
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Formato JSON inválido'
+            }, status=400)
+        except ConnectedAppliance.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'No se encontró el electrodoméstico'
+            }, status=404)
+        except Exception as e:
+            import traceback
+            print(f"Error al editar electrodoméstico: {str(e)}")
+            print(traceback.format_exc())
+            return JsonResponse({
+                'success': False,
+                'message': f'Error: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Método no permitido'
+    }, status=405)
+
+@login_required
 def appliance_details(request, appliance_id):
     """Vista detallada para la información y datos de consumo de un electrodoméstico."""
     from main.models import ConnectedAppliance, ApplianceConsumption
@@ -637,4 +902,4 @@ def appliance_details(request, appliance_id):
         return render(request, 'devices-info.html', context)
         
     except ConnectedAppliance.DoesNotExist:
-        return redirect('devices')  
+        return redirect('devices')      

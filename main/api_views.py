@@ -5,10 +5,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
 from datetime import datetime
-from main.models import ConnectedAppliance, ApplianceConsumption
+from main.models import ConnectedAppliance, ApplianceConsumption, ApplianceAlert, ApplianceControlState
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from main.models import ConnectedAppliance, ApplianceAlert
 from datetime import datetime
 import json
 
@@ -83,144 +82,8 @@ def device_alerts(request):
         print(f"Error al procesar alerta: {str(e)}")
         print(traceback.format_exc())
         response = JsonResponse({'error': str(e)}, status=500)
-        return response        
-# Add this function to main/api_views.py
+        return response
 
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from main.models import ApplianceConsumption, ConnectedAppliance
-from django.utils.timezone import now
-from datetime import timedelta
-
-@login_required
-def get_latest_consumption(request, appliance_id):
-    """
-    API endpoint to get the latest consumption data for a specific appliance.
-    GET /api/consumption/latest/{appliance_id}/
-    """
-    try:
-        # Verify the user has access to this appliance
-        appliance = ConnectedAppliance.objects.get(id=appliance_id)
-        
-        if str(appliance.user_device.usuario_id) != str(request.user.id):
-            return JsonResponse({
-                'success': False,
-                'message': 'No tienes acceso a este electrodoméstico'
-            }, status=403)
-        
-        # Get the latest consumption data
-        latest_consumption = ApplianceConsumption.objects.filter(
-            appliance_id=appliance_id
-        ).order_by('-fecha').first()
-        
-        if not latest_consumption:
-            return JsonResponse({
-                'success': False,
-                'message': 'No hay datos de consumo para este electrodoméstico'
-            })
-        
-        # Get consumption data for the last 7 days for the chart
-        seven_days_ago = timezone.now() - timedelta(days=7)
-        consumption_data = list(ApplianceConsumption.objects.filter(
-            appliance_id=appliance_id,
-            fecha__gte=seven_days_ago
-        ).order_by('-fecha')[:30])  # Limit to 30 records
-        
-        # Calculate daily consumption
-        days = ['lun', 'mar', 'mir', 'jue', 'vie', 'sab', 'dom']
-        daily_consumption = {day: 0 for day in days}
-        
-        # Calculate stats
-        voltage_values = [c.voltaje for c in consumption_data if c.voltaje is not None]
-        current_values = [c.corriente for c in consumption_data if c.corriente is not None]
-        
-        voltage_stats = {
-            'avg': sum(voltage_values) / len(voltage_values) if voltage_values else 0,
-            'max': max(voltage_values) if voltage_values else 0,
-            'min': min(voltage_values) if voltage_values else 0
-        }
-        
-        current_stats = {
-            'avg': sum(current_values) / len(current_values) if current_values else 0,
-            'max': max(current_values) if current_values else 0,
-            'min': min(current_values) if current_values else 0
-        }
-        
-        # Process the consumption data for the chart
-        for consumption in consumption_data:
-            if hasattr(consumption, 'fecha') and consumption.fecha:
-                day_name = consumption.fecha.strftime('%a').lower()[:3]
-                if day_name in daily_consumption:
-                    daily_consumption[day_name] += consumption.consumo or 0
-        
-        # Get recent history for the table
-        history = []
-        for i, c in enumerate(consumption_data[:10]):  # Limit to 10 most recent records
-            history.append({
-                'id': i + 1,
-                'fecha': c.fecha.strftime('%Y/%m/%d %H:%M:%S') if c.fecha else '',
-                'voltaje': c.voltaje or 0,
-                'corriente': c.corriente or 0,
-                'potencia': c.potencia or 0,
-                'consumo': c.consumo or 0,
-                'frecuencia': c.frecuencia or 60
-            })
-        
-        # Get active alerts
-        alerts = []
-        try:
-            alert_objects = ApplianceAlert.objects.filter(
-                appliance=appliance,
-                atendida=False
-            ).order_by('-fecha')[:5]
-            
-            for alert in alert_objects:
-                alerts.append({
-                    'id': str(alert.id),
-                    'fecha': alert.fecha.strftime('%Y/%m/%d %H:%M:%S') if alert.fecha else '',
-                    'tipo': alert.tipo,
-                    'mensaje': alert.mensaje,
-                    'atendida': alert.atendida
-                })
-        except Exception as e:
-            print(f"Error al obtener alertas: {e}")
-            import traceback
-            print(traceback.format_exc())
-
-        
-        # Return the processed data
-        return JsonResponse({
-            'success': True,
-            'latest': {
-                'fecha': latest_consumption.fecha.strftime('%Y-%m-%d %H:%M:%S') if latest_consumption.fecha else '',
-                'voltaje': latest_consumption.voltaje or 0,
-                'corriente': latest_consumption.corriente or 0,
-                'potencia': latest_consumption.potencia or 0,
-                'consumo': latest_consumption.consumo or 0,
-                'frecuencia': latest_consumption.frecuencia or 60
-            },
-            'daily_consumption': daily_consumption,
-            'voltage_stats': voltage_stats,
-            'current_stats': current_stats,
-            'history': history,
-            'alerts': alerts
-        })
-    
-    except ConnectedAppliance.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'message': 'Electrodoméstico no encontrado'
-        }, status=404)
-    
-    except Exception as e:
-        import traceback
-        print(f"Error in get_latest_consumption: {str(e)}")
-        print(traceback.format_exc())
-        return JsonResponse({
-            'success': False,
-            'message': f'Error al obtener datos: {str(e)}'
-        }, status=500)
-        
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from main.models import ApplianceConsumption, ConnectedAppliance
@@ -301,6 +164,38 @@ def get_latest_consumption(request, appliance_id):
                 'frecuencia': c.frecuencia or 60
             })
         
+        # Get active alerts
+        alerts = []
+        try:
+            alert_objects = ApplianceAlert.objects.filter(
+                appliance=appliance,
+                atendida=False
+            ).order_by('-fecha')[:5]
+            
+            for alert in alert_objects:
+                alerts.append({
+                    'id': str(alert.id),
+                    'fecha': alert.fecha.strftime('%Y/%m/%d %H:%M:%S') if alert.fecha else '',
+                    'tipo': alert.tipo,
+                    'mensaje': alert.mensaje,
+                    'atendida': alert.atendida
+                })
+        except Exception as e:
+            print(f"Error al obtener alertas: {e}")
+            import traceback
+            print(traceback.format_exc())
+
+        # Get control state
+        try:
+            control_state, created = ApplianceControlState.objects.get_or_create(
+                appliance=appliance,
+                defaults={'state': True}
+            )
+            is_device_on = control_state.state
+        except Exception as e:
+            is_device_on = True  # Default to ON if there's an error
+            print(f"Error al obtener estado de control: {e}")
+        
         # Return the processed data
         return JsonResponse({
             'success': True,
@@ -315,7 +210,9 @@ def get_latest_consumption(request, appliance_id):
             'daily_consumption': daily_consumption,
             'voltage_stats': voltage_stats,
             'current_stats': current_stats,
-            'history': history
+            'history': history,
+            'alerts': alerts,
+            'is_device_on': is_device_on
         })
     
     except ConnectedAppliance.DoesNotExist:
@@ -332,72 +229,6 @@ def get_latest_consumption(request, appliance_id):
             'success': False,
             'message': f'Error al obtener datos: {str(e)}'
         }, status=500)
-    
-@csrf_exempt
-@require_http_methods(["POST", "OPTIONS"])
-def device_alerts(request):
-    """
-    Endpoint para recibir alertas de dispositivos ESP32.
-    POST /api/device-alerts/
-    """
-    # Manejar CORS manualmente
-    response = JsonResponse({'status': 'ok'})
-    response['Access-Control-Allow-Origin'] = '*'
-    response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-    response['Access-Control-Allow-Headers'] = 'Content-Type'
-    
-    # Si es una solicitud OPTIONS (preflight), devolver respuesta vacía con headers CORS
-    if request.method == 'OPTIONS':
-        return response
-    
-    try:
-        # Decodificar los datos JSON recibidos
-        data = json.loads(request.body)
-        
-        # Extraer los datos de la solicitud
-        appliance_id = data.get('appliance_id')
-        tipo = data.get('tipo', 'voltaje')
-        mensaje = data.get('mensaje', 'Alerta de voltaje anormal')
-        
-        # Validar datos mínimos requeridos
-        if not appliance_id:
-            response = JsonResponse({'error': 'Se requiere ID del electrodoméstico'}, status=400)
-            return response
-        
-        # Buscar el electrodoméstico
-        try:
-            appliance = ConnectedAppliance.objects.get(id=appliance_id)
-        except ConnectedAppliance.DoesNotExist:
-            response = JsonResponse({'error': f'Electrodoméstico con ID {appliance_id} no encontrado'}, status=404)
-            return response
-        
-        # Crear el registro de alerta
-        alert = ApplianceAlert.objects.create(
-            appliance=appliance,
-            fecha=datetime.now(),
-            tipo=tipo,
-            mensaje=mensaje,
-            atendida=False
-        )
-        
-        # Generar la respuesta
-        response = JsonResponse({
-            'success': True,
-            'message': 'Alerta recibida y almacenada correctamente',
-            'data': {
-                'id': alert.id,
-                'appliance_id': appliance.id,
-                'timestamp': alert.fecha.isoformat()
-            }
-        })
-        return response
-        
-    except json.JSONDecodeError:
-        response = JsonResponse({'error': 'JSON inválido'}, status=400)
-        return response
-    except Exception as e:
-        response = JsonResponse({'error': str(e)}, status=500)
-        return response
     
 @csrf_exempt
 @require_http_methods(["POST", "OPTIONS"])
@@ -508,15 +339,11 @@ def mark_alert_attended(request, alert_id):
             'success': False,
             'message': f'Error: {str(e)}'
         }, status=500)
-    
-# Add this to main/api_views.py
 
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from main.models import UserDevice, ConnectedAppliance
-
-# Replace the get_user_appliances function in main/api_views.py with this version
 
 @csrf_exempt
 def get_user_appliances(request):
@@ -609,8 +436,6 @@ def get_user_appliances(request):
             'success': False,
             'message': f'Error: {str(e)}'
         }, status=500)
-    
-# Add this to main/api_vi# Replace the get_appliance_data function in main/api_views.py with this version
 
 @csrf_exempt
 def get_appliance_data(request, appliance_id):
@@ -660,6 +485,17 @@ def get_appliance_data(request, appliance_id):
                 # Get the first item (latest)
                 consumption = all_consumption[0] if all_consumption else None
                 
+                # Get control state
+                try:
+                    control_state, created = ApplianceControlState.objects.get_or_create(
+                        appliance=appliance,
+                        defaults={'state': True}
+                    )
+                    is_device_on = control_state.state
+                except Exception as e:
+                    is_device_on = True  # Default to ON if there's an error
+                    print(f"Error getting control state: {e}")
+                
                 # If no consumption data, return default values
                 if not consumption:
                     return JsonResponse({
@@ -670,7 +506,8 @@ def get_appliance_data(request, appliance_id):
                             'power': 0,
                             'energy': 0,
                             'frequency': 60,
-                            'timestamp': str(appliance.fecha_conexion)
+                            'timestamp': str(appliance.fecha_conexion),
+                            'is_device_on': is_device_on
                         }
                     })
                 
@@ -683,7 +520,8 @@ def get_appliance_data(request, appliance_id):
                         'power': consumption.potencia,
                         'energy': consumption.consumo,
                         'frequency': consumption.frecuencia,
-                        'timestamp': str(consumption.fecha)
+                        'timestamp': str(consumption.fecha),
+                        'is_device_on': is_device_on
                     }
                 })
                 
@@ -707,3 +545,123 @@ def get_appliance_data(request, appliance_id):
             'success': False,
             'message': f'Error: {str(e)}'
         }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST", "OPTIONS"])
+def device_control(request):
+    """
+    Endpoint para controlar dispositivos desde la app móvil.
+    POST /api/device-control/
+    """
+    # Manejar CORS manualmente
+    response = JsonResponse({'status': 'ok'})
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    
+    # Si es una solicitud OPTIONS (preflight), devolver respuesta vacía con headers CORS
+    if request.method == 'OPTIONS':
+        return response
+    
+    try:
+        # Decodificar los datos JSON recibidos
+        data = json.loads(request.body)
+        
+        # Extraer los datos de la solicitud
+        appliance_id = data.get('appliance_id')
+        state = data.get('state', False)  # False = OFF, True = ON
+        
+        # Validar datos mínimos requeridos
+        if not appliance_id:
+            return JsonResponse({'error': 'Se requiere ID del electrodoméstico'}, status=400)
+        
+        # Buscar el electrodoméstico
+        try:
+            appliance = ConnectedAppliance.objects.get(id=appliance_id)
+        except ConnectedAppliance.DoesNotExist:
+            return JsonResponse({'error': f'Electrodoméstico con ID {appliance_id} no encontrado'}, status=404)
+        
+        # Crear o actualizar el estado del dispositivo en la base de datos
+        from django.utils import timezone
+        
+        ApplianceControlState.objects.update_or_create(
+            appliance=appliance,
+            defaults={
+                'state': state,
+                'last_updated': timezone.now()
+            }
+        )
+        
+        # Generar la respuesta
+        return JsonResponse({
+            'success': True,
+            'message': f'Dispositivo {"encendido" if state else "apagado"} correctamente',
+            'data': {
+                'appliance_id': appliance.id,
+                'state': state,
+                'timestamp': timezone.now().isoformat()
+            }
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        import traceback
+        print(f"Error en device_control: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["GET", "OPTIONS"])
+def device_control_state(request):
+    """
+    Endpoint para que los dispositivos ESP32 obtengan su estado de control actual.
+    GET /api/device-control-state/?appliance_id=XXX
+    """
+    # Manejar CORS manualmente
+    response = JsonResponse({'status': 'ok'})
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response['Access-Control-Allow-Headers'] = 'Content-Type'
+    
+    # Si es una solicitud OPTIONS (preflight), devolver respuesta vacía con headers CORS
+    if request.method == 'OPTIONS':
+        return response
+    
+    try:
+        # Obtener el ID del electrodoméstico de los parámetros de consulta
+        appliance_id = request.GET.get('appliance_id')
+        
+        # Validar datos mínimos requeridos
+        if not appliance_id:
+            return JsonResponse({'error': 'Se requiere ID del electrodoméstico'}, status=400)
+        
+        # Buscar el electrodoméstico
+        try:
+            appliance = ConnectedAppliance.objects.get(id=appliance_id)
+        except ConnectedAppliance.DoesNotExist:
+            return JsonResponse({'error': f'Electrodoméstico con ID {appliance_id} no encontrado'}, status=404)
+        
+        # Obtener el estado de control actual
+        try:
+            control_state, created = ApplianceControlState.objects.get_or_create(
+                appliance=appliance,
+                defaults={'state': True}
+            )
+            state = control_state.state
+        except Exception as e:
+            # Si no existe estado de control, asumir encendido
+            state = True
+            print(f"Error: {e}")
+        
+        # Generar la respuesta
+        return JsonResponse({
+            'success': True,
+            'state': state
+        })
+        
+    except Exception as e:
+        import traceback
+        print(f"Error en device_control_state: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=500)

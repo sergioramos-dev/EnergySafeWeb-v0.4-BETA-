@@ -1,4 +1,4 @@
-# EnergySafe/urls.py - Versión mínima
+# EnergySafe/urls.py - Actualizado
 from django.contrib import admin
 from django.urls import include, path
 from main import api_views, views, device_views
@@ -24,18 +24,13 @@ urlpatterns = [
     path('devices/register/', device_views.register_energy_safe, name='register_device'),
 
     path('api/consumption/latest/<str:appliance_id>/', api_views.get_latest_consumption, name='get_latest_consumption'),
-    # Add this to EnergySafe/urls.py in the urlpatterns list
-    path('api/consumption/latest/<str:appliance_id>/', api_views.get_latest_consumption, name='get_latest_consumption'),
-        path('get-csrf-token/', views.get_csrf_token, name='get_csrf_token'),
-            path('mobile/login/', views.mobile_login, name='mobile_login'),
+    path('get-csrf-token/', views.get_csrf_token, name='get_csrf_token'),
+    path('mobile/login/', views.mobile_login, name='mobile_login'),
 
-
-
-    # En EnergySafe/urls.py
+    # Rutas para dispositivos
     path('devices/appliance/add/', device_views.add_appliance, name='add_appliance'),
     path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='appliance_details'),
     path('devices/appliance/<str:appliance_id>/', device_views.appliance_details, name='devices-info'),
-
 
     path('blog/', views.blog, name='blog'),
     path('soporte/', views.soporte, name='soporte'),
@@ -46,31 +41,24 @@ urlpatterns = [
 
     # API
     path('api/device-readings/', api_views.device_readings, name='device_readings'),
-
-    path('api/device-readings/', api_views.device_readings, name='device_readings'),
     path('api/device-alerts/', api_views.device_alerts, name='device_alerts'),
+    path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
 
-    # Añade esta línea a tus urlpatterns
-path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
+    # Nuevas rutas para control de dispositivos
+    path('api/device-control/', api_views.device_control, name='device_control'),
+    path('api/device-control-state/', api_views.device_control_state, name='device_control_state'),
 
-# Añade esta línea a tus urlpatterns
-path('api/alerts/attend/<str:alert_id>/', api_views.mark_alert_attended, name='mark_alert_attended'),
+    # API para aplicación móvil
+    path('api/mobile/login/', views.mobile_login, name='api_mobile_login'),
+    path('api/mobile/register/', views.mobile_register, name='api_mobile_register'),
+    path('api/mobile/verify-token/', views.verify_token, name='api_verify_token'),
+    path('api/mobile/logout/', views.mobile_logout, name='api_mobile_logout'),
+    path('api/mobile/appliances/', api_views.get_user_appliances, name='api_mobile_appliances'),
+    path('api/mobile/appliance/<str:appliance_id>/data/', api_views.get_appliance_data, name='api_appliance_data'),
 
-# Añadir estas líneas a EnergySafe/urls.py en el urlpatterns
-
-# API para aplicación móvil
-path('api/mobile/login/', views.mobile_login, name='api_mobile_login'),
-path('api/mobile/register/', views.mobile_register, name='api_mobile_register'),
-path('api/mobile/verify-token/', views.verify_token, name='api_verify_token'),
-path('api/mobile/logout/', views.mobile_logout, name='api_mobile_logout'),
-
-# Add this to EnergySafe/urls.py in the urlpatterns list
-
-# API for mobile app - user appliances
-path('api/mobile/appliances/', api_views.get_user_appliances, name='api_mobile_appliances'),
-# Add this to EnergySafe/urls.py in the urlpatterns list
-
-# API for mobile app - appliance data
-path('api/mobile/appliance/<str:appliance_id>/data/', api_views.get_appliance_data, name='api_appliance_data'),
+    # En urlpatterns, agregar estas rutas
+    path('devices/device/delete/', device_views.delete_device, name='delete_device'),
+    path('devices/device/edit/', device_views.edit_device, name='edit_device'),
+    path('devices/appliance/delete/', device_views.delete_appliance, name='delete_appliance'),
+    path('devices/appliance/edit/', device_views.edit_appliance, name='edit_appliance'),
 ]
-

@@ -116,7 +116,7 @@ class ConnectedAppliance(models.Model):
         db_table = "connected_appliances"
         
     def __str__(self):
-        return f"{self.nombre} - {self.user_device.usuario.username}"
+        return f"{self.nombre} - {self.user_device.usuario_id}"
 
 class ApplianceConsumption(models.Model):
     def generate_id():
@@ -164,8 +164,6 @@ class ApplianceAlert(models.Model):
     def __str__(self):
         return f"{self.appliance.nombre} - {self.tipo} - {self.fecha}"
     
-# Añadir este modelo a main/models.py después de los modelos existentes
-
 class AuthToken(models.Model):
     def generate_id():
         return get_random_string(40, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
@@ -188,3 +186,23 @@ class AuthToken(models.Model):
         if not self.expires_at:
             return False
         return timezone.now() > self.expires_at
+
+class ApplianceControlState(models.Model):
+    def generate_id():
+        return get_random_string(24, allowed_chars='abcdef0123456789')
+        
+    id = models.CharField(
+        primary_key=True,
+        max_length=24,
+        default=generate_id,
+        editable=False
+    )
+    appliance = models.OneToOneField(ConnectedAppliance, on_delete=models.CASCADE, related_name='control_state')
+    state = models.BooleanField(default=True)  # True = ON, False = OFF
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = "appliance_control_states"
+        
+    def __str__(self):
+        return f"{self.appliance.nombre} - {'ON' if self.state else 'OFF'}"

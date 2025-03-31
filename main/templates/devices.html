@@ -97,6 +97,7 @@
       display: flex;
       padding: 25px;
       align-items: center;
+      justify-content: space-between;
     }
     
     .device-icon {
@@ -169,6 +170,32 @@
       margin-right: 8px;
       display: inline-block;
       animation: pulse 2s infinite;
+    }
+    
+    .device-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .device-actions button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+    
+    .device-actions button:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+    
+    .btn-edit {
+      color: var(--accent-blue);
+    }
+    
+    .btn-delete {
+      color: var(--danger-color);
     }
     
     @keyframes pulse {
@@ -400,7 +427,28 @@
     .appliance-footer {
       padding: 15px 20px;
       border-top: 1px solid rgba(0, 0, 0, 0.05);
-      text-align: right;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .appliance-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .appliance-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 5px;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+    
+    .appliance-actions button:hover {
+      background-color: rgba(0,0,0,0.05);
     }
     
     .btn-details {
@@ -478,7 +526,7 @@
       box-shadow: 0 8px 20px rgba(1, 195, 141, 0.3);
     }
     
-    /* Modal styles */
+    /* Modals - Add, Edit, Delete */
     .modal {
       display: none;
       position: fixed;
@@ -680,7 +728,25 @@
       box-shadow: 0 5px 10px rgba(1, 195, 141, 0.2);
     }
     
-    .btn-success:disabled {
+    .btn-danger {
+      background: linear-gradient(90deg, #dc3545, #b02a37);
+      border: none;
+      color: white;
+      padding: 10px 25px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(220, 53, 69, 0.2);
+    }
+    
+    .btn-success:disabled,
+    .btn-danger:disabled {
       background: #cccccc;
       cursor: not-allowed;
       transform: none;
@@ -862,6 +928,22 @@
           </div>
           <div class="device-status">Conectado y funcionando</div>
         </div>
+        <div class="device-actions">
+          <button class="btn-edit" onclick="openEditDeviceModal('{{ user_device.id }}', '{{ user_device.nombre_personalizado|default:device_info.nombre }}', '{{ user_device.ubicacion|default:'' }}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button class="btn-delete" onclick="openDeleteDeviceModal('{{ user_device.id }}', '{{ user_device.nombre_personalizado|default:device_info.nombre }}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -938,6 +1020,22 @@
           <a href="/devices/appliance/{{ appliance.id }}/">
             <button class="btn-details">Ver Detalles</button>
           </a>
+          <div class="appliance-actions">
+            <button class="btn-edit" title="Editar" onclick="openEditApplianceModal('{{ appliance.id }}', '{{ appliance.nombre }}', '{{ appliance.tipo }}', '{{ appliance.voltaje }}', '{{ appliance.icono }}')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button class="btn-delete" title="Eliminar" onclick="openDeleteApplianceModal('{{ appliance.id }}', '{{ appliance.nombre }}')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       {% endfor %}
@@ -1100,6 +1198,169 @@
     </div>
   </div>
 
+  <!-- Modal for editing device -->
+  <div id="modal-edit-device" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Dispositivo</h3>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="form-edit-device">
+          {% csrf_token %}
+          <input type="hidden" id="edit-device-id" name="device_id">
+          <div class="form-group">
+            <label class="form-label" for="edit-device-name">Nombre del Dispositivo</label>
+            <input type="text" class="form-control" id="edit-device-name" name="nombre_personalizado" placeholder="Ej: Mi EnergySafe">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-device-location">Ubicación</label>
+            <input type="text" class="form-control" id="edit-device-location" name="ubicacion" placeholder="Ej: Sala de estar">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="btn-cancel-edit-device">Cancelar</button>
+            <button type="submit" class="btn-success" id="btn-update-device">Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for deleting device -->
+  <div id="modal-delete-device" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Eliminar Dispositivo</h3>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas eliminar el dispositivo <strong id="delete-device-name"></strong>?</p>
+        <p class="text-danger">¡Atención! Esta acción también eliminará todos los electrodomésticos conectados y no se puede deshacer.</p>
+        <form id="form-delete-device">
+          {% csrf_token %}
+          <input type="hidden" id="delete-device-id" name="device_id">
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="btn-cancel-delete-device">Cancelar</button>
+            <button type="submit" class="btn-danger" id="btn-confirm-delete-device">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for editing appliance -->
+  <div id="modal-edit-appliance" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Electrodoméstico</h3>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="form-edit-appliance">
+          {% csrf_token %}
+          <input type="hidden" id="edit-appliance-id" name="appliance_id">
+          <div class="form-group">
+            <label class="form-label" for="edit-appliance-name">Nombre del Electrodoméstico</label>
+            <input type="text" class="form-control" id="edit-appliance-name" name="nombre" placeholder="Ejemplo: Mi Televisor" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="edit-appliance-type">Tipo de Electrodoméstico</label>
+            <select class="form-control" id="edit-appliance-type" name="tipo">
+              <option value="television">Televisor</option>
+              <option value="refrigerador">Refrigerador</option>
+              <option value="lavadora">Lavadora</option>
+              <option value="microondas">Microondas</option>
+              <option value="computadora">Computadora</option>
+              <option value="impresora">Impresora</option>
+              <option value="consola">Consola de Videojuegos</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="edit-appliance-voltage">Voltaje</label>
+            <select class="form-control" id="edit-appliance-voltage" name="voltaje">
+              <option value="110">110 V</option>
+              <option value="120">120 V</option>
+              <option value="220">220 V</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Selecciona un ícono para tu dispositivo</label>
+            <div class="icon-grid" id="edit-icon-grid">
+              <div class="icon-option" data-icon="television">
+                <img src="https://i.imgur.com/1cp16yr.png" alt="Televisión">
+                <span>Televisión</span>
+              </div>
+              <div class="icon-option" data-icon="refrigerador">
+                <img src="https://i.imgur.com/y6vQp4I.png" alt="Refrigerador">
+                <span>Refrigerador</span>
+              </div>
+              <div class="icon-option" data-icon="lavadora">
+                <img src="https://i.imgur.com/HKZWrSP.png" alt="Lavadora">
+                <span>Lavadora</span>
+              </div>
+              <div class="icon-option" data-icon="microondas">
+                <img src="https://i.imgur.com/QFNUZvz.png" alt="Microondas">
+                <span>Microondas</span>
+              </div>
+              <div class="icon-option" data-icon="computadora">
+                <img src="https://i.imgur.com/G9W3kSS.png" alt="Computadora">
+                <span>Computadora</span>
+              </div>
+              <div class="icon-option" data-icon="impresora">
+                <img src="https://i.imgur.com/QTNk9c5.png" alt="Impresora">
+                <span>Impresora</span>
+              </div>
+              <div class="icon-option" data-icon="consola">
+                <img src="https://i.imgur.com/MYNXLrB.png" alt="Consola">
+                <span>Consola</span>
+              </div>
+              <div class="icon-option" data-icon="cargador">
+                <img src="https://i.imgur.com/J3y4lRs.png" alt="Cargador">
+                <span>Cargador</span>
+              </div>
+              <div class="icon-option" data-icon="pc">
+                <img src="https://i.imgur.com/Xwh0HPl.png" alt="PC">
+                <span>PC</span>
+              </div>
+            </div>
+            <input type="hidden" id="edit-appliance-icon" name="icono" value="">
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="btn-cancel-edit-appliance">Cancelar</button>
+            <button type="submit" class="btn-success" id="btn-update-appliance">Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for deleting appliance -->
+  <div id="modal-delete-appliance" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Eliminar Electrodoméstico</h3>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas eliminar el electrodoméstico <strong id="delete-appliance-name"></strong>?</p>
+        <p class="text-danger">Esta acción no se puede deshacer.</p>
+        <form id="form-delete-appliance">
+          {% csrf_token %}
+          <input type="hidden" id="delete-appliance-id" name="appliance_id">
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="btn-cancel-delete-appliance">Cancelar</button>
+            <button type="submit" class="btn-danger" id="btn-confirm-delete-appliance">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="energysafe-footer">
     <div class="footer-top">
@@ -1165,315 +1426,725 @@
         </div>
       </div>
     </div>
-  </footer>
+    </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Header scroll effect
-      window.onscroll = function() {
-        var header = document.querySelector('.header-container');
-        if (window.scrollY > 50) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-      };
+    <script>
+     document.addEventListener('DOMContentLoaded', function() {
+  // Header scroll effect
+  window.onscroll = function() {
+    var header = document.querySelector('.header-container');
+    if (window.scrollY > 50) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  };
+  
+  // Modal functionality - Add/Register
+  const modalAddAppliance = document.getElementById('modal-add-appliance');
+  const modalRegisterDevice = document.getElementById('modal-register-device');
+  const btnAddAppliance = document.getElementById('btn-add-appliance');
+  const btnAddFirstAppliance = document.getElementById('btn-add-first-appliance');
+  const btnRegisterDevice = document.getElementById('btn-register-device');
+  const btnRegisterFirstDevice = document.getElementById('btn-register-first-device');
+  const btnCancelAppliance = document.getElementById('btn-cancel-appliance');
+  const btnCancelDevice = document.getElementById('btn-cancel-device');
+  const modalCloseButtons = document.querySelectorAll('.modal-close');
+  
+  // Edit and Delete Modals
+  const modalEditDevice = document.getElementById('modal-edit-device');
+  const modalDeleteDevice = document.getElementById('modal-delete-device');
+  const modalEditAppliance = document.getElementById('modal-edit-appliance');
+  const modalDeleteAppliance = document.getElementById('modal-delete-appliance');
+  
+  // Edit and Delete Cancel Buttons
+  const btnCancelEditDevice = document.getElementById('btn-cancel-edit-device');
+  const btnCancelDeleteDevice = document.getElementById('btn-cancel-delete-device');
+  const btnCancelEditAppliance = document.getElementById('btn-cancel-edit-appliance');
+  const btnCancelDeleteAppliance = document.getElementById('btn-cancel-delete-appliance');
+  
+  // Open modals
+  function openModal(modal) {
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  // Close modals
+  function closeModal(modal) {
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // Add event listeners for opening modals
+  if (btnAddAppliance) {
+    btnAddAppliance.addEventListener('click', () => openModal(modalAddAppliance));
+  }
+  
+  if (btnAddFirstAppliance) {
+    btnAddFirstAppliance.addEventListener('click', () => openModal(modalAddAppliance));
+  }
+  
+  if (btnRegisterDevice) {
+    btnRegisterDevice.addEventListener('click', () => openModal(modalRegisterDevice));
+  }
+  
+  if (btnRegisterFirstDevice) {
+    btnRegisterFirstDevice.addEventListener('click', () => openModal(modalRegisterDevice));
+  }
+  
+  // Add event listeners for closing modals
+  if (btnCancelAppliance) {
+    btnCancelAppliance.addEventListener('click', () => closeModal(modalAddAppliance));
+  }
+  
+  if (btnCancelDevice) {
+    btnCancelDevice.addEventListener('click', () => closeModal(modalRegisterDevice));
+  }
+  
+  if (btnCancelEditDevice) {
+    btnCancelEditDevice.addEventListener('click', () => closeModal(modalEditDevice));
+  }
+  
+  if (btnCancelDeleteDevice) {
+    btnCancelDeleteDevice.addEventListener('click', () => closeModal(modalDeleteDevice));
+  }
+  
+  if (btnCancelEditAppliance) {
+    btnCancelEditAppliance.addEventListener('click', () => closeModal(modalEditAppliance));
+  }
+  
+  if (btnCancelDeleteAppliance) {
+    btnCancelDeleteAppliance.addEventListener('click', () => closeModal(modalDeleteAppliance));
+  }
+  
+  modalCloseButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      closeModal(modalAddAppliance);
+      closeModal(modalRegisterDevice);
+      closeModal(modalEditDevice);
+      closeModal(modalDeleteDevice);
+      closeModal(modalEditAppliance);
+      closeModal(modalDeleteAppliance);
+    });
+  });
+  
+  // Close modal when clicking outside
+  window.addEventListener('click', function(e) {
+    if (e.target === modalAddAppliance) {
+      closeModal(modalAddAppliance);
+    }
+    if (e.target === modalRegisterDevice) {
+      closeModal(modalRegisterDevice);
+    }
+    if (e.target === modalEditDevice) {
+      closeModal(modalEditDevice);
+    }
+    if (e.target === modalDeleteDevice) {
+      closeModal(modalDeleteDevice);
+    }
+    if (e.target === modalEditAppliance) {
+      closeModal(modalEditAppliance);
+    }
+    if (e.target === modalDeleteAppliance) {
+      closeModal(modalDeleteAppliance);
+    }
+  });
+  
+  // Icon selection for adding appliance
+  const iconOptions = document.querySelectorAll('.icon-option');
+  const iconInput = document.getElementById('appliance-icon');
+  
+  iconOptions.forEach(option => {
+    option.addEventListener('click', function() {
+      // Remove previously selected
+      iconOptions.forEach(opt => opt.classList.remove('selected'));
       
-      // Modal functionality
-      const modalAddAppliance = document.getElementById('modal-add-appliance');
-      const modalRegisterDevice = document.getElementById('modal-register-device');
-      const btnAddAppliance = document.getElementById('btn-add-appliance');
-      const btnAddFirstAppliance = document.getElementById('btn-add-first-appliance');
-      const btnRegisterDevice = document.getElementById('btn-register-device');
-      const btnRegisterFirstDevice = document.getElementById('btn-register-first-device');
-      const btnCancelAppliance = document.getElementById('btn-cancel-appliance');
-      const btnCancelDevice = document.getElementById('btn-cancel-device');
-      const modalCloseButtons = document.querySelectorAll('.modal-close');
+      // Add selected class
+      this.classList.add('selected');
       
-      // Open modals
-      function openModal(modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+      // Update hidden input
+      if (iconInput) {
+        iconInput.value = this.getAttribute('data-icon');
       }
       
-      // Close modals
-      function closeModal(modal) {
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-      
-      // Add event listeners for opening modals
-      if (btnAddAppliance) {
-        btnAddAppliance.addEventListener('click', () => openModal(modalAddAppliance));
-      }
-      
-      if (btnAddFirstAppliance) {
-        btnAddFirstAppliance.addEventListener('click', () => openModal(modalAddAppliance));
-      }
-      
-      if (btnRegisterDevice) {
-        btnRegisterDevice.addEventListener('click', () => openModal(modalRegisterDevice));
-      }
-      
-      if (btnRegisterFirstDevice) {
-        btnRegisterFirstDevice.addEventListener('click', () => openModal(modalRegisterDevice));
-      }
-      
-      // Add event listeners for closing modals
-      if (btnCancelAppliance) {
-        btnCancelAppliance.addEventListener('click', () => closeModal(modalAddAppliance));
-      }
-      
-      if (btnCancelDevice) {
-        btnCancelDevice.addEventListener('click', () => closeModal(modalRegisterDevice));
-      }
-      
-      modalCloseButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          closeModal(modalAddAppliance);
-          closeModal(modalRegisterDevice);
-        });
-      });
-      
-      // Close modal when clicking outside
-      window.addEventListener('click', function(e) {
-        if (e.target === modalAddAppliance) {
-          closeModal(modalAddAppliance);
-        }
-        if (e.target === modalRegisterDevice) {
-          closeModal(modalRegisterDevice);
-        }
-      });
-      
-      // Icon selection
-      const iconOptions = document.querySelectorAll('.icon-option');
-      const iconInput = document.getElementById('appliance-icon');
-      
-      iconOptions.forEach(option => {
-        option.addEventListener('click', function() {
-          // Remove previously selected
-          iconOptions.forEach(opt => opt.classList.remove('selected'));
-          
-          // Add selected class
-          this.classList.add('selected');
-          
-          // Update hidden input
-          if (iconInput) {
-            iconInput.value = this.getAttribute('data-icon');
-          }
-          
-          // Also update appliance type if that field exists
-          const applianceType = document.getElementById('appliance-type');
-          if (applianceType) {
-            const iconType = this.getAttribute('data-icon');
-            
-            for (let i = 0; i < applianceType.options.length; i++) {
-              if (applianceType.options[i].value === iconType) {
-                applianceType.selectedIndex = i;
-                break;
-              }
-            }
-          }
-        });
-      });
-      
-      // Update icon when type changes
+      // Also update appliance type if that field exists
       const applianceType = document.getElementById('appliance-type');
       if (applianceType) {
-        applianceType.addEventListener('change', function() {
-          const selectedType = this.value;
-          
-          // Find matching icon
-          const matchingIcon = document.querySelector(`.icon-option[data-icon="${selectedType}"]`);
-          if (matchingIcon) {
-            matchingIcon.click();
+        const iconType = this.getAttribute('data-icon');
+        
+        for (let i = 0; i < applianceType.options.length; i++) {
+          if (applianceType.options[i].value === iconType) {
+            applianceType.selectedIndex = i;
+            break;
           }
-        });
-      }
-      
-      // Select the first icon by default
-      const firstIcon = document.querySelector('.icon-option');
-      if (firstIcon) {
-        firstIcon.click();
-      }
-      
-      // Device serial verification
-      const deviceSerial = document.getElementById('device-serial');
-      const serialFeedback = document.getElementById('serial-feedback');
-      const btnSaveDevice = document.getElementById('btn-save-device');
-      let deviceVerified = false;
-      
-      if (deviceSerial) {
-        deviceSerial.addEventListener('blur', function() {
-          const serial = this.value.trim();
-          
-          if (serial.length < 5) {
-            showFeedback('El número de serie debe tener al menos 5 caracteres', 'error');
-            deviceVerified = false;
-            btnSaveDevice.disabled = true;
-            return;
-          }
-          
-          // Show loading state
-          showFeedback('Verificando...', '');
-          serialFeedback.style.display = 'block';
-          
-          // Verify device serial
-          fetch(`/devices/verify/${serial}/`)
-            .then(response => response.json())
-            .then(data => {
-              if (data.exists) {
-                if (data.available) {
-                  // Device exists and is available
-                  showFeedback(data.message, 'success');
-                  deviceVerified = true;
-                  btnSaveDevice.disabled = false;
-                  
-                  // Auto-fill name if empty
-                  const deviceName = document.getElementById('device-name');
-                  if (deviceName && !deviceName.value && data.device_name) {
-                    deviceName.value = data.device_name;
-                  }
-                } else {
-                  // Device not available
-                  showFeedback(data.message, 'error');
-                  deviceVerified = false;
-                  btnSaveDevice.disabled = true;
-                }
-              } else {
-                // Device does not exist
-                showFeedback(data.message, 'error');
-                deviceVerified = false;
-                btnSaveDevice.disabled = true;
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              showFeedback('Error al verificar el dispositivo', 'error');
-              deviceVerified = false;
-              btnSaveDevice.disabled = true;
-            });
-        });
-      }
-      
-      // Show feedback for device registration
-      function showFeedback(message, type) {
-        if (serialFeedback) {
-          serialFeedback.textContent = message;
-          serialFeedback.className = 'form-feedback';
-          
-          if (type === 'success') {
-            serialFeedback.classList.add('success');
-          } else if (type === 'error') {
-            serialFeedback.classList.add('error');
-          }
-          
-          serialFeedback.style.display = 'block';
         }
       }
+    });
+  });
+
+  // Icon selection for editing appliance
+  const editIconOptions = document.querySelectorAll('#edit-icon-grid .icon-option');
+  const editIconInput = document.getElementById('edit-appliance-icon');
+  
+  editIconOptions.forEach(option => {
+    option.addEventListener('click', function() {
+      // Remove previously selected
+      editIconOptions.forEach(opt => opt.classList.remove('selected'));
       
-      // Form submission for device registration
-      const formDevice = document.getElementById('form-device');
-      if (formDevice) {
-        formDevice.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          if (!deviceVerified) {
-            showFeedback('Primero debes verificar el número de serie', 'error');
-            return;
-          }
-          
-          // Show loading state
-          btnSaveDevice.disabled = true;
-          btnSaveDevice.innerHTML = 'Registrando... <span class="loading-spinner"></span>';
-          
-          // Submit form
-          const formData = new FormData(this);
-          
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              // Success
-              showFeedback(data.message, 'success');
-              
-              // Reload page after 1.5 seconds
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-            } else {
-              // Error
-              showFeedback(data.message, 'error');
-              btnSaveDevice.disabled = false;
-              btnSaveDevice.textContent = 'Registrar Dispositivo';
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            showFeedback('Error al registrar el dispositivo', 'error');
-            btnSaveDevice.disabled = false;
-            btnSaveDevice.textContent = 'Registrar Dispositivo';
-          });
-        });
+      // Add selected class
+      this.classList.add('selected');
+      
+      // Update hidden input
+      if (editIconInput) {
+        editIconInput.value = this.getAttribute('data-icon');
       }
       
-      // Form submission for appliance
-      const formAppliance = document.getElementById('form-appliance');
-      if (formAppliance) {
-        formAppliance.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Validate icon selection
-          if (!iconInput.value) {
-            alert('Por favor, selecciona un ícono para el dispositivo');
-            return;
+      // Also update appliance type if that field exists
+      const editApplianceType = document.getElementById('edit-appliance-type');
+      if (editApplianceType) {
+        const iconType = this.getAttribute('data-icon');
+        
+        for (let i = 0; i < editApplianceType.options.length; i++) {
+          if (editApplianceType.options[i].value === iconType) {
+            editApplianceType.selectedIndex = i;
+            break;
           }
-          
-          // Show loading state
-          const btnSaveAppliance = document.getElementById('btn-save-appliance');
-          btnSaveAppliance.disabled = true;
-          btnSaveAppliance.innerHTML = 'Guardando... <span class="loading-spinner"></span>';
-          
-          // Submit form
-          const formData = new FormData(this);
-          
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              // Success
-              alert(data.message);
-              
-              // Reload page
-              window.location.reload();
-            } else {
-              // Error
-              alert(data.message || 'Error al registrar el dispositivo');
-              btnSaveAppliance.disabled = false;
-              btnSaveAppliance.textContent = 'Guardar';
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Error al enviar el formulario');
-            btnSaveAppliance.disabled = false;
-            btnSaveAppliance.textContent = 'Guardar';
-          });
-        });
+        }
       }
     });
-  </script>
+  });
+  
+  // Update icon when type changes
+  const applianceType = document.getElementById('appliance-type');
+  if (applianceType) {
+    applianceType.addEventListener('change', function() {
+      const selectedType = this.value;
+      
+      // Find matching icon
+      const matchingIcon = document.querySelector(`.icon-option[data-icon="${selectedType}"]`);
+      if (matchingIcon) {
+        matchingIcon.click();
+      }
+    });
+  }
+
+  // Update icon when type changes (edit form)
+  const editApplianceType = document.getElementById('edit-appliance-type');
+  if (editApplianceType) {
+    editApplianceType.addEventListener('change', function() {
+      const selectedType = this.value;
+      
+      // Find matching icon
+      const matchingIcon = document.querySelector(`#edit-icon-grid .icon-option[data-icon="${selectedType}"]`);
+      if (matchingIcon) {
+        matchingIcon.click();
+      }
+    });
+  }
+  
+  // Select the first icon by default
+  const firstIcon = document.querySelector('.icon-option');
+  if (firstIcon) {
+    firstIcon.click();
+  }
+  
+  // Device serial verification
+  const deviceSerial = document.getElementById('device-serial');
+  const serialFeedback = document.getElementById('serial-feedback');
+  const btnSaveDevice = document.getElementById('btn-save-device');
+  let deviceVerified = false;
+  
+  if (deviceSerial) {
+    deviceSerial.addEventListener('blur', function() {
+      const serial = this.value.trim();
+      
+      if (serial.length < 5) {
+        showFeedback('El número de serie debe tener al menos 5 caracteres', 'error');
+        deviceVerified = false;
+        btnSaveDevice.disabled = true;
+        return;
+      }
+      
+      // Show loading state
+      showFeedback('Verificando...', '');
+      serialFeedback.style.display = 'block';
+      
+      // Verify device serial
+      fetch(`/devices/verify/${serial}/`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.exists) {
+            if (data.available) {
+              // Device exists and is available
+              showFeedback(data.message, 'success');
+              deviceVerified = true;
+              btnSaveDevice.disabled = false;
+              
+              // Auto-fill name if empty
+              const deviceName = document.getElementById('device-name');
+              if (deviceName && !deviceName.value && data.device_name) {
+                deviceName.value = data.device_name;
+              }
+            } else {
+              // Device not available
+              showFeedback(data.message, 'error');
+              deviceVerified = false;
+              btnSaveDevice.disabled = true;
+            }
+          } else {
+            // Device does not exist
+            showFeedback(data.message, 'error');
+            deviceVerified = false;
+            btnSaveDevice.disabled = true;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showFeedback('Error al verificar el dispositivo', 'error');
+          deviceVerified = false;
+          btnSaveDevice.disabled = true;
+        });
+    });
+  }
+  
+  // Show feedback for device registration
+  function showFeedback(message, type) {
+    if (serialFeedback) {
+      serialFeedback.textContent = message;
+      serialFeedback.className = 'form-feedback';
+      
+      if (type === 'success') {
+        serialFeedback.classList.add('success');
+      } else if (type === 'error') {
+        serialFeedback.classList.add('error');
+      }
+      
+      serialFeedback.style.display = 'block';
+    }
+  }
+  
+  // Form submission for device registration
+  const formDevice = document.getElementById('form-device');
+  if (formDevice) {
+    formDevice.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (!deviceVerified) {
+        showFeedback('Primero debes verificar el número de serie', 'error');
+        return;
+      }
+      
+      // Show loading state
+      btnSaveDevice.disabled = true;
+      btnSaveDevice.innerHTML = 'Registrando... <span class="loading-spinner"></span>';
+      
+      // Submit form
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response:', text);
+            throw new Error('Error en la respuesta del servidor');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          // Success
+          showFeedback(data.message, 'success');
+          
+          // Reload page after 1.5 seconds
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          // Error
+          showFeedback(data.message, 'error');
+          btnSaveDevice.disabled = false;
+          btnSaveDevice.textContent = 'Registrar Dispositivo';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showFeedback('Error al registrar el dispositivo', 'error');
+        btnSaveDevice.disabled = false;
+        btnSaveDevice.textContent = 'Registrar Dispositivo';
+      });
+    });
+  }
+  
+  // Form submission for appliance
+  const formAppliance = document.getElementById('form-appliance');
+  if (formAppliance) {
+    formAppliance.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Validate icon selection
+      if (!iconInput.value) {
+        alert('Por favor, selecciona un ícono para el dispositivo');
+        return;
+      }
+      
+      // Show loading state
+      const btnSaveAppliance = document.getElementById('btn-save-appliance');
+      btnSaveAppliance.disabled = true;
+      btnSaveAppliance.innerHTML = 'Guardando... <span class="loading-spinner"></span>';
+      
+      // Submit form
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response:', text);
+            throw new Error('Error en la respuesta del servidor');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          // Success
+          alert(data.message);
+          
+          // Reload page
+          window.location.reload();
+        } else {
+          // Error
+          alert(data.message || 'Error al registrar el dispositivo');
+          btnSaveAppliance.disabled = false;
+          btnSaveAppliance.textContent = 'Guardar';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error al enviar el formulario');
+        btnSaveAppliance.disabled = false;
+        btnSaveAppliance.textContent = 'Guardar';
+      });
+    });
+  }
+
+  // Function to open edit device modal
+  window.openEditDeviceModal = function(deviceId, deviceName, deviceLocation) {
+    document.getElementById('edit-device-id').value = deviceId;
+    document.getElementById('edit-device-name').value = deviceName;
+    document.getElementById('edit-device-location').value = deviceLocation || '';
+    openModal(modalEditDevice);
+  };
+
+  // Function to open delete device modal
+  window.openDeleteDeviceModal = function(deviceId, deviceName) {
+    document.getElementById('delete-device-id').value = deviceId;
+    document.getElementById('delete-device-name').textContent = deviceName;
+    openModal(modalDeleteDevice);
+  };
+
+  // Function to open edit appliance modal
+  window.openEditApplianceModal = function(applianceId, applianceName, applianceType, applianceVoltage, applianceIcon) {
+    document.getElementById('edit-appliance-id').value = applianceId;
+    document.getElementById('edit-appliance-name').value = applianceName;
+    
+    // Set the appliance type
+    const typeSelect = document.getElementById('edit-appliance-type');
+    for (let i = 0; i < typeSelect.options.length; i++) {
+      if (typeSelect.options[i].value === applianceType) {
+        typeSelect.selectedIndex = i;
+        break;
+      }
+    }
+    
+    // Set the voltage
+    const voltageSelect = document.getElementById('edit-appliance-voltage');
+    for (let i = 0; i < voltageSelect.options.length; i++) {
+      if (voltageSelect.options[i].value == applianceVoltage) {
+        voltageSelect.selectedIndex = i;
+        break;
+      }
+    }
+    
+    // Select the icon
+    document.getElementById('edit-appliance-icon').value = applianceIcon;
+    const iconOption = document.querySelector(`#edit-icon-grid .icon-option[data-icon="${applianceIcon}"]`);
+    if (iconOption) {
+      // Remove previously selected
+      document.querySelectorAll('#edit-icon-grid .icon-option').forEach(opt => opt.classList.remove('selected'));
+      // Add selected class
+      iconOption.classList.add('selected');
+    }
+    
+    openModal(modalEditAppliance);
+  };
+
+  // Function to open delete appliance modal
+  window.openDeleteApplianceModal = function(applianceId, applianceName) {
+    document.getElementById('delete-appliance-id').value = applianceId;
+    document.getElementById('delete-appliance-name').textContent = applianceName;
+    openModal(modalDeleteAppliance);
+  };
+
+  // Edit device form submission
+  const formEditDevice = document.getElementById('form-edit-device');
+  if (formEditDevice) {
+    formEditDevice.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const deviceId = document.getElementById('edit-device-id').value;
+      const deviceName = document.getElementById('edit-device-name').value;
+      const deviceLocation = document.getElementById('edit-device-location').value;
+      
+      // Show loading state
+      const btnUpdateDevice = document.getElementById('btn-update-device');
+      btnUpdateDevice.disabled = true;
+      btnUpdateDevice.innerHTML = 'Actualizando... <span class="loading-spinner"></span>';
+      
+      // Get the CSRF token
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      fetch('/devices/device/edit/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          device_id: deviceId,
+          nombre_personalizado: deviceName,
+          ubicacion: deviceLocation
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response:', text);
+            throw new Error('Error en la respuesta del servidor');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        btnUpdateDevice.disabled = false;
+        btnUpdateDevice.textContent = 'Actualizar';
+        
+        if (data.success) {
+          alert(data.message);
+          closeModal(modalEditDevice);
+          window.location.reload();
+        } else {
+          alert(data.message || 'Error al actualizar el dispositivo');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        btnUpdateDevice.disabled = false;
+        btnUpdateDevice.textContent = 'Actualizar';
+        alert('Error al actualizar el dispositivo');
+      });
+    });
+  }
+
+  // Delete device form submission
+  const formDeleteDevice = document.getElementById('form-delete-device');
+  if (formDeleteDevice) {
+    formDeleteDevice.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const deviceId = document.getElementById('delete-device-id').value;
+      
+      // Show loading state
+      const btnConfirmDeleteDevice = document.getElementById('btn-confirm-delete-device');
+      btnConfirmDeleteDevice.disabled = true;
+      btnConfirmDeleteDevice.innerHTML = 'Eliminando... <span class="loading-spinner"></span>';
+      
+      // Get the CSRF token
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      fetch('/devices/device/delete/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          device_id: deviceId
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response:', text);
+            throw new Error('Error en la respuesta del servidor');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        btnConfirmDeleteDevice.disabled = false;
+        btnConfirmDeleteDevice.textContent = 'Eliminar';
+        
+        if (data.success) {
+          alert(data.message);
+          closeModal(modalDeleteDevice);
+          window.location.reload();
+        } else {
+          alert(data.message || 'Error al eliminar el dispositivo');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        btnConfirmDeleteDevice.disabled = false;
+        btnConfirmDeleteDevice.textContent = 'Eliminar';
+        alert('Error al eliminar el dispositivo');
+      });
+    });
+  }
+
+  // Edit appliance form submission
+  const formEditAppliance = document.getElementById('form-edit-appliance');
+  if (formEditAppliance) {
+    formEditAppliance.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const applianceId = document.getElementById('edit-appliance-id').value;
+      const applianceName = document.getElementById('edit-appliance-name').value;
+      const applianceType = document.getElementById('edit-appliance-type').value;
+      const applianceVoltage = document.getElementById('edit-appliance-voltage').value;
+      const applianceIcon = document.getElementById('edit-appliance-icon').value;
+      
+      // Validate icon selection
+      if (!applianceIcon) {
+        alert('Por favor, selecciona un ícono para el dispositivo');
+        return;
+      }
+      
+      // Show loading state
+      const btnUpdateAppliance = document.getElementById('btn-update-appliance');
+      btnUpdateAppliance.disabled = true;
+      btnUpdateAppliance.innerHTML = 'Actualizando... <span class="loading-spinner"></span>';
+      
+      // Get the CSRF token
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      fetch('/devices/appliance/edit/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          appliance_id: applianceId,
+          nombre: applianceName,
+          tipo: applianceType,
+          voltaje: applianceVoltage,
+          icono: applianceIcon
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response:', text);
+            throw new Error('Error en la respuesta del servidor');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        btnUpdateAppliance.disabled = false;
+        btnUpdateAppliance.textContent = 'Actualizar';
+        
+        if (data.success) {
+          alert(data.message);
+          closeModal(modalEditAppliance);
+          window.location.reload();
+        } else {
+          alert(data.message || 'Error al actualizar el electrodoméstico');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        btnUpdateAppliance.disabled = false;
+        btnUpdateAppliance.textContent = 'Actualizar';
+        alert('Error al actualizar el electrodoméstico');
+      });
+    });
+  }
+
+  // Delete appliance form submission
+  const formDeleteAppliance = document.getElementById('form-delete-appliance');
+  if (formDeleteAppliance) {
+    formDeleteAppliance.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const applianceId = document.getElementById('delete-appliance-id').value;
+      
+      // Show loading state
+      const btnConfirmDeleteAppliance = document.getElementById('btn-confirm-delete-appliance');
+      btnConfirmDeleteAppliance.disabled = true;
+      btnConfirmDeleteAppliance.innerHTML = 'Eliminando... <span class="loading-spinner"></span>';
+      
+      // Get the CSRF token
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      fetch('/devices/appliance/delete/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          appliance_id: applianceId
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response:', text);
+            throw new Error('Error en la respuesta del servidor');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        btnConfirmDeleteAppliance.disabled = false;
+        btnConfirmDeleteAppliance.textContent = 'Eliminar';
+        
+        if (data.success) {
+          alert(data.message);
+          closeModal(modalDeleteAppliance);
+          window.location.reload();
+        } else {
+          alert(data.message || 'Error al eliminar el electrodoméstico');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        btnConfirmDeleteAppliance.disabled = false;
+        btnConfirmDeleteAppliance.textContent = 'Eliminar';
+        alert('Error al eliminar el electrodoméstico');
+      });
+    });
+  }
+});
+    </script>
 </body>
 </html>
