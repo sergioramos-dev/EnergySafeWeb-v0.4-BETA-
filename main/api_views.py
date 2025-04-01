@@ -649,7 +649,7 @@ def device_control(request):
     response = JsonResponse({'status': 'ok'})
     response['Access-Control-Allow-Origin'] = '*'
     response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-    response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response['Access-Control-Allow-Headers'] = 'Content-Type'
     
     # Si es una solicitud OPTIONS (preflight), devolver respuesta vacía con headers CORS
     if request.method == 'OPTIONS':
@@ -700,6 +700,58 @@ def device_control(request):
     except Exception as e:
         import traceback
         print(f"Error en device_control: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["GET", "OPTIONS"])
+def device_control_state(request):
+    """
+    Endpoint para que los dispositivos ESP32 obtengan su estado de control actual.
+    GET /api/device-control-state/?appliance_id=XXX
+    """
+    # Manejar CORS manualmente
+    response = JsonResponse({'status': 'ok'})
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response['Access-Control-Allow-Headers'] = 'Content-Type'
+    
+    # Si es una solicitud OPTIONS (preflight), devolver respuesta vacía con headers CORS
+    if request.method == 'OPTIONS':
+        return response
+    
+    try:
+        # Obtener el ID del electrodoméstico de los parámetros de consulta
+        appliance_id = request.GET.get('appliance_id')
+        
+        # Validar datos mínimos requeridos
+        if not appliance_id:
+            return JsonResponse({'error': 'Se requiere ID del electrodoméstico'}, status=400)
+        
+        # Buscar el electrodoméstico
+        try:
+            appliance = ConnectedAppliance.objects.get(id=appliance_id)
+        except ConnectedAppliance.DoesNotExist:
+            return JsonResponse({'error': f'Electrodoméstico con ID {appliance_id} no encontrado'}, status=404)
+        
+        # Obtener el estado de control actual
+        try:
+            control_state = ApplianceControlState.objects.get(appliance=appliance)
+            state = control_state.state
+        except ApplianceControlState.DoesNotExist:
+            # Si no existe estado de control, crear uno por defecto (encendido)
+            state = True
+            ApplianceControlState.objects.create(appliance=appliance, state=state)
+        
+        # Generar la respuesta
+        return JsonResponse({
+            'success': True,
+            'state': state
+        })
+        
+    except Exception as e:
+        import traceback
+        print(f"Error en device_control_state: {str(e)}")
         print(traceback.format_exc())
         return JsonResponse({'error': str(e)}, status=500)
 
